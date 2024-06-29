@@ -16,9 +16,6 @@ from langchain.chains import RetrievalQA
 import json
 from utils.custom_logger import CustomLogger
 
-
-
-
 class Chatwithdocument(CustomLogger):
     def __init__(self, llm: ChatOpenAI, vector_db: Chroma):
         super().__init__(__name__)

@@ -15,13 +15,13 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 
-
 class TableChat:
     def __init__(self, llm: ChatOpenAI, file_path, client):
         self.table_file_path: str = file_path
         self.prompt: str = prompts.CHAT_WITH_TABLE
         self.template: PromptTemplate = PromptTemplate.from_template(self.prompt)
         self.llm = llm
+        
         self.client = client
         self.max_token_limit: int = 500
         self.chatHistory= history.chatHistory(max_token_limit=self.max_token_limit)
@@ -31,7 +31,6 @@ class TableChat:
         texts = self.client.read_from_bucket(path).decode("utf-8")
         self.chatHistory.texts.append(texts)
         self.chatHistory.save_context_to_memory()
-
 
         chain = self.template | self.llm | StrOutputParser()
         filtered_list = [d for d in self.chatHistory.chat_history if 'summary' not in d]

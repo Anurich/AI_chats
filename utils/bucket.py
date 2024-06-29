@@ -124,7 +124,6 @@ class BucketDigitalOcean(CustomLogger):
             with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
                 df.to_excel(writer, index=False)
             excel_buffer.seek(0)
-
             self.client_object.put_object(Bucket='ai-server-bucket',
                                           Key=folder_path,
                                           Body=excel_buffer,

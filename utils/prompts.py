@@ -7,7 +7,6 @@ RAG_FUSION  =  """You are a helpful assistant that generates multiple search que
 Generate multiple search queries related to: {question} \n
 Output (4 queries):"""
 
-
 CHAT_WITH_TABLE = """
 Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
 Each table is delineated by its number, followed by sequential data entries. For example, Table 1 encompasses information from the subsequent lines until the next table is encountered.
@@ -87,10 +86,11 @@ TOKEN_SENTIMENT_PROMPT = """
 Your task involves two parts: token classification and sentiment analysis.
 
 Token Classification:
-You are an expert in token identification. Your goal is to analyze the provided content and identify the most relevant tokens. 
-List up to 5 tokens that best represent the content in bullet points. 
-If you cannot identify relevant tokens, simply indicate "not known." Focus on extracting tokens from content as they appear, do not add upper case or 
-small case in tokens, just take it as they appear in the content.
+You are an expert in Entities identification. Your goal is to analyze the provided content and identify the most relevant Entities.
+Select those Entities which has some relationships.
+List up to 10 Entities that best represent the content in bullet points. 
+If you cannot identify relevant Entities, simply indicate "not known." Focus on extracting Entity from content as they appear, do not add upper case or 
+small case in Entity, just take it as they appear in the content.
 
 Sentiment Analysis:
 As an annotator, your job is to assess the sentiment of the given content. Dive deep into its meaning and determine whether the sentiment is positive or negative. Provide a brief explanation (not exceeding 20 tokens) for your sentiment assignment.

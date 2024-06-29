@@ -62,7 +62,6 @@ class QueryRequest(BaseModel):
 all_user_vector_db = dict()
 all_user_table_chat =dict()
 client = BucketDigitalOcean()
-graph  = KnowledgeGraph(llm)
 
 @app.post("/ai/model/chat_with_table")
 async def chat_with_table(requestQuery: QueryRequest):
@@ -83,8 +82,7 @@ async def chat_with_table(requestQuery: QueryRequest):
             all_user_table_chat[ids] = chatwithtable
             chat_history, output = all_user_table_chat[ids].run_chat(requestQuery.query)
 
-        # response_graph = graph.construct_knowledge_graph(output)
-       
+        
         response_graph =[]
         response =  {
             "query": requestQuery.query,
@@ -181,6 +179,27 @@ async def chat_with_pdf(requestQuery: QueryRequest):
         "intermediate_steps":["chat_with_pdf"]
     }
 
+@app.post("/ai/model/knowledge_graph")
+async def knowledge_graph_computation(requestQuery : QueryRequest):
+    graph  = KnowledgeGraph(llm)
+    histories = requestQuery.chat_history
+    graph_texts = []
+    for history in histories:
+        history = history.replace("<<<<", "").replace(">>>>", "")
+        graph_texts.append(history)
+    if len(graph_texts) == 1:
+        kg = graph.construct_knowledge_graph(graph_texts[0])
+    else:
+        texts = " ".join(graph_texts)
+        kg = graph.construct_knowledge_graph(texts)
+    
+    print(kg[0].nodes)
+    print(kg[0].relationships)
+    return {
+        "node": kg[0].nodes,
+        "relationship": kg[0].relationships,
+        "chat_id": requestQuery.chat_id
+    }
 
 @app.post("/ai/model/chat_with_website")
 async def chat_with_website(requestQuery: QueryRequest):
