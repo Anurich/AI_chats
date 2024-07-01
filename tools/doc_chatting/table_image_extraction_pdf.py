@@ -3,7 +3,8 @@ import torch
 from typing import List, Dict
 import numpy as np
 import matplotlib.pyplot as plt 
-import fitz
+# import fitz
+from pdf2image import convert_from_bytes
 from torchvision import transforms
 from PIL import Image 
 import pandas as pd 
@@ -103,25 +104,37 @@ class TableExtraction(CustomLogger):
         b = b * torch.tensor([img_w, img_h, img_w, img_h], dtype=torch.float32)
         return b
 
+    # def _convert_pdf_page_to_image(self):
+    #     zoom_x = 2.0  # horizontal zoom
+    #     zoom_y = 2.0  # vertical zoom
+    #     mat = fitz.Matrix(zoom_x, zoom_y)
+    #     all_images = []
+    #     self.log_info(f"Total PDFs to process: {len(self.pdfs)}")
+    #     for pdf in tqdm(self.pdfs):
+    #         pdf_bytes = self.client_s3.read_from_bucket(pdf["filename"])
+    #         pdf_document = fitz.open(stream=pdf_bytes, filetype="pdf") # load the pdf 
+    #         for page_number in range(len(pdf_document)):
+    #             page = pdf_document.load_page(page_number)
+    #             pixmap = page.get_pixmap(matrix=mat)
+    #             img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
+    #             all_images.append(img)
+        
+    #     self.log_info(f"Total images extracted from PDFs: {len(all_images)}")
+    #     return all_images    
+
     def _convert_pdf_page_to_image(self):
-        zoom_x = 2.0  # horizontal zoom
-        zoom_y = 2.0  # vertical zoom
-        mat = fitz.Matrix(zoom_x, zoom_y)
         all_images = []
         self.log_info(f"Total PDFs to process: {len(self.pdfs)}")
+        
         for pdf in tqdm(self.pdfs):
             pdf_bytes = self.client_s3.read_from_bucket(pdf["filename"])
-            pdf_document = fitz.open(stream=pdf_bytes, filetype="pdf") # load the pdf 
-            for page_number in range(len(pdf_document)):
-                page = pdf_document.load_page(page_number)
-                pixmap = page.get_pixmap(matrix=mat)
-                img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
-                all_images.append(img)
-        
+            # Convert PDF bytes to list of PIL images
+            images = convert_from_bytes(pdf_bytes, fmt='jpg')
+            # Append each page's image to all_images list
+            all_images.extend(images)
         self.log_info(f"Total images extracted from PDFs: {len(all_images)}")
-        return all_images    
+        return all_images
     
-
 
     def _prepare_image_for_table_detection(self):
         detection_transform = transforms.Compose([

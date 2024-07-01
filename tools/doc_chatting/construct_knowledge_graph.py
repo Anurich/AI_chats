@@ -10,7 +10,7 @@ class KnowledgeGraph(CustomLogger):
     
     def construct_knowledge_graph(self, response: str):
         self.log_info("Started the graph execution.")
-        splitted_texts = response.split("Key Points:")[0]
+        # splitted_texts = response.split("Key Points:")[0]
         docs = [Document(page_content=response)]
         graph_documents = self.llm_graph.convert_to_graph_documents(docs)
         return graph_documents

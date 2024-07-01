@@ -5,7 +5,7 @@ from langchain import hub
 MAIN_PROMPT =  hub.pull("hwchase17/openai-functions-agent")
 RAG_FUSION  =  """You are a helpful assistant that generates multiple search queries based on a single input query. \n
 Generate multiple search queries related to: {question} \n
-Output (4 queries):"""
+Output (2 queries):"""
 
 CHAT_WITH_TABLE = """
 Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
@@ -84,19 +84,10 @@ Content:
 """
 TOKEN_SENTIMENT_PROMPT = """
 Your task involves two parts: token classification and sentiment analysis.
-
-Token Classification:
-You are an expert in Entities identification. Your goal is to analyze the provided content and identify the most relevant Entities.
-Select those Entities which has some relationships.
-List up to 10 Entities that best represent the content in bullet points. 
-If you cannot identify relevant Entities, simply indicate "not known." Focus on extracting Entity from content as they appear, do not add upper case or 
-small case in Entity, just take it as they appear in the content.
-
+As an expert in token classification and semantic understanding, your task is to thoroughly analyze the provided content and identify the most relevant tokens that encapsulate its main points. List the 5 most pertinent tokens in bullet points. If no relevant tokens are found, please indicate accordingly
 Sentiment Analysis:
 As an annotator, your job is to assess the sentiment of the given content. Dive deep into its meaning and determine whether the sentiment is positive or negative. Provide a brief explanation (not exceeding 20 tokens) for your sentiment assignment.
-
 Content: {content}
-
 Always address both parts of the task: token classification and sentiment analysis.
 """
 

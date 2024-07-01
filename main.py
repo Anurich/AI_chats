@@ -193,8 +193,7 @@ async def knowledge_graph_computation(requestQuery : QueryRequest):
         texts = " ".join(graph_texts)
         kg = graph.construct_knowledge_graph(texts)
     
-    print(kg[0].nodes)
-    print(kg[0].relationships)
+
     return {
         "node": kg[0].nodes,
         "relationship": kg[0].relationships,
@@ -232,7 +231,6 @@ async def router(requestQuery: QueryRequest):
     template = PromptTemplate.from_template(prompts.ROUTER)
     chain = template | llm | JsonOutputParser()
     json_output = chain.invoke({"query": requestQuery.query})
-    print(json_output)
     return json_output
 
 

@@ -22,7 +22,7 @@ class Chatwithdocument(CustomLogger):
         self.llm  = llm
         self.vector_db = vector_db
         self.num_docs_final: int = 30
-        self.num_retrieved_docs: int = 50
+        self.num_retrieved_docs: int = 20
         self.chat_history: List[Any] = []
         self.prompt: ChatPromptTemplate = ChatPromptTemplate.from_template(prompts.CHAT_WITH_PDF)
         self.max_token_limit: int = 500
@@ -31,7 +31,7 @@ class Chatwithdocument(CustomLogger):
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
         #self.reranker = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
 
-    def reciprocal_rank_fusion(self, results: list[list], k=20):
+    def reciprocal_rank_fusion(self, results: list[list], k=30):
         """ Reciprocal_rank_fusion that takes multiple lists of ranked documents 
             and an optional parameter k used in the RRF formula """
         
@@ -97,11 +97,12 @@ class Chatwithdocument(CustomLogger):
         that performs token classification and sentiment analysis on given content. The function takes in
         a language model (llm) and the content for analysis
         """
+        self.log_info("Computing sentiment_token......")
         template = PromptTemplate.from_template(prompts.TOKEN_SENTIMENT_PROMPT)
         chain = template | llm | StrOutputParser()
         response = chain.invoke({"content": content})
         splitted_response = response.split("\n")[1:]
         response = list(map(lambda x: x.replace("-","").strip(),  splitted_response))
-        response = list(filter(lambda x: x !="**Sentiment Analysis:**" and x!="Sentiment Analysis:" and x!='', response))   
-        print(response)     
+        response = list(filter(lambda x: x !="**Sentiment Analysis:**" and x!="Sentiment Analysis:" and x!='', response))
+        self.log_info("Done..")
         return  response
