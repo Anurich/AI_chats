@@ -12,16 +12,13 @@ from utils import utility, prompts
 import shutil
 from utils.doc_chatting import tools_structure
 from langchain.agents import AgentExecutor, create_openai_functions_agent
-from langchain.tools import tool
 from langchain.memory import ConversationBufferMemory
 import os
-from fastapi import FastAPI, HTTPException
 from typing import Dict
 import uvicorn
 from langchain.prompts import MessagesPlaceholder
-from typing import List, Any
+from typing import List
 import json
-from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
