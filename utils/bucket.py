@@ -17,11 +17,9 @@ class BucketDigitalOcean(CustomLogger):
 
     session = boto3.session.Session()
     client_object = session.client('s3',
-                            region_name='sfo3',
-                            endpoint_url='https://sfo3.digitaloceanspaces.com',
-                            aws_access_key_id='DO00HJ27F3J3KEMER2ZV',
-                            aws_secret_access_key='eUviKyjL/YQDfN5JubDJX6w08d0RmeOumn/3UHQESzk')
-
+                            region_name='eu-north-1',
+                            aws_access_key_id='AKIAQBWNUTEZUN2LO7BX',
+                            aws_secret_access_key='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')
     def __init__(self):
         """
         Initializes the BucketDigitalOcean instance.
