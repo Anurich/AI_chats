@@ -26,7 +26,7 @@ PyMuPDF
 pdf2image
 frontend
 matplotlib
-unstructured[pdf]
+unstructured[all-docs]
 chromadb
 numpy
 duckduckgo-search
