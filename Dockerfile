@@ -27,4 +27,5 @@ COPY . /code
 RUN chmod +x /code/start.sh
 
 # Define the command to run your start.sh script
-CMD ["sh", "start.sh"]
+# CMD ["sh", "start.sh"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "4", "main:app"]

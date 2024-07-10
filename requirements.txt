@@ -21,10 +21,12 @@ tqdm
 transformers
 typing_extensions
 uvicorn
+gunicorn
 PyMuPDF
 pdf2image
 frontend
 matplotlib
-unstructured
+unstructured[pdf]
+chromadb
 numpy
 duckduckgo-search
