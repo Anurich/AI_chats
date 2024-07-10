@@ -25,5 +25,6 @@ PyMuPDF
 pdf2image
 frontend
 matplotlib
+unstructured
 numpy
 duckduckgo-search
