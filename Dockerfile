@@ -3,12 +3,13 @@ FROM python:3.12.3
 # Set the working directory
 WORKDIR /code
 
-# Install MuPDF and poppler-utils dependencies
+# Install dependencies including libgl1-mesa-glx for OpenGL
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     mupdf-tools \
     libmupdf-dev \
-    poppler-utils && \
+    poppler-utils \
+    libgl1-mesa-glx && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
