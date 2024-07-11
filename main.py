@@ -81,7 +81,6 @@ async def chat_with_table(requestQuery: QueryRequest):
             chat_history, output = all_user_table_chat[ids].run_chat(requestQuery.query)
 
         
-        response_graph =[]
         response =  {
             "query": requestQuery.query,
             "chat_history": chat_history,

@@ -9,7 +9,8 @@ RUN apt-get update && \
     mupdf-tools \
     libmupdf-dev \
     poppler-utils \
-    libgl1-mesa-glx && \
+    libgl1-mesa-glx \
+    tesseract-ocr && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
