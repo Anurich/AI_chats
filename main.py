@@ -22,10 +22,10 @@ import json
 from fastapi import FastAPI
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
-import multiprocessing
 from utils.bucket import BucketDigitalOcean
-import asyncio
 
+####################
+# move to seprate file 
 app = FastAPI()
 os.environ["AWS_MAX_ATTEMPTS"] = "0"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -34,10 +34,12 @@ OPENAI_API_KEY = json.load(open(PATH_TO_OPENAI_KEY, "r"))
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY["API_key"]
 os.environ["COHERE_API_KEY"] = OPENAI_API_KEY["API_COHERE_KEY"]
 path_for_image_and_text="path_for_image_and_text"
-
-
-
 llm =  ChatOpenAI(model="gpt-4-turbo-2024-04-09", temperature=0)
+det_model, det_processor, rec_model, rec_processor = utility.load_model_surya()
+all_user_vector_db = dict()
+all_user_table_chat =dict()
+client = BucketDigitalOcean()
+####################
 
 class QueryRequest(BaseModel):
     query: str 
@@ -56,16 +58,15 @@ class QueryRequest(BaseModel):
     relationship:List = []
     
 
-all_user_vector_db = dict()
-all_user_table_chat =dict()
-client = BucketDigitalOcean()
+
 
 @app.post("/ai/model/chat_with_table")
 async def chat_with_table(requestQuery: QueryRequest):
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id
     if requestQuery.table_extract:
-        tableExtraction = TableExtraction(pdfs=requestQuery.file_names,path_for_image_and_text=image_and_text_path,language=requestQuery.language,client_s3=client)
+        tableExtraction = TableExtraction(pdfs=requestQuery.file_names,path_for_image_and_text=image_and_text_path,language=requestQuery.language,client_s3=client,\
+                                          det_model=det_model, det_processor=det_processor,rec_model=rec_model, rec_processor=rec_processor)
         tableExtraction.run_extraction("") # this tool need to be run in order to save the images into the files 
         response = {
             "output": "Extraction Complete!",
@@ -266,7 +267,5 @@ async def normal_agent_chat(requestQuery: QueryRequest):
     output["chat_id"] = requestQuery.chat_id
     return output
 
-
-from pathlib import Path
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=4200)

@@ -6,10 +6,7 @@ import matplotlib.pyplot as plt
 # import fitz
 from pdf2image import convert_from_bytes
 from torchvision import transforms
-from PIL import Image 
-import pandas as pd 
 import cv2 
-import multiprocessing
 from utils.custom_logger import CustomLogger
 import os 
 import numpy as np
@@ -34,7 +31,8 @@ class MaxResize(object):
         return resized_image
 
 class TableExtraction(CustomLogger):
-    def __init__(self, pdfs:  List[str], path_for_image_and_text: str, language: str, client_s3):
+    def __init__(self, pdfs:  List[str], path_for_image_and_text: str, language: str, client_s3, \
+                 det_model, det_processor, rec_model, rec_processor):
         super().__init__(__name__)
         self.pdfs = pdfs
         self.model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", revision="no_timm")
@@ -50,7 +48,7 @@ class TableExtraction(CustomLogger):
         self.language = language
         self.client_s3 = client_s3
         self.path_for_image_and_text: str = path_for_image_and_text
-        self.det_model, self.det_processor, self.rec_model, self.rec_processor = utility.load_model_surya()
+        self.det_model, self.det_processor, self.rec_model, self.rec_processor = det_model, det_processor, rec_model, rec_processor
         
     def run_extraction(self, query: str):
         self.model.to(device) 
