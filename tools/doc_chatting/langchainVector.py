@@ -38,8 +38,9 @@ class UTILS:
 
 
 class createVectorStore_DOC:
-    def __init__(self, doc_object: dict, client,again=False):
+    def __init__(self, doc_object: dict, llm client,again=False):
         # now we can exrtact the pdfs
+        self.llm = llm
         self.doc_object = doc_object
         self.client = client
         self.vector_storage = UTILS(self.doc_object)
@@ -54,6 +55,7 @@ class createVectorStore_DOC:
             self.vector_storage.createVectorStore(self.doc_object.persist_directory)
         self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
 
+        self.categorization = dict()
         
     def create_pdf_texts(self):
         """
@@ -62,6 +64,7 @@ class createVectorStore_DOC:
         """
        
         self.docs = []
+        assign_category = dict()
         for filename in self.doc_object.filenames:
             print(filename, "**"*100)
             temp_file_path = self.client.download_file_to_temp(filename)
@@ -74,6 +77,7 @@ class createVectorStore_DOC:
             elif filename.endswith("docx"):
                 loader = Docx2txtLoader(temp_file_path)
             
+
             self.docs.extend(loader.load_and_split())
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
