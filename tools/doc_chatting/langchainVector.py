@@ -6,6 +6,7 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from utils import utility, prompts
 from collections import Counter
+from tqdm import tqdm
 import re 
 import os
 
@@ -80,7 +81,7 @@ class createVectorStore_DOC:
                 loader = Docx2txtLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
-            outputs  = [self.chain.invoke({"Context": page.page_content}) for page in document_chunked]
+            outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
             self.categorization[filename] = category
