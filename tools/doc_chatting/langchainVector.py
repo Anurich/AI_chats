@@ -84,7 +84,11 @@ class createVectorStore_DOC:
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
-            self.categorization[filename] = category
+            if self.categorization.get(filename) == None:
+                self.categorization[filename] = category
+            else:
+                self.categorization[filename].append(category)
+            
             self.docs.extend(document_chunked)
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
