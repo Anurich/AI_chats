@@ -3,7 +3,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
-from langchain.output_parsers import StructuredOutputParser
+from langchain_core.output_parsers import StrOutputParser
 from utils import utility, prompts
 from collections import Counter
 import re 
@@ -44,7 +44,7 @@ class createVectorStore_DOC:
         self.doc_object = doc_object
         self.client = client
         self.vector_storage = UTILS(self.doc_object)
-        self.chain = PromptTemplate.from_template(prompts.CATEGORIZATION) | self.llm | StructuredOutputParser()
+        self.chain = PromptTemplate.from_template(prompts.CATEGORIZATION) | self.llm | StrOutputParser()
         # create a pdf to text
         self.categorization = dict()
         self.create_pdf_texts()

@@ -116,7 +116,6 @@ async def summarization_doc(requestQuery: QueryRequest):
     vector_doc = createVectorStore_DOC(object_chat_with_pdf, llm,client)
     print(vector_doc.categorization)
     chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm)
-
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
     if os.path.isdir(SAVE_SUMMAIZE_DIR):
