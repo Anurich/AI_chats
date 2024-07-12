@@ -16,7 +16,9 @@ Resume blue
 Education green
 Environment orange
 Health pink
-Others yellow
+Entertainment brown
+Legal/Documents yellow
+Others black
 
 Ensure you select only from the categories listed above. If the category is unclear, assign it to point number 6 (Others). Your answer should be one of the points above.
 
