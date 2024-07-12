@@ -6,13 +6,11 @@ from langchain_openai import ChatOpenAI
 from langchain.load import dumps, loads
 from langchain.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_cohere import CohereRerank
 from operator import itemgetter
 from utils import history, prompts
 from typing import List
 from langchain_community.vectorstores import Chroma
 from typing import  List, Any
-from langchain.chains import RetrievalQA
 import json
 from utils.custom_logger import CustomLogger
 

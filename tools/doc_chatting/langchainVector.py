@@ -2,12 +2,12 @@ from langchain_community.document_loaders import UnstructuredFileLoader,TextLoad
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
-from langchain_community.document_loaders.s3_file import S3FileLoader
-from utils import utility
+from langchain.prompts import PromptTemplate
+from langchain.output_parsers import StructuredOutputParser
+from utils import utility, prompts
+from collections import Counter
 import re 
-from io import BytesIO
 import os
-import json
 
 class UTILS:
     def __init__(self, doc_object: dict) -> None:
@@ -38,13 +38,15 @@ class UTILS:
 
 
 class createVectorStore_DOC:
-    def __init__(self, doc_object: dict, llm client,again=False):
+    def __init__(self, doc_object: dict, llm, client,again=False):
         # now we can exrtact the pdfs
         self.llm = llm
         self.doc_object = doc_object
         self.client = client
         self.vector_storage = UTILS(self.doc_object)
+        self.chain = PromptTemplate.from_template(prompts.CATEGORIZATION) | self.llm | StructuredOutputParser()
         # create a pdf to text
+        self.categorization = dict()
         self.create_pdf_texts()
         # split the pdf into texts
         self.vector_storage.text_splitters(self.page_texts)
@@ -55,16 +57,16 @@ class createVectorStore_DOC:
             self.vector_storage.createVectorStore(self.doc_object.persist_directory)
         self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
 
-        self.categorization = dict()
+        
         
     def create_pdf_texts(self):
         """
             we flatten the pdf and create the one complete text 
             than we can split the pdf into multiple chunks with some overlap
         """
-       
+        
         self.docs = []
-        assign_category = dict()
+        
         for filename in self.doc_object.filenames:
             print(filename, "**"*100)
             temp_file_path = self.client.download_file_to_temp(filename)
@@ -77,8 +79,12 @@ class createVectorStore_DOC:
             elif filename.endswith("docx"):
                 loader = Docx2txtLoader(temp_file_path)
             
-
-            self.docs.extend(loader.load_and_split())
+            document_chunked = loader.load_and_split()
+            outputs  = [self.chain.invoke({"Context": page.page_content}) for page in document_chunked]
+            counts = Counter(outputs)
+            category = counts.most_common(1)[0][0]
+            self.categorization[filename] = category
+            self.docs.extend(document_chunked)
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
         # than we can create the text splitter     

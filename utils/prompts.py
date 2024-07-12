@@ -7,6 +7,23 @@ RAG_FUSION  =  """You are a helpful assistant that generates multiple search que
 Generate multiple search queries related to: {question} \n
 Output (2 queries):"""
 
+
+CATEGORIZATION = """
+Given the context of the document, assign the appropriate category and color to each context provided below. The categories to choose from are:
+
+1. Finance/Banking (red)
+2. Resume (blue)
+3. Education (green)
+4. Environment (orange)
+5. Health (pink)
+6. Others (yellow)
+
+Ensure you select only from the categories listed above. If the category is unclear, assign it to point number 6 (Others). Your answer should be one of the points above.
+
+Context: {Context}
+Answer:
+"""
+
 CHAT_WITH_TABLE = """
 Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
 Each table is delineated by its number, followed by sequential data entries. For example, Table 1 encompasses information from the subsequent lines until the next table is encountered.
