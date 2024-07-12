@@ -11,12 +11,12 @@ Output (2 queries):"""
 CATEGORIZATION = """
 Given the context of the document, assign the appropriate category and color to each context provided below. The categories to choose from are:
 
-1. Finance/Banking (red)
-2. Resume (blue)
-3. Education (green)
-4. Environment (orange)
-5. Health (pink)
-6. Others (yellow)
+Finance/Banking red
+Resume blue
+Education green
+Environment orange
+Health pink
+Others yellow
 
 Ensure you select only from the categories listed above. If the category is unclear, assign it to point number 6 (Others). Your answer should be one of the points above.
 

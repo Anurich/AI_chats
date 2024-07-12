@@ -56,6 +56,7 @@ class QueryRequest(BaseModel):
     language: str = "en"
     node:List =[]
     relationship:List = []
+    categories: List = []
     
 
 
@@ -114,7 +115,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     
     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
     vector_doc = createVectorStore_DOC(object_chat_with_pdf, llm,client)
-    print(vector_doc.categorization)
+
     chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm)
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
@@ -128,7 +129,8 @@ async def summarization_doc(requestQuery: QueryRequest):
     response= {
         "summary": output_summary,
         "chat_id": requestQuery.chat_id,
-        "intermediate_steps": ["chat_with_pdf"]
+        "intermediate_steps": ["chat_with_pdf"],
+        "categories": [vector_doc.categorization]
     }
     return response
 
