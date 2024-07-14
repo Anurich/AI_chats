@@ -27,9 +27,10 @@ Answer:
 """
 
 KEY_POINTS = """
-    Please list the key points from the context provided:\n\nContext:
-    {Context}
-    Key Points:
+Please extract and list the key points as short phrases or entities from the context provided. Focus on the most relevant and concise information:\n\nContext:
+{Context}
+Key Points:
+- 
 """
 
 CHAT_WITH_TABLE = """
