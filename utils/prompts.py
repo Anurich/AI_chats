@@ -26,6 +26,12 @@ Context: {Context}
 Answer:
 """
 
+KEY_POINTS = """
+    Please list the key points from the summary provided below:\n\nSummary:
+    {summary}
+    Key Points:
+"""
+
 CHAT_WITH_TABLE = """
 Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
 Each table is delineated by its number, followed by sequential data entries. For example, Table 1 encompasses information from the subsequent lines until the next table is encountered.
