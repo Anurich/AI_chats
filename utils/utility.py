@@ -123,7 +123,7 @@ def summarize_pdf(llm, txt_file_path,keypoints, splitted_docs, client):
     response_with_keypoints = "Summary: \n"+ response +" \n KeyPoints: \n "+ "\n".join(list(set(keypoints)))
     client.write_data_as_txt(response_with_keypoints, txt_file_path)
     # client.write_data_as_txt()
-    return response,
+    return response
 
 
 
