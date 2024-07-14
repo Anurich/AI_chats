@@ -12,9 +12,9 @@ import pandas as pd
 import pickle
 from PIL import Image
 from surya.ocr import run_ocr
-from surya.model.detection import segformer
 from surya.model.recognition.model import load_model
 from surya.model.recognition.processor import load_processor
+from surya.model.detection import segformer
 
 
 def load_model_surya():

@@ -162,9 +162,7 @@ async def chat_with_pdf(requestQuery: QueryRequest):
         vector_doc,  summary, chat_tool = all_user_vector_db[ids]
 
     output,  chat_history = chat_tool.run_chat(requestQuery.query)
-    # response_graph = graph.construct_knowledge_graph(output)
-    response_graph=[]
-   
+
     
     return {
         "query": requestQuery.query,

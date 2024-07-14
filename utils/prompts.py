@@ -40,7 +40,6 @@ Key Points:
 Focus on the entity that represents the question, not the answer. Skip any numeric values, floating points, or doubles. You will be provided with the context below:
 Context:
 {Context}
-
 Key Points:
 - 
 """
