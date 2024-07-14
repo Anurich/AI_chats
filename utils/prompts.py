@@ -27,8 +27,8 @@ Answer:
 """
 
 KEY_POINTS = """
-    Please list the key points from the summary provided below:\n\nSummary:
-    {summary}
+    Please list the key points from the context provided:\n\nContext:
+    {Context}
     Key Points:
 """
 

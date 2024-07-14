@@ -85,7 +85,7 @@ def batched_summarize(documents, tokenizer, batch_size=16):
         yield tokenized_ids
 
 # for summary of the pdf 
-def summarize_pdf(llm, txt_file_path, save_file_key_point_path, splitted_docs, client):
+def summarize_pdf(llm, txt_file_path, splitted_docs, client):
     """
         Approach we can use 
         First let's summarize the whole pdf using the opensource model 
@@ -96,15 +96,12 @@ def summarize_pdf(llm, txt_file_path, save_file_key_point_path, splitted_docs, c
     model     = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
     documents_for_summarization = []
     non_summary = []
-    key_points = []
     splitted_docs = random.sample(splitted_docs, k=200) if len(splitted_docs) > 1000  else splitted_docs
 
-    chain_key_point = PromptTemplate.from_template(prompts.KEY_POINTS) | llm | StrOutputParser()
     for doc in tqdm(splitted_docs):
         # Summarize the current document
         if len(doc.page_content.split()) > 100:
             # Append the summary to the list of all summaries
-            
             documents_for_summarization.append(doc.page_content)   
         else:
             non_summary.append(doc.page_content)
@@ -115,18 +112,15 @@ def summarize_pdf(llm, txt_file_path, save_file_key_point_path, splitted_docs, c
             
             output = model.generate(tokenized_ids["input_ids"])
             summary_output =tokenizer.decode(output[0], skip_special_tokens=True)
-            key_points.append(chain_key_point.invoke({"summary": summary_output}))
             summary.append(summary_output)
         all_summaries_text = ' '.join(summary)
     else:
-        key_points.append(chain_key_point.invoke({"summary": " ".join(non_summary)}))
         all_summaries_text = ' '.join(non_summary)
 
     # than we can create like a prompt to create an 
     chain= PromptTemplate.from_template(prompts.map_template) | llm | StrOutputParser()
     response = chain.invoke({"docs": all_summaries_text})
 
-    print(key_points)
     client.write_data_as_txt(response, txt_file_path)
     # client.write_data_as_txt()
     return response,

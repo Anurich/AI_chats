@@ -46,8 +46,10 @@ class createVectorStore_DOC:
         self.client = client
         self.vector_storage = UTILS(self.doc_object)
         self.chain = PromptTemplate.from_template(prompts.CATEGORIZATION) | self.llm | StrOutputParser()
+        self.chain_keyword = PromptTemplate.from_template(prompts.KEY_POINTS) | self.llm | StrOutputParser()
         # create a pdf to text
         self.categorization = dict()
+        self.key_points = []
         self.create_pdf_texts()
         # split the pdf into texts
         self.vector_storage.text_splitters(self.page_texts)
@@ -81,7 +83,11 @@ class createVectorStore_DOC:
                 loader = Docx2txtLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
+
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
+            self.key_points.extend([self.chain_keyword.invoke({"Context":page.page_content} for page in tqdm(document_chunked)])
+                
+
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
             if self.categorization.get(filename) == None:
