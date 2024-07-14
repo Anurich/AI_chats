@@ -17,7 +17,7 @@ Education green
 Environment orange
 Health pink
 Entertainment brown
-Legal/Documents yellow
+Legal/Documents purple
 Others black
 
 Ensure you select only from the categories listed above. If the category is unclear, assign it to point number 6 (Others). Your answer should be one of the points above.
@@ -27,8 +27,21 @@ Answer:
 """
 
 KEY_POINTS = """
-Please extract and list the key points as short phrases or entities from the context provided. 
-Focus on only the entities and it should not be more than 2 tokens:\n\nContext:
+
+Extract the list of key points, make sure to extract only the words and no numeric values. To extract the keypoint focus on few things:
+We only want the important topics and it should not be more than 2 tokens, for example: 
+
+My name is Anupam i have loan amount of 200, I live in Noida and I have car. 
+
+In this case the keypoint extraction should extract: 
+1. name
+2. loan amount
+3. live
+4. car
+
+It should not extract the answer but the entity like name, loan amount etc. 
+
+So in your analysis please focus on the entity which represent the question and not the answer. you will be provided with Context:
 {Context}
 Key Points:
 - 
