@@ -86,8 +86,6 @@ class createVectorStore_DOC:
 
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
             self.key_points.extend([self.chain_keyword.invoke({"Context":page.page_content} for page in tqdm(document_chunked)])
-                
-
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
             if self.categorization.get(filename) == None:
