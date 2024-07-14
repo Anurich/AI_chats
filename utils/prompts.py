@@ -32,10 +32,10 @@ Please extract the list of key points from the context provided. Focus on import
 Context: My name is Anupam, I have a loan amount of 200, I live in Noida, and I have a car.
 
 Key Points:
-1. name
-2. loan amount
-3. live
-4. car
+name
+loan amount
+live
+car
 
 Focus on the entity that represents the question, not the answer. Skip any numeric values, floating points, or doubles. You will be provided with the context below:
 Context:
