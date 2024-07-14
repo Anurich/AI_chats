@@ -27,25 +27,24 @@ Answer:
 """
 
 KEY_POINTS = """
+Please extract the list of key points from the context provided. Focus on important topics and ensure each key point is no more than 2 tokens. Do not include numeric values.
+## Example
+Context: My name is Anupam, I have a loan amount of 200, I live in Noida, and I have a car.
 
-Extract the list of key points, make sure to extract only the words and no numeric values. To extract the keypoint focus on few things:
-We only want the important topics and it should not be more than 2 tokens, for example: 
-
-My name is Anupam i have loan amount of 200, I live in Noida and I have car. 
-
-In this case the keypoint extraction should extract: 
+Key Points:
 1. name
 2. loan amount
 3. live
 4. car
 
-It should not extract the answer but the entity like name, loan amount etc. 
-
-So in your analysis please focus on the entity which represent the question and not the answer. you will be provided with Context:
+Focus on the entity that represents the question, not the answer. Skip any numeric values, floating points, or doubles. You will be provided with the context below:
+Context:
 {Context}
+
 Key Points:
 - 
 """
+
 
 CHAT_WITH_TABLE = """
 Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
