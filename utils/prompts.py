@@ -27,7 +27,8 @@ Answer:
 """
 
 KEY_POINTS = """
-Please extract and list the key points as short phrases or entities from the context provided. Focus on the most relevant and concise information:\n\nContext:
+Please extract and list the key points as short phrases or entities from the context provided. 
+Focus on only the entities and it should not be more than 2 tokens:\n\nContext:
 {Context}
 Key Points:
 - 
