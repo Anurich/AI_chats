@@ -41,7 +41,6 @@ Focus on the entity that represents the question, not the answer. Skip any numer
 Context:
 {Context}
 Key Points:
-- 
 """
 
 

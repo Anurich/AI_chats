@@ -30,7 +30,6 @@ class UTILS:
         """
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, persist_directory=persist_directory)
 
-
     def readVectorStore(self,persist_directory):
         """
             read the document from persis directory 
@@ -88,7 +87,7 @@ class createVectorStore_DOC:
             for page in tqdm(document_chunked):
                 keypoint_output = self.chain_keyword.invoke({"Context":page.page_content})
                 self.key_points.extend(keypoint_output.split("Key Points:")[1:])
-            
+
 
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]

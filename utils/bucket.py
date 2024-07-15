@@ -207,3 +207,18 @@ class BucketDigitalOcean(CustomLogger):
             self.logger.info(f"Object '{folder_path}' deleted successfully.")
         except Exception as e:
             self.logger.error(f"Unable to delete object '{folder_path}'. {e}")
+
+    def upload_vectordb_to_bucket(self, from_path, to_path):
+        """
+        Uploads a vector database file from a local path to an S3 bucket.
+
+        :param from_path: str, local path to the file to be uploaded.
+        :param to_path: str, destination path in the S3 bucket.
+        :param bucket_name: str, name of the S3 bucket.
+        """
+        try:
+            # Upload the file to S3
+            self.client_object.upload_file(from_path, bucket_name, to_path)
+            print(f"File uploaded successfully to s3://{bucket_name}/{to_path}")
+        except Exception as e:
+            print(f"Failed to upload file to S3: {e}")
