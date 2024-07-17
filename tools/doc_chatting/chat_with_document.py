@@ -69,14 +69,14 @@ class Chatwithdocument(CustomLogger):
         retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs})
         multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
-       
+
         rag_chain = (
             {"context": ragfusion_chain,  "question": itemgetter("question")} 
             | self.prompt 
             | self.llm
             | StrOutputParser() 
         )
-        output = rag_chain.invoke({"question":query})
+        output = rag_chain.invoke({"question":query},config="metadata")
         print("*"*100,)
         print(output)
         self.chatHistory.append_data_to_history(query, output)
