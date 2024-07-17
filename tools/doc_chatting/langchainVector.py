@@ -70,7 +70,6 @@ class createVectorStore_DOC:
         self.docs = []
         
         for filename in self.doc_object.filenames:
-            print(filename, "**"*100)
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
                 loader = UnstructuredFileLoader(temp_file_path)
@@ -82,6 +81,11 @@ class createVectorStore_DOC:
                 loader = Docx2txtLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
+            for i in range(len(document_chunked)):
+                document_chunked[i]["metadata"] = {
+                    "filename": filename,
+                    "page_number": i+1
+                }
             
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
             for page in tqdm(document_chunked):
@@ -97,7 +101,7 @@ class createVectorStore_DOC:
                 self.categorization[filename].append(category)
             
 
-            print(document_chunked)
+            
             self.docs.extend(document_chunked)
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
