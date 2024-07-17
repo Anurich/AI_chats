@@ -82,7 +82,7 @@ class createVectorStore_DOC:
                 loader = Docx2txtLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
-
+            
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
             for page in tqdm(document_chunked):
                 keypoint_output = self.chain_keyword.invoke({"Context":page.page_content})
@@ -96,6 +96,8 @@ class createVectorStore_DOC:
             else:
                 self.categorization[filename].append(category)
             
+
+            print(document_chunked)
             self.docs.extend(document_chunked)
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
