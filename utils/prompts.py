@@ -122,8 +122,7 @@ ROUTER = """
         "topic": "chat_with_pdf"
 """
 
-CHAT_WITH_PDF="""You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. 
-Please in every response we need to include the metadata information which will be presented for  example inside ::metadata:: . Metadata information is provided in every retreived response.
+CHAT_WITH_PDF="""You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know.
 Provide the answer in great detail. After the answer, list the important key points, numbered 1 through 5. 
 Context: {context}
 Question: {question}

@@ -21,8 +21,8 @@ class UTILS:
         """
             the idea is to split the texts into multiple chunks based on the chunk size and chunk overlap
         """
-        page_texts_joined = [" ".join(page_texts)]
-        self.recursive_texts = self.text_split.create_documents(page_texts_joined)
+        # page_texts_joined = [" ".join(page_texts)]
+        self.recursive_texts = self.text_split.split_documents(page_texts)
 
     def createVectorStore(self, persist_directory) -> None:
         """
@@ -68,7 +68,7 @@ class createVectorStore_DOC:
             than we can split the pdf into multiple chunks with some overlap
         """
         
-        self.docs = []
+        self.page_texts = []
         
         for filename in self.doc_object.filenames:
             temp_file_path = self.client.download_file_to_temp(filename)
@@ -102,15 +102,15 @@ class createVectorStore_DOC:
                 self.categorization[filename].append(category)
             
 
-            self.docs.extend(document_chunked)
+            self.page_texts.extend(document_chunked)
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
         # than we can create the text splitter     
         # for doc in pdf_docs:
             os.remove(temp_file_path)
-        self.page_texts = []
-        for doc in self.docs:
-            self.page_texts.append(doc.page_content+f" ::metadata:: {doc.metadata}")
+        # self.page_texts = []
+        # for doc in self.docs:
+        #     self.page_texts.append(doc.page_content)
 
 class createVectorStore_WEB:
     def __init__(self, doc_object: dict) -> None:
