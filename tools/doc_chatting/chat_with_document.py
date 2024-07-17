@@ -36,8 +36,8 @@ class Chatwithdocument(CustomLogger):
         # Initialize a dictionary to hold fused scores for each unique document
         fused_scores = {}
         # Iterate through each list of ranked documents
-        print(results)
         for docs in results:
+            print(docs)
             # Iterate through each document in the list, with its rank (position in the list)
             for rank, doc in enumerate(docs):
                 # Convert the document to a string format to use as a key (assumes documents can be serialized to JSON)
