@@ -67,7 +67,7 @@ class createVectorStore_DOC:
             than we can split the pdf into multiple chunks with some overlap
         """
         
-        self.docs = []
+        self.page_texts = []
         
         for filename in self.doc_object.filenames:
             temp_file_path = self.client.download_file_to_temp(filename)
@@ -101,16 +101,15 @@ class createVectorStore_DOC:
                 self.categorization[filename].append(category)
             
 
-            print(document_chunked)
-            self.docs.extend(document_chunked)
+            self.page_texts.extend(document_chunked)
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
         # than we can create the text splitter     
         # for doc in pdf_docs:
             os.remove(temp_file_path)
-        self.page_texts = []
-        for doc in self.docs:
-            self.page_texts.append(doc.page_content)
+        # self.page_texts = []
+        # for doc in self.docs:
+        #     self.page_texts.append(doc.page_content)
 
 class createVectorStore_WEB:
     def __init__(self, doc_object: dict) -> None:
