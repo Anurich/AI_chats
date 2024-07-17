@@ -28,8 +28,8 @@ class UTILS:
         """
             Creating and Storing the vector store
         """
-        for rctext in self.recursive_texts:
-            self.vector_db = Chroma.from_texts(rctext.page_content, self.embedding_function, persist_directory=persist_directory, collection_metadata=rctext.metadata)
+        print(self.recursive_texts)
+        self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, persist_directory=persist_directory)
 
     def readVectorStore(self,persist_directory):
         """

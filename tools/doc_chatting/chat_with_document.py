@@ -36,6 +36,7 @@ class Chatwithdocument(CustomLogger):
         # Initialize a dictionary to hold fused scores for each unique document
         fused_scores = {}
         # Iterate through each list of ranked documents
+        print(results)
         for docs in results:
             # Iterate through each document in the list, with its rank (position in the list)
             for rank, doc in enumerate(docs):
@@ -61,7 +62,7 @@ class Chatwithdocument(CustomLogger):
     def run_chat(self, query: str):
         # summarize docs need not to be run everytime because if the document is summarized i can save it 
         # and next time when someone ask question i can simply use the saved one 
-        retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs},)
+        retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs})
         multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
        
