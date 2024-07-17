@@ -78,7 +78,7 @@ class Chatwithdocument(CustomLogger):
             | self.llm
             | StrOutputParser() 
         )
-        output = rag_chain.invoke({"question":query|)
+        output = rag_chain.invoke({"question":query})
         print("*"*100,)
         print(output)
         self.chatHistory.append_data_to_history(query, output)
