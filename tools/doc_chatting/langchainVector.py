@@ -21,7 +21,7 @@ class UTILS:
         """
             the idea is to split the texts into multiple chunks based on the chunk size and chunk overlap
         """
-        page_texts_joined = [" ".join(page_texts)]
+        
         self.recursive_texts = self.text_split.create_documents(page_texts_joined)
 
     def createVectorStore(self, persist_directory) -> None:
