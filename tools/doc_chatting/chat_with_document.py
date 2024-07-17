@@ -61,10 +61,10 @@ class Chatwithdocument(CustomLogger):
     def run_chat(self, query: str):
         # summarize docs need not to be run everytime because if the document is summarized i can save it 
         # and next time when someone ask question i can simply use the saved one 
-        retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs})
+        retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs},)
         multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
-
+       
         rag_chain = (
             {"context": ragfusion_chain,  "question": itemgetter("question")} 
             | self.prompt 
