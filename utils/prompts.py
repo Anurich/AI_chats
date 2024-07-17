@@ -59,8 +59,7 @@ Human: {input}
 AI:
 
 Example:
-
-    <!-- Table 1 -->
+    <span> Table 1 </span>
     <table border="1">
     <tr>
         <th>Column 1</th>
@@ -81,7 +80,7 @@ Example:
 
     <br>
 
-    <!-- Table 2 -->
+    <span> Table 2 </span>
     <table border="1">
     <tr>
         <th>Column A</th>
