@@ -82,7 +82,7 @@ class createVectorStore_DOC:
             
             document_chunked = loader.load_and_split()
             for i in range(len(document_chunked)):
-                document_chunked[i]["metadata"] = {
+                document_chunked[i].metadata = {
                     "filename": filename,
                     "page_number": i+1
                 }
