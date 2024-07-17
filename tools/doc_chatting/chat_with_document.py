@@ -70,13 +70,15 @@ class Chatwithdocument(CustomLogger):
         multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
+        contexts = ragfusion_chain.invoke({"question": query})
+        print(contexts)
         rag_chain = (
             {"context": ragfusion_chain,  "question": itemgetter("question")} 
             | self.prompt 
             | self.llm
             | StrOutputParser() 
         )
-        output = rag_chain.invoke({"question":query},config="metadata")
+        output = rag_chain.invoke({"question":query|)
         print("*"*100,)
         print(output)
         self.chatHistory.append_data_to_history(query, output)
