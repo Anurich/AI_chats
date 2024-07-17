@@ -37,7 +37,7 @@ loan amount
 live
 car
 
-Focus on the entity that represents the question, not the answer. Skip any numeric values, floating points, or doubles. You will be provided with the context below:
+Focus on the entity that represents the question, not the answer. Skip any numeric values, floating points, or doubles.You will be provided with the context below:
 Context:
 {Context}
 Key Points:
@@ -60,17 +60,45 @@ AI:
 
 Example:
 
-Table 1:
-| Column 1 | Column 2 | Column 3 |
-|----------|----------|----------|
-| Data 1   | Data 2   | Data 3   |
-| Data 4   | Data 5   | Data 6   |
+    <!-- Table 1 -->
+    <table border="1">
+    <tr>
+        <th>Column 1</th>
+        <th>Column 2</th>
+        <th>Column 3</th>
+    </tr>
+    <tr>
+        <td>Data 1</td>
+        <td>Data 2</td>
+        <td>Data 3</td>
+    </tr>
+    <tr>
+        <td>Data 4</td>
+        <td>Data 5</td>
+        <td>Data 6</td>
+    </tr>
+    </table>
 
-Table 2:
-| Column A | Column B | Column C |
-|----------|----------|----------|
-| Info A   | Info B   | Info C   |
-| Info D   | Info E   | Info F   |
+    <br>
+
+    <!-- Table 2 -->
+    <table border="1">
+    <tr>
+        <th>Column A</th>
+        <th>Column B</th>
+        <th>Column C</th>
+    </tr>
+    <tr>
+        <td>Info A</td>
+        <td>Info B</td>
+        <td>Info C</td>
+    </tr>
+    <tr>
+        <td>Info D</td>
+        <td>Info E</td>
+        <td>Info F</td>
+    </tr>
+    </table>
 
 and so on.
 """
