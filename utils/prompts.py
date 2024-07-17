@@ -48,7 +48,7 @@ CHAT_WITH_TABLE = """
 Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
 Each table is delineated by its number, followed by sequential data entries. For example, Table 1 encompasses information from the subsequent lines until the next table is encountered.
 In cases where a table lacks information, respond with "no information found for that table." Your analysis should aim to uncover valuable insights tailored to each table, steering clear of irrelevant or generic responses.
-Always present the extracted data in a clear and organized manner using markdown table format to facilitate understanding.
+Always present the extracted data in a clear and organized manner using HTML table format to facilitate understanding.
 
 Relevant Information:
 
@@ -101,6 +101,7 @@ Example:
     </table>
 
 and so on.
+Make sure the response of the table is formatted in HTML table tags with proper functioning code.
 """
 
 
