@@ -22,13 +22,13 @@ class UTILS:
             the idea is to split the texts into multiple chunks based on the chunk size and chunk overlap
         """
         page_texts_joined = [" ".join(page_texts)]
-        print(page_texts_joined)
         self.recursive_texts = self.text_split.create_documents(page_texts_joined)
 
     def createVectorStore(self, persist_directory) -> None:
         """
             Creating and Storing the vector store
         """
+        print(self.recursive_texts)
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, persist_directory=persist_directory)
 
     def readVectorStore(self,persist_directory):
@@ -110,7 +110,7 @@ class createVectorStore_DOC:
             os.remove(temp_file_path)
         self.page_texts = []
         for doc in self.docs:
-            self.page_texts.append(doc.page_content+f"::metadata:: {doc.metadata}")
+            self.page_texts.append(doc.page_content+f" ::metadata:: {doc.metadata}")
 
 class createVectorStore_WEB:
     def __init__(self, doc_object: dict) -> None:
