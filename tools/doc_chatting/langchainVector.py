@@ -101,7 +101,7 @@ class createVectorStore_DOC:
                 self.categorization[filename].append(category)
             
 
-            
+            print(document_chunked)
             self.docs.extend(document_chunked)
         # now that we have the pdf_documents
         # we can combine the page_content form the pdf 
