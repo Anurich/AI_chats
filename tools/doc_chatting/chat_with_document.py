@@ -35,16 +35,14 @@ class Chatwithdocument(CustomLogger):
         
         # Initialize a dictionary to hold fused scores for each unique document
         fused_scores = {}
-        metadata = []
         # Iterate through each list of ranked documents
         for docs in results:
            
             # Iterate through each document in the list, with its rank (position in the list)
             for rank, doc in enumerate(docs):
-                metadata.append(doc.metadata)
                 # Convert the document to a string format to use as a key (assumes documents can be serialized to JSON)
                 doc_str = dumps(doc)
-                print(doc_str)
+       
                 # If the document is not yet in the fused_scores dictionary, add it with an initial score of 0
                 if doc_str not in fused_scores:
                     fused_scores[doc_str] = 0
@@ -59,8 +57,10 @@ class Chatwithdocument(CustomLogger):
             for doc, score in sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
         ]
         # Return the reranked results as a list of tuples, each containing the document and its fused score
-        print(len(reranked_results), len(metadata))
         self.log_info("Sucessfully computred reranked-results.....")
+        print("--"*100)
+        print(reranked_results)
+        print("--"*100)
         return reranked_results
 
     def run_chat(self, query: str):
