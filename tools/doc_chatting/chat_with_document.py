@@ -75,9 +75,6 @@ class Chatwithdocument(CustomLogger):
             | StrOutputParser() 
         )
         output = rag_chain.invoke({"question":query})
-        print("*"*100,)
-        print(ragfusion_chain["context"])
-        print(output)
         self.chatHistory.append_data_to_history(query, output)
         #let's take always top last 5 in chat history 
         # to find the answer
