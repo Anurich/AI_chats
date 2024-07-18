@@ -58,9 +58,7 @@ class Chatwithdocument(CustomLogger):
         ]
         # Return the reranked results as a list of tuples, each containing the document and its fused score
         self.log_info("Sucessfully computred reranked-results.....")
-        print("--"*100)
-        print(reranked_results)
-        print("--"*100)
+        
         return reranked_results
 
     def run_chat(self, query: str):
@@ -70,8 +68,6 @@ class Chatwithdocument(CustomLogger):
         multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
-        contexts = ragfusion_chain.invoke({"question": query})
-        print(contexts)
         rag_chain = (
             {"context": ragfusion_chain,  "question": itemgetter("question")} 
             | self.prompt 
@@ -80,6 +76,7 @@ class Chatwithdocument(CustomLogger):
         )
         output = rag_chain.invoke({"question":query})
         print("*"*100,)
+        print(ragfusion_chain["context"])
         print(output)
         self.chatHistory.append_data_to_history(query, output)
         #let's take always top last 5 in chat history 
