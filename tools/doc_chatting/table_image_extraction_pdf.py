@@ -65,7 +65,7 @@ class TableExtraction(CustomLogger):
         if len(self.all_crop_images) > 0:
 
             for idx, (cropped_img, filename_img) in enumerate(zip(self.all_crop_images, self.all_files_for_crop_image)):
-                path_to_save_image =os.path.join(self.path_for_image_and_text,f"{filename_img.split(".pdf")[0].split("/")[1]} Table {idx}.jpg")
+                path_to_save_image =os.path.join(self.path_for_image_and_text,f"{filename_img.split(".pdf")[0].split("/")[1]}-Table {idx}.jpg")
                 self.client_s3.write_data_as_image(cropped_img, path_to_save_image)
 
             # now we can perform the pddle ocr 
