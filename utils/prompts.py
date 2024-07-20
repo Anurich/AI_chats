@@ -79,7 +79,7 @@ Example:
     </table>
 
     <br>
-
+    <hr/>
     <span> <b>filename-Table 2</b> </span>
     <table border="1">
     <tr>
