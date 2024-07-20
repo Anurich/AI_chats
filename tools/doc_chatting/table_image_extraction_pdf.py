@@ -131,7 +131,7 @@ class TableExtraction(CustomLogger):
             images = convert_from_bytes(pdf_bytes, fmt='jpg')
             # Append each page's image to all_images list
             all_images.extend(images)
-            all_files.append(self.pdf["filename"])
+            all_files.append(pdf["filename"])
         self.log_info(f"Total images extracted from PDFs: {len(all_images)}")
         return all_images, all_files
     
