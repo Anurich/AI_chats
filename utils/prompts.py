@@ -46,7 +46,7 @@ Key Points:
 
 CHAT_WITH_TABLE = """
 Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
-Each table is delineated by its number, followed by sequential data entries. For example, Table 1 encompasses information from the subsequent lines until the next table is encountered.
+Each table is delineated by its number, followed by sequential data entries. For example, filename Table 1 encompasses information from the subsequent lines until the next table is encountered.
 In cases where a table lacks information, respond with "no information found for that table." Your analysis should aim to uncover valuable insights tailored to each table, steering clear of irrelevant or generic responses.
 Always present the extracted data in a clear and organized manner using HTML table format to facilitate understanding.
 
@@ -59,7 +59,7 @@ Human: {input}
 AI:
 
 Example:
-    <span> Table 1 </span>
+    <span> filename Table 1 </span>
     <table border="1">
     <tr>
         <th>Column 1</th>
@@ -80,7 +80,7 @@ Example:
 
     <br>
 
-    <span> Table 2 </span>
+    <span> filename Table 2 </span>
     <table border="1">
     <tr>
         <th>Column A</th>
