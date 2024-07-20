@@ -131,7 +131,7 @@ class TableExtraction(CustomLogger):
             # Convert PDF bytes to list of PIL images
             images = convert_from_bytes(pdf_bytes, fmt='jpg')
             # Append each page's image to all_images list
-            print(images.shape)
+            print(np.array(images).shape)
             all_images.extend(images)
             all_files.append(pdf["filename"])
 
