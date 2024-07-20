@@ -146,6 +146,7 @@ class TableExtraction(CustomLogger):
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
         prepared_images = []
+        assert len(self.all_files) == len(self.all_images)
         for img, filename in zip(self.all_images, self.all_files):
             org_img = img.copy()
             pixel_values = detection_transform(img).unsqueeze(0)
