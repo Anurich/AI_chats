@@ -56,21 +56,21 @@ class TableExtraction(CustomLogger):
         # self.model_naught_ocr.to(device) # do not remove this it can be explored in future
         
         self.log_info("Starting pdf to image conversion.....")
-        self.all_images = self._convert_pdf_page_to_image() # converting the pdf to images 
+        self.all_images, self.all_files = self._convert_pdf_page_to_image() # converting the pdf to images
         self.log_info("Image preperation for table detection.....")
         self.prepared_images = self._prepare_image_for_table_detection()
         self.log_info("Inference on images.....")
         self.object_with_img_bbox = self._perform_image_inference()
-        self.all_crop_images = self._crop_images()
+        self.all_crop_images, self.all_files_for_crop_image = self._crop_images()
         if len(self.all_crop_images) > 0:
-            for idx, cropped_img in enumerate(self.all_crop_images):
-                path_to_save_image =os.path.join(self.path_for_image_and_text,f"Table {idx}.jpg")
+            for idx, cropped_img, filename_img in enumerate(zip(self.all_crop_images, self.all_files_for_crop_image)):
+                path_to_save_image =os.path.join(self.path_for_image_and_text,f"{filename_img.split(".pdf")[0]} Table {idx}.jpg")
                 self.client_s3.write_data_as_image(cropped_img, path_to_save_image)
 
             # now we can perform the pddle ocr 
             all_tables = ""
             all_images = self.client_s3.s3_object_list(self.path_for_image_and_text)
-            for idx, img in enumerate(tqdm(all_images)):
+            for idx, img, crop_img_file_path in enumerate(tqdm(all_images)):
                 if img.endswith("jpg"):
                     filename = img.replace(".jpg","")
                     path_to_write_txt = os.path.join(self.path_for_image_and_text, filename+".txt")
@@ -80,7 +80,7 @@ class TableExtraction(CustomLogger):
                     # now we can write it to txt file and also save the dataframe 
                     path_to_write_xlsx = os.path.join(self.path_for_image_and_text, filename+".xlsx")
                     self.client_s3.write_data_excel(df, path_to_write_xlsx)
-                    all_tables += f"Table {idx}"+"\n"+df_markdown+"\n"
+                    all_tables += f"{filename}"+"\n"+df_markdown+"\n"
                     self.client_s3.write_data_as_txt(df_markdown,path_to_write_txt)
             
             # write the table
@@ -122,6 +122,7 @@ class TableExtraction(CustomLogger):
 
     def _convert_pdf_page_to_image(self):
         all_images = []
+        all_files = []
         self.log_info(f"Total PDFs to process: {len(self.pdfs)}")
         
         for pdf in tqdm(self.pdfs):
@@ -130,8 +131,9 @@ class TableExtraction(CustomLogger):
             images = convert_from_bytes(pdf_bytes, fmt='jpg')
             # Append each page's image to all_images list
             all_images.extend(images)
+            all_files.append(self.pdf["filename"])
         self.log_info(f"Total images extracted from PDFs: {len(all_images)}")
-        return all_images
+        return all_images, all_files
     
 
     def _prepare_image_for_table_detection(self):
@@ -141,18 +143,18 @@ class TableExtraction(CustomLogger):
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
         prepared_images = []
-        for img in self.all_images:
+        for img, filename in zip(self.all_images, self.all_files):
             org_img = img.copy()
             pixel_values = detection_transform(img).unsqueeze(0)
             pixel_values = pixel_values.to(device)
-            prepared_images.append((pixel_values,org_img.size, org_img))
+            prepared_images.append((pixel_values,org_img.size, org_img, filename))
         return prepared_images
     
     
     def _perform_image_inference(self):
         objects = []
         with torch.no_grad():
-            for img, size, org_img in tqdm(self.prepared_images):
+            for img, size, org_img, filename in tqdm(self.prepared_images):
                 outputs = self.model(img) # inference form the image 
                 m = outputs.logits.softmax(-1).max(-1)
                 pred_labels = list(m.indices.detach().cpu().numpy())[0]
@@ -165,25 +167,28 @@ class TableExtraction(CustomLogger):
                         continue 
                     elif float(score) > 0.95:
                         objects.append({'label': class_label, 'score': float(score),
-                            'bbox': [float(elem) for elem in bbox],"image":org_img})
+                            'bbox': [float(elem) for elem in bbox],"image":org_img, "filename":filename})
         
         return objects
 
     def _crop_images(self):
         # Define the font properties
         all_crops_images = []
+        all_filename = []
         if len(self.object_with_img_bbox) >=1:
             for object in self.object_with_img_bbox:
                 image = np.array(object["image"])
+                filename = object["filename"]
                 bboxes = object["bbox"]
                 bboxes = list(map(int, bboxes))
                 x1, y1, x2, y2 = bboxes
                 croped_image = image[y1: y2, x1:x2]
                 all_crops_images.append(croped_image)
+                all_filename.append(filename)
         else:
             self.log_warning("No tables detected in the images.")
         # let's combine the images
-        return all_crops_images
+        return all_crops_images, all_filename
         # self._combine_images(all_crops_images)
 
     def _combine_images(self, image_list):
