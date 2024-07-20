@@ -59,7 +59,7 @@ Human: {input}
 AI:
 
 Example:
-    <span> filename-Table 1 </span>
+    <span> <b>filename-Table 1</b> </span>
     <table border="1">
     <tr>
         <th>Column 1</th>
@@ -80,7 +80,7 @@ Example:
 
     <br>
 
-    <span> filename-Table 2 </span>
+    <span> <b>filename-Table 2</b> </span>
     <table border="1">
     <tr>
         <th>Column A</th>
