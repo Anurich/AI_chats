@@ -78,8 +78,9 @@ Example:
     </tr>
     </table>
 
-    <br>
+    <br/>
     <hr/>
+    <br/>
     <span> <b>filename-Table 2</b> </span>
     <table border="1">
     <tr>
