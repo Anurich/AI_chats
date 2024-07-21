@@ -74,7 +74,7 @@ class createVectorStore_DOC:
         for filename in self.doc_object.filenames:
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
-                loader = UnstructuredFileLoader(temp_file_path)
+                loader = UnstructuredFileLoader(temp_file_path,mode="elements")
             elif filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
             elif filename.endswith("pptx"):
