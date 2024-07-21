@@ -22,6 +22,7 @@ class UTILS:
             the idea is to split the texts into multiple chunks based on the chunk size and chunk overlap
         """
         # page_texts_joined = [" ".join(page_texts)]
+      
         self.recursive_texts = self.text_split.split_documents(page_texts)
 
     def createVectorStore(self, persist_directory) -> None:
@@ -82,10 +83,10 @@ class createVectorStore_DOC:
                 loader = Docx2txtLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
+            print(document_chunked)
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {
-                    "filename": filename,
-                    "page": document_chunked[i].page
+                    "filename": filename
                 }
             
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
