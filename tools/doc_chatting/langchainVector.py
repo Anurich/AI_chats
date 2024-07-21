@@ -74,7 +74,7 @@ class createVectorStore_DOC:
         for filename in self.doc_object.filenames:
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
-                loader = UnstructuredFileLoader(temp_file_path,mode="elements")
+                loader = UnstructuredFileLoader(temp_file_path,mode="paged")
             elif filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
             elif filename.endswith("pptx"):
@@ -84,7 +84,10 @@ class createVectorStore_DOC:
             
             document_chunked = loader.load_and_split()
             for i in range(len(document_chunked)):
-                document_chunked[i].metadata["source"] = filename
+                document_chunked[i].metadata = {
+                    "source": filename,
+                    "page": str(document_chunked[i].metadata["page_number"])
+                }
             
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
             for page in tqdm(document_chunked):
