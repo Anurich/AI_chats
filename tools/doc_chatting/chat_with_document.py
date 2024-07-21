@@ -86,10 +86,23 @@ class Chatwithdocument(CustomLogger):
         for token in token_sentiment_response[:-2]:
             output = output.replace(token.strip(), f"<<<<{token.strip()}>>>>")
         output += "\n **Sentiment:**\n "+token_sentiment_response[-1]
-        print("*"*100)
-        print(response)
-        source, _ = response["context"][0]
-        return [output+f" ***{source.metadata}***",  self.chatHistory.chat_history]
+        
+        max = 0
+        metadata = None
+        splitted_response = response["answer"].lower().split()
+        for i in range(len(response["context"])):
+            consider = 0
+            doc,_ = response["context"][i]
+            data = doc.page_content.lower()
+            for res in splitted_response:
+                if res in data:
+                    consider +=1
+
+            if consider > max:
+                max  = consider
+                metadata = doc.metadata
+        
+        return [output+f" ***{metadata}***",  self.chatHistory.chat_history]
 
     def sentiment_token_classification(self, llm, content):
         """
