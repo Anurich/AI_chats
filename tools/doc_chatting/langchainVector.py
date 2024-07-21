@@ -83,11 +83,8 @@ class createVectorStore_DOC:
                 loader = Docx2txtLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
-            print(document_chunked)
             for i in range(len(document_chunked)):
-                document_chunked[i].metadata = {
-                    "filename": filename
-                }
+                document_chunked[i].metadata["source"] = filename
             
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
             for page in tqdm(document_chunked):
