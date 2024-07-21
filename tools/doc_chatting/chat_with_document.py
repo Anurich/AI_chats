@@ -87,6 +87,8 @@ class Chatwithdocument(CustomLogger):
             output = output.replace(token.strip(), f"<<<<{token.strip()}>>>>")
         output += "\n **Sentiment:**\n "+token_sentiment_response[-1]
         
+        print(response)
+        print(response["context"])
         metadata = response["context"][0].metadata
         return [output+f" ***{metadata}***",  self.chatHistory.chat_history]
 
