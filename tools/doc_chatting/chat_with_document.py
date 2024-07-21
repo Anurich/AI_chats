@@ -77,8 +77,9 @@ class Chatwithdocument(CustomLogger):
 
         retriever_with_rag_fusion = (lambda x: x["question"]) | ragfusion_chain
         rag_chain_with_source = RunnablePassthrough.assign(context=retriever_with_rag_fusion).assign(answer = rag_chain)
-        output = rag_chain_with_source.invoke({"question": query})
-        self.chatHistory.append_data_to_history(query, output["answer"])
+        response = rag_chain_with_source.invoke({"question": query})
+        output = response["answer"]
+        self.chatHistory.append_data_to_history(query, output)
         #let's take always top last 5 in chat history 
         # to find the answer
         token_sentiment_response = self.sentiment_token_classification(self.llm, output)
@@ -86,7 +87,7 @@ class Chatwithdocument(CustomLogger):
             output = output.replace(token.strip(), f"<<<<{token.strip()}>>>>")
         output += "\n **Sentiment:**\n "+token_sentiment_response[-1]
         
-        metadata = output["context"][0].metadata
+        metadata = response["context"][0].metadata
         return [output+f" ***{metadata}***",  self.chatHistory.chat_history]
 
     def sentiment_token_classification(self, llm, content):
