@@ -85,7 +85,7 @@ class createVectorStore_DOC:
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {
                     "filename": filename,
-                    "page_number": i+1
+                    "page": document_chunked[i].page
                 }
             
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]

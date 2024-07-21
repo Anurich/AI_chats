@@ -12,6 +12,7 @@ from typing import List
 from langchain_community.vectorstores import Chroma
 from typing import  List, Any
 import json
+from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from utils.custom_logger import CustomLogger
 
 class Chatwithdocument(CustomLogger):
@@ -68,13 +69,17 @@ class Chatwithdocument(CustomLogger):
         multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
-        rag_chain = (
-            {"context": ragfusion_chain,  "question": itemgetter("question")} 
+        rag_chain = (RunnablePassthrough.assign(context = lambda x: x["context"])
             | self.prompt 
             | self.llm
             | StrOutputParser() 
         )
-        output = rag_chain.invoke({"question":query})
+        rag_chain_with_source = RunnableParallel(
+            rag_chain.invoke({"context": ragfusion_chain, "question":RunnablePassthrough()})
+        ).assign(rag_chain)
+
+        output = rag_chain_with_source.invoke(query)
+        print(output)
         self.chatHistory.append_data_to_history(query, output)
         #let's take always top last 5 in chat history 
         # to find the answer
