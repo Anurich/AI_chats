@@ -74,11 +74,10 @@ class Chatwithdocument(CustomLogger):
             | self.llm
             | StrOutputParser() 
         )
-        rag_chain_with_source = RunnableParallel(
-            rag_chain.invoke({"context": ragfusion_chain, "question":RunnablePassthrough()})
-        ).assign(rag_chain)
 
-        output = rag_chain_with_source.invoke(query)
+        retriever_with_rag_fusion = itemgetter("question") | ragfusion_chain
+        rag_chain_with_source = RunnablePassthrough(context=retriever_with_rag_fusion).assign(answer = rag_chain)
+        output = rag_chain_with_source.invoke({"question": query})
         print(output)
         self.chatHistory.append_data_to_history(query, output)
         #let's take always top last 5 in chat history 
