@@ -69,7 +69,7 @@ class Chatwithdocument(CustomLogger):
         multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
-        rag_chain = (RunnablePassthrough.assign(context = (lambda x: x["context"]))
+        rag_chain = (RunnablePassthrough.assign(context = (lambda x: x["answer"]))
             | self.prompt 
             | self.llm
             | StrOutputParser() 
