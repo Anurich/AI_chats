@@ -75,7 +75,7 @@ class Chatwithdocument(CustomLogger):
             | StrOutputParser() 
         )
 
-        retriever_with_rag_fusion = itemgetter("question") | ragfusion_chain
+        retriever_with_rag_fusion = (lambda x: x["question"]) | ragfusion_chain
         rag_chain_with_source = RunnablePassthrough(context=retriever_with_rag_fusion).assign(answer = rag_chain)
         output = rag_chain_with_source.invoke({"question": query})
         print(output)
