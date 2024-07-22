@@ -150,7 +150,6 @@ class TableExtraction(CustomLogger):
         for img, filename in zip(self.all_images, self.all_files):
             org_img = img.copy()
             pixel_values = detection_transform(img).unsqueeze(0)
-            print(pixel_values.shape)
             pixel_values = pixel_values.to(device)
             prepared_images.append((pixel_values,org_img.size, org_img, filename))
         return prepared_images
