@@ -231,6 +231,7 @@ async def router(requestQuery: QueryRequest):
     chain = template | llm | JsonOutputParser()
     all_images = client.s3_object_list(image_and_text_path)
     json_output = chain.invoke({"query": requestQuery.query, "table": str(len(all_images))})
+    print(json_output)
     return json_output
 
 
