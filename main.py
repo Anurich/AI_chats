@@ -224,9 +224,11 @@ async def chat_with_website(requestQuery: QueryRequest):
 
 @app.post("/ai/model/router")
 async def router(requestQuery: QueryRequest):
+    image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id
     template = PromptTemplate.from_template(prompts.ROUTER)
     chain = template | llm | JsonOutputParser()
-    json_output = chain.invoke({"query": requestQuery.query})
+    all_images = client.s3_object_list(image_and_text_path)
+    json_output = chain.invoke({"query": requestQuery.query, "table": str(len(all_images))})
     return json_output
 
 

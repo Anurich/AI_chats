@@ -110,10 +110,10 @@ ROUTER = """
     1. chat_with_table 
     2. chat_with_pdf 
 
-    Provided the query: {query}, you will interpret based on the context if this query is related to chat_with_pdf or chat_with_table.
+    Provided the query: {query} and number of tables available {table}, you will interpret based on the context if this query is related to chat_with_pdf or chat_with_table.
     
     Criteria:
-    - Assign the topic 'chat_with_table' if the query contains the keyword 'table' or refers to data that is structured in rows and columns.
+    - Assign the topic 'chat_with_table' if the query contains the keyword 'table' and number of tables available is more than 0 or refers to data that is structured in rows and columns.
     - Assign the topic 'chat_with_pdf' for all other queries.
 
     Do not assign any other topics except the two discussed above. 
@@ -124,17 +124,10 @@ ROUTER = """
 """
 
 CHAT_WITH_PDF="""You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know.
-Provide the answer in great detail. After the answer, list the important key points, numbered 1 through 5. 
+Provide the answer in great detail. 
 Context: {context}
 Question: {question}
 Answer:
-
-Key Points:
-1. [First key point]
-2. [Second key point]
-3. [Third key point]
-4. [Fourth key point]
-5. [Fifth key point]
 """
 
 
