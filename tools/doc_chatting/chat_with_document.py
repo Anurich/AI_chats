@@ -83,7 +83,6 @@ class Chatwithdocument(CustomLogger):
         #let's take always top last 5 in chat history 
         # to find the answer
         token_sentiment_response = self.sentiment_token_classification(self.llm, output)
-        print(token_sentiment_response)
         for token in token_sentiment_response[:-2]:
             output = output.replace(token.strip(), f"<<<<{token.strip()}>>>>")
         output += "\n **Sentiment:**\n "+token_sentiment_response[-1]
@@ -104,7 +103,6 @@ class Chatwithdocument(CustomLogger):
                 max  = consider
                 metadata = doc.metadata
         
-        print(metadata)
         return [output+f" ***{metadata}***",  self.chatHistory.chat_history]
 
     def sentiment_token_classification(self, llm, content):

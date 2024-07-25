@@ -126,11 +126,18 @@ ROUTER = """
 """
 
 CHAT_WITH_PDF="""
-Answer the question in a clear and concise manner, using the provided context. Aim for an answer that's easy to understand and provides relevant details. If you're unsure or don't know the answer, just say so.
+Answer the question using only the provided context.
+Do not provide an answer if it's not present in the context.
+Aim for an answer that's easy to understand and provides relevant details.
 Context: {context}
 Question: {question}
 Answer:
-(Please respond in 2-3 paragraphs at most, using short sentences and simple language. Focus on getting the main points across in a way that's easy to follow.)
+(Please respond in 2-3 paragraphs at most, using short sentences and simple language.
+Only provide an answer if it's explicitly mentioned in the context.
+If the answer is not present in the context, please say "Answer not found in context".)
+
+response of each paragraph should have <br> tag so that it's readable by human.
+
 """
 
 
