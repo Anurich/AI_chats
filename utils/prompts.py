@@ -125,11 +125,12 @@ ROUTER = """
     Number of tables available: {table}
 """
 
-CHAT_WITH_PDF="""You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know.
-Provide the answer in great detail. 
+CHAT_WITH_PDF="""
+Answer the question in a clear and concise manner, using the provided context. Aim for an answer that's easy to understand and provides relevant details. If you're unsure or don't know the answer, just say so.
 Context: {context}
 Question: {question}
 Answer:
+(Please respond in 2-3 paragraphs at most, using short sentences and simple language. Focus on getting the main points across in a way that's easy to follow.)
 """
 
 
@@ -144,13 +145,45 @@ Format the summary as follows:
 Content:
 {docs}
 """
+# TOKEN_SENTIMENT_PROMPT = """
+# Your task involves two parts: token classification and sentiment analysis.
+# As an expert in token classification and semantic understanding, your task is to thoroughly analyze the provided content and identify the most relevant tokens that encapsulate its main points. List the 5 most pertinent tokens in bullet points. If no relevant tokens are found, please indicate accordingly
+# Sentiment Analysis:
+# As an annotator, your job is to assess the sentiment of the given content. Dive deep into its meaning and determine whether the sentiment is positive or negative. Provide a brief explanation (not exceeding 20 tokens) for your sentiment assignment.
+# Content: {content}
+# Always address both parts of the task: token classification and sentiment analysis.
+# """
+
+
 TOKEN_SENTIMENT_PROMPT = """
-Your task involves two parts: token classification and sentiment analysis.
-As an expert in token classification and semantic understanding, your task is to thoroughly analyze the provided content and identify the most relevant tokens that encapsulate its main points. List the 5 most pertinent tokens in bullet points. If no relevant tokens are found, please indicate accordingly
-Sentiment Analysis:
-As an annotator, your job is to assess the sentiment of the given content. Dive deep into its meaning and determine whether the sentiment is positive or negative. Provide a brief explanation (not exceeding 20 tokens) for your sentiment assignment.
+Content Insights
+Analyze the given content to uncover key insights.
+
+Key Tokens:
+Extract the top 5 tokens (words or phrases) that convey the main ideas and concepts. Present them in a bullet-point list.
+
+Sentiment Snapshot:
+Assess the overall sentiment of the content as:
+Positive (e.g., enthusiastic, optimistic)
+Negative (e.g., critical, pessimistic)
+Neutral (e.g., informative, objective)
+Provide a brief explanation (max 20 tokens) for your sentiment assignment.
+
 Content: {content}
-Always address both parts of the task: token classification and sentiment analysis.
+
+Output Format:
+Key Tokens:
+Token 1
+Token 2
+Token 3
+Token 4
+Token 5
+Sentiment: [Positive/Negative/Neutral]
+Explanation: [brief explanation]
+Tips:
+1. Focus on tokens that carry significant meaning and context.
+2. Consider the tone, language, and intent behind the content.
+3. Keep your explanation concise and clear.
+
+By following this format, you'll provide valuable insights into the content's key tokens and sentiment.
 """
-
-
