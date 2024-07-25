@@ -228,6 +228,7 @@ async def router(requestQuery: QueryRequest):
     template = PromptTemplate.from_template(prompts.ROUTER)
     chain = template | llm | JsonOutputParser()
     all_images = client.s3_object_list(image_and_text_path)
+    print("**", str(len(all_images)), "**")
     json_output = chain.invoke({"query": requestQuery.query, "table": str(len(all_images))})
     return json_output
 
