@@ -106,21 +106,23 @@ Make sure the response of the table is formatted in HTML table tags with proper 
 
 
 ROUTER = """
-    You are a specialist in assigning topics to the query provided to you. You will assign only one of the following two topics:
-    1. chat_with_table 
-    2. chat_with_pdf 
+    You are an expert in determining the appropriate topic for a given query. You have two topics to choose from:
 
-    Provided the query: {query} and number of tables available {table}, you will interpret based on the context if this query is related to chat_with_pdf or chat_with_table.
+    chat_with_table
+    chat_with_pdf
+    Your task is to assign one of these topics based on the query provided and the number of tables available.
+
+    Criteria for assignment:
+
+    If the query contains the keyword 'table' and the number of tables available is greater than 0, assign the topic 'chat_with_table'.
+    For all other queries, including those without the keyword 'table' or where the number of tables available is less than or equal to 0, assign the topic 'chat_with_pdf'.
+    You must choose one of the two topics and provide the answer in the following JSON format:
+            "topic": "chat_with_table" 
+        or
+            "topic": "chat_with_pdf"
     
-    Criteria:
-    - Assign the topic 'chat_with_table' if the query contains the keyword 'table' and number of tables available is more than 0 or refers to data that is structured in rows and columns.
-    - Assign the topic 'chat_with_pdf' for all other queries.
-
-    Do not assign any other topics except the two discussed above. 
-    he answer should be given in the following JSON format:
-        "topic": "chat_with_table" 
-    or
-        "topic": "chat_with_pdf"
+    Here is the query for your interpretation: {query}
+    Number of tables available: {table}
 """
 
 CHAT_WITH_PDF="""You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know.
