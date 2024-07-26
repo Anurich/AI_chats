@@ -44,20 +44,83 @@ Key Points:
 """
 
 
-CHAT_WITH_TABLE = """
-Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
-Each table is delineated by its number, followed by sequential data entries. For example, filename-Table 1 encompasses information from the subsequent lines until the next table is encountered.
-In cases where a table lacks information, respond with "no information found for that table." Your analysis should aim to uncover valuable insights tailored to each table, steering clear of irrelevant or generic responses.
-Always present the extracted data in a clear and organized manner using HTML table format to facilitate understanding.
 
-Relevant Information:
 
-{history}
+# CHAT_WITH_TABLE = """
+# Your expertise lies in deciphering complex table data, even when it's presented in a less-than-ideal format. Your mission is to extract meaningful insights from the provided data, organized by table numbers.
+# Each table is delineated by its number, followed by sequential data entries. For example, filename-Table 1 encompasses information from the subsequent lines until the next table is encountered.
+# In cases where a table lacks information, respond with "no information found for that table." Your analysis should aim to uncover valuable insights tailored to each table, steering clear of irrelevant or generic responses.
+# Always present the extracted data in a clear and organized manner using HTML table format to facilitate understanding.
 
-Conversation:
-Human: {input}
-AI:
+# Relevant Information:
 
+# {history}
+
+# Conversation:
+# Human: {input}
+# AI:
+
+# Example:
+#     <span> <b>filename-Table 1</b> </span>
+#     <table border="1">
+#     <tr>
+#         <th>Column 1</th>
+#         <th>Column 2</th>
+#         <th>Column 3</th>
+#     </tr>
+#     <tr>
+#         <td>Data 1</td>
+#         <td>Data 2</td>
+#         <td>Data 3</td>
+#     </tr>
+#     <tr>
+#         <td>Data 4</td>
+#         <td>Data 5</td>
+#         <td>Data 6</td>
+#     </tr>
+#     </table>
+
+#     <br/>
+#     <br/>
+#     <span> <b>filename-Table 2</b> </span>
+#     <table border="1">
+#     <tr>
+#         <th>Column A</th>
+#         <th>Column B</th>
+#         <th>Column C</th>
+#     </tr>
+#     <tr>
+#         <td>Info A</td>
+#         <td>Info B</td>
+#         <td>Info C</td>
+#     </tr>
+#     <tr>
+#         <td>Info D</td>
+#         <td>Info E</td>
+#         <td>Info F</td>
+#     </tr>
+#     </table>
+
+# and so on.
+# Make sure the response of the table is formatted in HTML table tags with proper functioning code.
+# """
+
+CHAT_WITH_TABLE="""
+Extract insights from complex table data and present them in a clear, organized HTML table format.
+Input:
+    Table data, separated by table numbers (e.g., filename-Table 1, filename-Table 2, etc.)
+    Each table may have varying columns and data
+Expected Output:
+    HTML table(s) with extracted insights, using the following format:
+    Table title (filename-Table X)
+    Column headers (clearly labeled)
+    Data rows (with relevant information)
+Guidelines:
+    Focus on extracting meaningful insights (e.g., patterns, trends, correlations)
+Handle errors or inconsistencies by:
+    Noting "no information found" for missing data
+    Skipping corrupted or malformed tables
+    Use clear, concise language in table titles and column headers
 Example:
     <span> <b>filename-Table 1</b> </span>
     <table border="1">
@@ -78,29 +141,6 @@ Example:
     </tr>
     </table>
 
-    <br/>
-    <br/>
-    <span> <b>filename-Table 2</b> </span>
-    <table border="1">
-    <tr>
-        <th>Column A</th>
-        <th>Column B</th>
-        <th>Column C</th>
-    </tr>
-    <tr>
-        <td>Info A</td>
-        <td>Info B</td>
-        <td>Info C</td>
-    </tr>
-    <tr>
-        <td>Info D</td>
-        <td>Info E</td>
-        <td>Info F</td>
-    </tr>
-    </table>
-
-and so on.
-Make sure the response of the table is formatted in HTML table tags with proper functioning code.
 """
 
 
