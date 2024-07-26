@@ -125,18 +125,13 @@ ROUTER = """
     Number of tables available: {table}
 """
 
-CHAT_WITH_PDF="""
-Answer the question using only the provided context.
-Do not provide an answer if it's not present in the context.
-Aim for an answer that's easy to understand and provides relevant details.
+CHAT_WITH_PDF="""You are an assistant for question-answering tasks.
+Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know.
+Provide the answer in great detail. After the answer, Make sure you provide concise answer. 
 Context: {context}
 Question: {question}
 Answer:
-(Please respond in 2-3 paragraphs at most, using short sentences and simple language.
-Only provide an answer if it's explicitly mentioned in the context.
-If the answer is not present in the context, please say "Answer not found in context".)
 
-response of each paragraph should have <br> tag so that it's readable by human.
 
 """
 
