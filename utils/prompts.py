@@ -79,7 +79,6 @@ Example:
     </table>
 
     <br/>
-    <hr/>
     <br/>
     <span> <b>filename-Table 2</b> </span>
     <table border="1">
@@ -127,7 +126,7 @@ ROUTER = """
 
 CHAT_WITH_PDF="""You are an assistant for question-answering tasks.
 Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know.
-Provide the answer in great detail. After the answer, Make sure you provide concise answer. 
+Make sure you provide concise answer. representation of answer should be in human readable form.
 Context: {context}
 Question: {question}
 Answer:
