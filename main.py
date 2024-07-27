@@ -161,7 +161,7 @@ async def chat_with_pdf(requestQuery: QueryRequest):
     if all_user_vector_db.get(ids) != None:
         vector_doc,  summary, chat_tool = all_user_vector_db[ids]
 
-    output,  chat_history = chat_tool.run_chat(requestQuery.query)
+    output,  chat_history = await chat_tool.run_chat(requestQuery.query)
 
     
     return {

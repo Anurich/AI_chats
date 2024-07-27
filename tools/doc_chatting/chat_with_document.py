@@ -62,11 +62,11 @@ class Chatwithdocument(CustomLogger):
         
         return reranked_results
 
-    def run_chat(self, query: str):
-        # summarize docs need not to be run everytime because if the document is summarized i can save it 
-        # and next time when someone ask question i can simply use the saved one 
+    async def run_chat(self, query: str):
+        # Summarize docs need not to be run every time because if the document is summarized I can save it 
+        # and next time when someone asks a question I can simply use the saved one 
         retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs})
-        multi_query_generated = ( ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
+        multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
         rag_chain = (RunnablePassthrough.assign(context = (lambda x: x["context"]))
@@ -77,19 +77,23 @@ class Chatwithdocument(CustomLogger):
 
         retriever_with_rag_fusion = (lambda x: x["question"]) | ragfusion_chain
         rag_chain_with_source = RunnablePassthrough.assign(context=retriever_with_rag_fusion).assign(answer = rag_chain)
-        response = rag_chain_with_source.invoke({"question": query})
+        
+        # Async processing
+        response = await rag_chain_with_source.invoke({"question": query})
+
         output = response["answer"]
         self.chatHistory.append_data_to_history(query, output)
-        #let's take always top last 5 in chat history 
+        
+        # Let's take always top last 5 in chat history 
         # to find the answer
-        token_sentiment_response = self.sentiment_token_classification(self.llm, output)
+        token_sentiment_response = await self.sentiment_token_classification(self.llm, output)
         print(token_sentiment_response)
         for token in token_sentiment_response[:-2]:
             if token.strip() != "":
                 output = output.replace(token.strip(), f"<<<<{token.strip()}>>>>")
         output += "\n **Sentiment:**\n "+token_sentiment_response[-1]
         
-        max = 0
+        max_count = 0
         metadata = None
         
         splitted_response = response["answer"].lower().split()
@@ -101,14 +105,13 @@ class Chatwithdocument(CustomLogger):
                 if res in data:
                     consider +=1
 
-            if consider > max:
-                max  = consider
+            if consider > max_count:
+                max_count  = consider
                 metadata = doc.metadata
-        
-        
+            
         return [output+f" ***{metadata}***",  self.chatHistory.chat_history]
 
-    def sentiment_token_classification(self, llm, content):
+    async def sentiment_token_classification(self, llm, content):
         """
         The function `sentiment_token_classification` prompts the user to perform token classification
         and sentiment analysis on provided content using a language model.
