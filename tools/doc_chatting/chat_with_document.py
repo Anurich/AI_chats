@@ -91,7 +91,7 @@ class Chatwithdocument(CustomLogger):
         for token in token_sentiment_response[:-2]:
             if token.strip() != "":
                 output = output.replace(token.strip(), f"<<<<{token.strip()}>>>>")
-        output += "\n **Sentiment:**\n "+token_sentiment_response[-1]
+        output += "\n **Sentiment:**\n "+" ".join(token_sentiment_response[-2:])
         
         max_count = 0
         metadata = None
