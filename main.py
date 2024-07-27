@@ -136,7 +136,7 @@ async def summarization_doc(requestQuery: QueryRequest):
 
 
 @app.post("/ai/model/chat_with_pdf")
-async def chat_with_pdf(requestQuery: QueryRequest):
+def chat_with_pdf(requestQuery: QueryRequest):
     # once i am here i need to respond with firs the summary of the pdf
     # for file 
     vector_db = None
