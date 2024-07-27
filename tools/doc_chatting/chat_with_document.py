@@ -79,7 +79,7 @@ class Chatwithdocument(CustomLogger):
         rag_chain_with_source = RunnablePassthrough.assign(context=retriever_with_rag_fusion).assign(answer = rag_chain)
         
         # Async processing
-        response = rag_chain_with_source.ainvoke({"question": query})
+        response = await rag_chain_with_source.ainvoke({"question": query})
 
         output = response["answer"]
         self.chatHistory.append_data_to_history(query, output)
@@ -111,7 +111,7 @@ class Chatwithdocument(CustomLogger):
             
         return [output+f" ***{metadata}***",  self.chatHistory.chat_history]
 
-    def sentiment_token_classification(self, llm, content):
+    async def sentiment_token_classification(self, llm, content):
         """
         The function `sentiment_token_classification` prompts the user to perform token classification
         and sentiment analysis on provided content using a language model.
@@ -127,7 +127,7 @@ class Chatwithdocument(CustomLogger):
         self.log_info("Computing sentiment_token......")
         template = PromptTemplate.from_template(prompts.TOKEN_SENTIMENT_PROMPT)
         chain = template | llm | StrOutputParser()
-        response = chain.ainvoke({"content": content})
+        response = await chain.ainvoke({"content": content})
         splitted_response = response.split("\n")[1:]
         response = list(map(lambda x: x.replace("-","").strip(),  splitted_response))
         response = list(filter(lambda x: x !="**Sentiment Analysis:**" and x!="Sentiment Analysis:" and x!='', response))

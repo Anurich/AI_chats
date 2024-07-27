@@ -136,7 +136,7 @@ async def summarization_doc(requestQuery: QueryRequest):
 
 
 @app.post("/ai/model/chat_with_pdf")
-def chat_with_pdf(requestQuery: QueryRequest):
+async def chat_with_pdf(requestQuery: QueryRequest):
     # once i am here i need to respond with firs the summary of the pdf
     # for file 
     vector_db = None
@@ -161,7 +161,7 @@ def chat_with_pdf(requestQuery: QueryRequest):
     if all_user_vector_db.get(ids) != None:
         vector_doc,  summary, chat_tool = all_user_vector_db[ids]
 
-    output,  chat_history = chat_tool.run_chat(requestQuery.query)
+    output,  chat_history = await chat_tool.run_chat(requestQuery.query)
 
     
     return {
