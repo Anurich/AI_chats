@@ -161,7 +161,7 @@ async def chat_with_pdf(requestQuery: QueryRequest):
     if all_user_vector_db.get(ids) != None:
         vector_doc,  summary, chat_tool = all_user_vector_db[ids]
 
-    output,  chat_history = await chat_tool.run_chat(requestQuery.query)
+    output,  chat_history = chat_tool.run_chat(requestQuery.query)
 
     
     return {
@@ -225,13 +225,10 @@ async def chat_with_website(requestQuery: QueryRequest):
 @app.post("/ai/model/router")
 async def router(requestQuery: QueryRequest):
     image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id
-    print("***"*10)
-    print(image_and_text_path)
     template = PromptTemplate.from_template(prompts.ROUTER)
     chain = template | llm | JsonOutputParser()
     all_images = client.s3_object_list(image_and_text_path)
     json_output = chain.invoke({"query": requestQuery.query, "table": str(len(all_images))})
-    print(json_output)
     return json_output
 
 
