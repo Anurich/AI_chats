@@ -94,15 +94,15 @@ class Chatwithdocument(CustomLogger):
         
         print("**"*100)
         print(output)
-        output = output.split("Sentiment:")[0].split("Answer:")[1]
-        docs   = self.nlp(output)
+        output_answer = output.split("Sentiment:")[0].split("Answer:")[1].replace("\n","").strip()
+        ner   = self.nlp(output_answer)
         tokens_with_label = []
-        for doc in docs.ents:
+        for ner_obj in ner.ents:
             try:
-                start_index = doc.star_char
-                end_index   = doc.end_char
-                label = doc.label_
-                text  = doc.text
+                start_index = ner_obj.star_char
+                end_index   = ner_obj.end_char
+                label = ner_obj.label_
+                text  = ner_obj.text
                 tokens_with_label.append([start_index, end_index, label, text])
             except:
                 tokens_with_label.append([])
