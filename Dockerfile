@@ -20,10 +20,10 @@ ENV LD_LIBRARY_PATH=/usr/local/lib/
 # Copy requirements.txt file and install Python dependencies
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
-
 # Copy the entire current directory into the Docker image
 COPY . /code
 
+RUN python /utils/download_spacy_model.py
 # Set execute permissions for start.sh if needed
 RUN chmod +x /code/start.sh
 

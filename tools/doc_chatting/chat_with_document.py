@@ -14,7 +14,6 @@ from typing import  List, Any
 import json
 from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from utils.custom_logger import CustomLogger
-from spacy.cli import download
 import spacy
 
 class Chatwithdocument(CustomLogger):
@@ -30,7 +29,6 @@ class Chatwithdocument(CustomLogger):
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
         #self.compressor = LLMLinguaCompressor(model_name="openai-community/gpt2", device_map="cpu")
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
-        download("en_core_web_sm")
         self.nlp = spacy.load("en_core_web_sm")
 
         #self.reranker = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
@@ -109,7 +107,6 @@ class Chatwithdocument(CustomLogger):
         sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
         output_answer += "\n **Sentiment:**\n "+sentiment
         
-        
         max_count = 0
         metadata = None
         
@@ -128,25 +125,25 @@ class Chatwithdocument(CustomLogger):
             
         return [output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
 
-    async def sentiment_token_classification(self, llm, content):
-        """
-        The function `sentiment_token_classification` prompts the user to perform token classification
-        and sentiment analysis on provided content using a language model.
+    # async def sentiment_token_classification(self, llm, content):
+    #     """
+    #     The function `sentiment_token_classification` prompts the user to perform token classification
+    #     and sentiment analysis on provided content using a language model.
         
-        :param llm: The `llm` parameter in the `sentiment_token_classification` function is likely
-        referring to a language model (LLM) that is used for token classification and sentiment analysis
-        tasks. This language model could be a pre-trained model like BERT, GPT-3, or any other model
-        capable
-        :param content: Based on the provided code snippet, it seems like you are working on a function
-        that performs token classification and sentiment analysis on given content. The function takes in
-        a language model (llm) and the content for analysis
-        """
-        self.log_info("Computing sentiment_token......")
-        template = PromptTemplate.from_template(prompts.TOKEN_SENTIMENT_PROMPT)
-        chain = template | llm | StrOutputParser()
-        response = await chain.ainvoke({"content": content})
-        splitted_response = response.split("\n")[1:]
-        response = list(map(lambda x: x.replace("-","").strip(),  splitted_response))
-        response = list(filter(lambda x: x !="**Sentiment Analysis:**" and x!="Sentiment Analysis:" and x!='', response))
-        self.log_info("Done..")
-        return  response
+    #     :param llm: The `llm` parameter in the `sentiment_token_classification` function is likely
+    #     referring to a language model (LLM) that is used for token classification and sentiment analysis
+    #     tasks. This language model could be a pre-trained model like BERT, GPT-3, or any other model
+    #     capable
+    #     :param content: Based on the provided code snippet, it seems like you are working on a function
+    #     that performs token classification and sentiment analysis on given content. The function takes in
+    #     a language model (llm) and the content for analysis
+    #     """
+    #     self.log_info("Computing sentiment_token......")
+    #     template = PromptTemplate.from_template(prompts.TOKEN_SENTIMENT_PROMPT)
+    #     chain = template | llm | StrOutputParser()
+    #     response = await chain.ainvoke({"content": content})
+    #     splitted_response = response.split("\n")[1:]
+    #     response = list(map(lambda x: x.replace("-","").strip(),  splitted_response))
+    #     response = list(filter(lambda x: x !="**Sentiment Analysis:**" and x!="Sentiment Analysis:" and x!='', response))
+    #     self.log_info("Done..")
+    #     return  response
