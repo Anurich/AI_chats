@@ -126,7 +126,7 @@ class Chatwithdocument(CustomLogger):
                 max_count  = consider
                 metadata = doc.metadata
             
-        return [output_answer+f" ***{metadata}***",  self.chatHistory.chat_history]
+        return [output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
 
     async def sentiment_token_classification(self, llm, content):
         """
