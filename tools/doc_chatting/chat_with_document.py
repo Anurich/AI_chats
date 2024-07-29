@@ -89,7 +89,7 @@ class Chatwithdocument(CustomLogger):
         # Let's take always top last 5 in chat history 
         # to find the answer
         
-        output_answer = output.split("Sentiment:")[0].strip()[:-6].strip()
+        output_answer = output.split("Sentiment:")[0].strip().replace("Answer:","")
         ner   = self.nlp(output_answer)
         tokens_with_label = []
         if ner.ents:
