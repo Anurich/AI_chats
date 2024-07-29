@@ -31,7 +31,7 @@ class Chatwithdocument(CustomLogger):
         #self.compressor = LLMLinguaCompressor(model_name="openai-community/gpt2", device_map="cpu")
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
         download("en_core_web_lg")
-        self.nlp = spacy.load("en_core_web_lg")
+        self.nlp = spacy.load("en_core_web_sm")
 
         #self.reranker = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
 
@@ -97,17 +97,15 @@ class Chatwithdocument(CustomLogger):
         output_answer = output.split("Sentiment:")[0].split("Answer:")[1].replace("\n","").strip()
         ner   = self.nlp(output_answer)
         tokens_with_label = []
-        for ner_obj in ner.ents:
-            try:
+        if ner.ents:
+            for ner_obj in ner.ents:
                 start_index = ner_obj.star_char
                 end_index   = ner_obj.end_char
                 label = ner_obj.label_
                 text  = ner_obj.text
                 tokens_with_label.append([start_index, end_index, label, text])
-            except:
-                tokens_with_label.append([])
-        
-        print(tokens_with_label)
+            
+    
         sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
         output += "\n **Sentiment:**\n "+sentiment
         
@@ -128,7 +126,7 @@ class Chatwithdocument(CustomLogger):
                 max_count  = consider
                 metadata = doc.metadata
             
-        return [output+f" ***{metadata}***",  self.chatHistory.chat_history]
+        return [output_answer+f" ***{metadata}***",  self.chatHistory.chat_history]
 
     async def sentiment_token_classification(self, llm, content):
         """
