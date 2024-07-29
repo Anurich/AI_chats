@@ -86,6 +86,9 @@ class Chatwithdocument(CustomLogger):
         
         # Let's take always top last 5 in chat history 
         # to find the answer
+        
+        print("**"*100)
+        print(output)
         token_sentiment_response = await self.sentiment_token_classification(self.llm, output)
         print(token_sentiment_response)
         for token in token_sentiment_response[:-2]:
