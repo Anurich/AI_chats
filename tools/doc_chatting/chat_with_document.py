@@ -93,6 +93,7 @@ class Chatwithdocument(CustomLogger):
         # to find the answer
         
         print("**"*100)
+        print(output)
         output = output.split("Sentiment:")[0].split("Answer:")[1]
         docs   = self.nlp(output)
         tokens_with_label = []
