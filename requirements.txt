@@ -5,6 +5,7 @@ langchain
 langchain_cohere
 langchain_community
 langchain_core
+spacy
 langchain_experimental
 langchain_openai
 langgraph

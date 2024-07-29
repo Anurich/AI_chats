@@ -88,13 +88,9 @@ class Chatwithdocument(CustomLogger):
         # to find the answer
         
         print("**"*100)
-        print(output)
-        token_sentiment_response = await self.sentiment_token_classification(self.llm, output)
-        print(token_sentiment_response)
-        for token in token_sentiment_response[:-2]:
-            if token.strip() != "":
-                output = output.replace(token.strip(), f"<<<<{token.strip()}>>>>")
-        output += "\n **Sentiment:**\n "+" ".join(token_sentiment_response[-2:])
+        sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
+        
+        output += "\n **Sentiment:**\n "+sentiment
         
         max_count = 0
         metadata = None
