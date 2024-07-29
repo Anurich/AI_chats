@@ -30,7 +30,7 @@ class Chatwithdocument(CustomLogger):
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
         #self.compressor = LLMLinguaCompressor(model_name="openai-community/gpt2", device_map="cpu")
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
-        download("en_core_web_lg")
+        download("en_core_web_sm")
         self.nlp = spacy.load("en_core_web_sm")
 
         #self.reranker = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
