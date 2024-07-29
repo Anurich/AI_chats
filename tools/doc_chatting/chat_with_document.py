@@ -30,8 +30,8 @@ class Chatwithdocument(CustomLogger):
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
         #self.compressor = LLMLinguaCompressor(model_name="openai-community/gpt2", device_map="cpu")
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
-        download("en_core_web_sm")
-        self.nlp = spacy.load("en_core_web_sm")
+        download("en_core_web_lg")
+        self.nlp = spacy.load("en_core_web_lg")
 
         #self.reranker = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
 
@@ -96,7 +96,7 @@ class Chatwithdocument(CustomLogger):
         output = output.split("Sentiment:")[0].split("Answer:")[1]
         docs   = self.nlp(output)
         tokens_with_label = []
-        for doc in docs:
+        for doc in docs.ents:
             start_index = doc.star_char
             end_index   = doc.end_char
             label = doc.label_
