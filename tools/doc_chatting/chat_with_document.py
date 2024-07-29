@@ -99,7 +99,7 @@ class Chatwithdocument(CustomLogger):
         tokens_with_label = []
         if ner.ents:
             for ner_obj in ner.ents:
-                start_index = ner_obj.star_char
+                start_index = ner_obj.start_char
                 end_index   = ner_obj.end_char
                 label = ner_obj.label_
                 text  = ner_obj.text
