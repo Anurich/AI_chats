@@ -97,11 +97,14 @@ class Chatwithdocument(CustomLogger):
         docs   = self.nlp(output)
         tokens_with_label = []
         for doc in docs.ents:
-            start_index = doc.star_char
-            end_index   = doc.end_char
-            label = doc.label_
-            text  = doc.text
-            tokens_with_label.append([start_index, end_index, label, text])
+            try:
+                start_index = doc.star_char
+                end_index   = doc.end_char
+                label = doc.label_
+                text  = doc.text
+                tokens_with_label.append([start_index, end_index, label, text])
+            except:
+                tokens_with_label.append([])
         
         print(tokens_with_label)
         sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
