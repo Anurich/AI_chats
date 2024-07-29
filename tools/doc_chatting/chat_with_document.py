@@ -14,6 +14,8 @@ from typing import  List, Any
 import json
 from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from utils.custom_logger import CustomLogger
+from spacy.cli import download
+import spacy
 
 class Chatwithdocument(CustomLogger):
     def __init__(self, llm: ChatOpenAI, vector_db: Chroma):
@@ -28,6 +30,9 @@ class Chatwithdocument(CustomLogger):
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
         #self.compressor = LLMLinguaCompressor(model_name="openai-community/gpt2", device_map="cpu")
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
+        download("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_sm")
+
         #self.reranker = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
 
     def reciprocal_rank_fusion(self, results: list[list], k=30):
@@ -88,9 +93,20 @@ class Chatwithdocument(CustomLogger):
         # to find the answer
         
         print("**"*100)
-        sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
+        output = output.split("Sentiment:")[0].split("Answer:")[1]
+        docs   = self.nlp(output)
+        tokens_with_label = []
+        for doc in docs:
+            start_index = doc.star_char
+            end_index   = doc.end_char
+            label = doc.label_
+            text  = doc.text
+            tokens_with_label.append([start_index, end_index, label, text])
         
+        print(tokens_with_label)
+        sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
         output += "\n **Sentiment:**\n "+sentiment
+        
         
         max_count = 0
         metadata = None
