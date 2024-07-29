@@ -107,7 +107,7 @@ class Chatwithdocument(CustomLogger):
             
     
         sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
-        output += "\n **Sentiment:**\n "+sentiment
+        output_answer += "\n **Sentiment:**\n "+sentiment
         
         
         max_count = 0
