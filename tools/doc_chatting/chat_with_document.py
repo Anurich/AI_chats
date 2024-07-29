@@ -64,7 +64,7 @@ class Chatwithdocument(CustomLogger):
         
         return reranked_results
 
-    async def run_chat(self, query: str):
+    def run_chat(self, query: str):
         # Summarize docs need not to be run every time because if the document is summarized I can save it 
         # and next time when someone asks a question I can simply use the saved one 
         retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs})
@@ -81,7 +81,7 @@ class Chatwithdocument(CustomLogger):
         rag_chain_with_source = RunnablePassthrough.assign(context=retriever_with_rag_fusion).assign(answer = rag_chain)
         
         # Async processing
-        response = await rag_chain_with_source.ainvoke({"question": query})
+        response =  rag_chain_with_source.ainvoke({"question": query})
 
         output = response["answer"]
         self.chatHistory.append_data_to_history(query, output)
@@ -89,8 +89,6 @@ class Chatwithdocument(CustomLogger):
         # Let's take always top last 5 in chat history 
         # to find the answer
         
-        print("**"*100)
-        print(output)
         output_answer = output.split("Sentiment:")[0].strip()[:-6].strip()
         ner   = self.nlp(output_answer)
         tokens_with_label = []

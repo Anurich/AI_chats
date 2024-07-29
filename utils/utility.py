@@ -85,7 +85,7 @@ def batched_summarize(documents, tokenizer, batch_size=16):
         yield tokenized_ids
 
 # for summary of the pdf 
-async def summarize_pdf(llm, txt_file_path,keypoints, splitted_docs, client):
+def summarize_pdf(llm, txt_file_path,keypoints, splitted_docs, client):
     """
         Approach we can use 
         First let's summarize the whole pdf using the opensource model 
@@ -119,7 +119,7 @@ async def summarize_pdf(llm, txt_file_path,keypoints, splitted_docs, client):
 
     # than we can create like a prompt to create an 
     chain= PromptTemplate.from_template(prompts.map_template) | llm | StrOutputParser()
-    response = await chain.ainvoke({"docs": all_summaries_text})
+    response = chain.invoke({"docs": all_summaries_text})
     response_with_keypoints = "Summary: \n"+ response +" \n KeyPoints: "+ "\n".join(list(set(keypoints)))
     client.write_data_as_txt(response_with_keypoints, txt_file_path)
     # client.write_data_as_txt()

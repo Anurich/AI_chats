@@ -126,7 +126,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     
     save_file_path = os.path.join(SAVE_SUMMAIZE_DIR,"summary.txt")
 
-    output_summary = await utility.summarize_pdf(llm,save_file_path,vector_doc.key_points,vector_doc.vector_storage.recursive_texts, client)
+    output_summary = utility.summarize_pdf(llm,save_file_path,vector_doc.key_points,vector_doc.vector_storage.recursive_texts, client)
     all_user_vector_db[ids] = [vector_doc, output_summary, chat_tool]
     response= {
         "summary": output_summary,
@@ -164,7 +164,7 @@ async def chat_with_pdf(requestQuery: QueryRequest):
     if all_user_vector_db.get(ids) != None:
         vector_doc,  summary, chat_tool = all_user_vector_db[ids]
 
-    output,  chat_history = await chat_tool.run_chat(requestQuery.query)
+    output,  chat_history =  chat_tool.run_chat(requestQuery.query)
 
     
     return {
