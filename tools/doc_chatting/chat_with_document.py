@@ -91,7 +91,7 @@ class Chatwithdocument(CustomLogger):
         
         print("**"*100)
         print(output)
-        output_answer = output.split("Sentiment:")[0].strip()
+        output_answer = output.split("Sentiment:")[0].strip()[:-6].strip()
         ner   = self.nlp(output_answer)
         tokens_with_label = []
         if ner.ents:
