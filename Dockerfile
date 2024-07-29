@@ -23,8 +23,6 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 # Copy the entire current directory into the Docker image
 COPY . /code
 
-COPY download_spacy_model.py /code/download_spacy_model.py
-RUN python /utils/download_spacy_model.py
 # Set execute permissions for start.sh if needed
 RUN chmod +x /code/start.sh
 

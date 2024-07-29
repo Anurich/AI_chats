@@ -23,6 +23,9 @@ from fastapi import FastAPI
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 from utils.bucket import BucketDigitalOcean
+from spacy.cli import download
+download("en_core_web_sm")
+
 
 ####################
 # move to seprate file 

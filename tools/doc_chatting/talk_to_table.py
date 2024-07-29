@@ -1,19 +1,10 @@
-from pydantic import BaseModel
 import os
-from pydantic import Field
-from typing import List, Any, Optional
+from typing import List, Any
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate
-from langchain_core.runnables import RunnableLambda, RunnablePassthrough
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
-from utils import utility, history, prompts
+from utils import history, prompts
 
-from langchain.callbacks.manager import (
-    AsyncCallbackManagerForToolRun,
-    CallbackManagerForToolRun,
-)
 
 class TableChat:
     def __init__(self, llm: ChatOpenAI, file_path, client):
