@@ -23,8 +23,10 @@ from fastapi import FastAPI
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 from utils.bucket import BucketDigitalOcean
-from spacy.cli import download
-download("en_core_web_lg")
+from transformers import AutoTokenizer, AutoModelForTokenClassification
+
+tokenizer = AutoTokenizer.from_pretrained("dslim/bert-base-NER")
+model = AutoModelForTokenClassification.from_pretrained("dslim/bert-base-NER")
 
 
 ####################
@@ -56,7 +58,7 @@ class QueryRequest(BaseModel):
     path_for_summarization: str = "file_uploads/summarize_doc_into_txt"
     table_extract:bool=False
     website_link:str= None
-    language: str = "en"
+    language: str = "it"
     node:List =[]
     relationship:List = []
     categories: List = []

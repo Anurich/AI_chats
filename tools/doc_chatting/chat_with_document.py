@@ -14,10 +14,11 @@ from typing import  List, Any
 import json
 from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from utils.custom_logger import CustomLogger
+from transformers import pipeline
 import spacy
 
 class Chatwithdocument(CustomLogger):
-    def __init__(self, llm: ChatOpenAI, vector_db: Chroma):
+    def __init__(self, llm: ChatOpenAI, vector_db: Chroma, model, tokenizer):
         super().__init__(__name__)
         self.llm  = llm
         self.vector_db = vector_db
@@ -29,18 +30,16 @@ class Chatwithdocument(CustomLogger):
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
         #self.compressor = LLMLinguaCompressor(model_name="openai-community/gpt2", device_map="cpu")
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
-        self.nlp = spacy.load("en_core_web_lg")
-        #self.reranker = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
-
+        self.tokenizer = tokenizer
+        self.model  = model
+        
     def reciprocal_rank_fusion(self, results: list[list], k=30):
         """ Reciprocal_rank_fusion that takes multiple lists of ranked documents 
             and an optional parameter k used in the RRF formula """
-        
         # Initialize a dictionary to hold fused scores for each unique document
         fused_scores = {}
         # Iterate through each list of ranked documents
         for docs in results:
-           
             # Iterate through each document in the list, with its rank (position in the list)
             for rank, doc in enumerate(docs):
                 # Convert the document to a string format to use as a key (assumes documents can be serialized to JSON)
@@ -90,16 +89,20 @@ class Chatwithdocument(CustomLogger):
         # to find the answer
         
         output_answer = output.split("Sentiment:")[0].strip().replace("Answer:","")
-        ner   = self.nlp(output_answer)
-        tokens_with_label = []
-        if ner.ents:
-            for ner_obj in ner.ents:
-                start_index = ner_obj.start_char
-                end_index   = ner_obj.end_char
-                label = ner_obj.label_
-                text  = ner_obj.text
-                tokens_with_label.append([start_index, end_index, label, text])
-            
+
+        piepline_ner = pipeline(task="ner", model=self.model)
+        ner_result = piepline_ner(output_answer)
+        
+        # ner   = self.nlp(output_answer)
+        # tokens_with_label = []
+        # if ner.ents:
+        #     for ner_obj in ner.ents:
+        #         start_index = ner_obj.start_char
+        #         end_index   = ner_obj.end_char
+        #         label = ner_obj.label_
+        #         text  = ner_obj.text
+        #         tokens_with_label.append([start_index, end_index, label, text])
+        
     
         sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
         output_answer += "\n **Sentiment:**\n "+sentiment
