@@ -37,7 +37,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 self.vectordb_search.add_texts(
                     texts = all_chunks,
                     metadatas = metadatas,
-                    ids=[self.doc_id]*len(all_chunks),
+                    ids=[str(self.doc_id)]*len(all_chunks),
                 )
                 self.doc_id+=1
                 self.log_info("Embedding stored successfully !")
