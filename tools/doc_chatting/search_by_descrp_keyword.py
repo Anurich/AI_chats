@@ -6,7 +6,7 @@ from utils.custom_logger import CustomLogger
 
 class Filesearchbykeyworddescrp(CustomLogger):
     def __init__(self, client, persist_directory) -> None:
-        super().__init__()
+        super().__init__(__name__)
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
         self.client =client
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)
