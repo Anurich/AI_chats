@@ -3,6 +3,8 @@ from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
 
 class Filesearchbykeyworddescrp(CustomLogger):
     def __init__(self, client, persist_directory) -> None:
