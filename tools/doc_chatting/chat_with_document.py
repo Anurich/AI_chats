@@ -87,9 +87,6 @@ class Chatwithdocument(CustomLogger):
         # to find the answer
         
         output_answer = output.split("Sentiment:")[0].strip().replace("Answer:","")
-
-        piepline_ner = pipeline(task="ner", model=self.model)
-        ner_result = piepline_ner(output_answer)
         
         ner   = self.nlp(output_answer)
         tokens_with_label = []
