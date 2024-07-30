@@ -1,6 +1,6 @@
 import os
 from langchain_community.document_loaders import UnstructuredFileLoader
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
 
@@ -10,9 +10,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
         self.client =client
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)
-        self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, \
-                                                chunk_overlap=500, \
-                                                length_function=len)
+        self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
 
     def add_file_to_db(self, file_paths):
