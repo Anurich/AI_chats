@@ -4,17 +4,15 @@
 import os 
 from langchain_openai import ChatOpenAI
 from langchain.load import dumps, loads
-from langchain.prompts import ChatPromptTemplate, PromptTemplate
+from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from operator import itemgetter
 from utils import history, prompts
 from typing import List
 from langchain_community.vectorstores import Chroma
 from typing import  List, Any
 import json
-from langchain_core.runnables import RunnablePassthrough, RunnableParallel
+from langchain_core.runnables import RunnablePassthrough
 from utils.custom_logger import CustomLogger
-from transformers import pipeline
 import spacy
 
 class Chatwithdocument(CustomLogger):

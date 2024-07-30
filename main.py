@@ -10,13 +10,9 @@ from langchain.prompts import  PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from utils import utility, prompts
 import shutil
-from utils.doc_chatting import tools_structure
-from langchain.agents import AgentExecutor, create_openai_functions_agent
-from langchain.memory import ConversationBufferMemory
 import os
 from typing import Dict
 import uvicorn
-from langchain.prompts import MessagesPlaceholder
 from typing import List
 import json
 from fastapi import FastAPI
@@ -24,6 +20,7 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 from utils.bucket import BucketDigitalOcean
 from spacy.cli import download
+from tools.doc_chatting.search_by_descrp_keyword import Filesearchbykeyworddescrp
 download("en_core_web_lg")
 
 
@@ -39,9 +36,11 @@ os.environ["COHERE_API_KEY"] = OPENAI_API_KEY["API_COHERE_KEY"]
 path_for_image_and_text="path_for_image_and_text"
 llm =  ChatOpenAI(model="gpt-4o", temperature=0)
 det_model, det_processor, rec_model, rec_processor = utility.load_model_surya()
-all_user_vector_db = dict()
+all_user_vector_db  = dict()
 all_user_table_chat =dict()
+all_user_search_file=dict()
 client = BucketDigitalOcean()
+
 ####################
 
 class QueryRequest(BaseModel):
@@ -60,6 +59,7 @@ class QueryRequest(BaseModel):
     node:List =[]
     relationship:List = []
     categories: List = []
+    keyword_search: int =0
     
 
 
@@ -117,7 +117,6 @@ async def summarization_doc(requestQuery: QueryRequest):
     
     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
     vector_doc = createVectorStore_DOC(object_chat_with_pdf, llm,client)
-    print(vector_doc.key_points)
     chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm)
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
@@ -225,6 +224,20 @@ async def chat_with_website(requestQuery: QueryRequest):
         "output": output
     }
 
+@app.post("/ai/model/search_keyword")
+async def file_search(requestQuery: QueryRequest):
+    file_search_by_keyword = Filesearchbykeyworddescrp(client=client, persist_directory="search_by_keyword")
+    if requestQuery.keyword_search == 0:
+        if all_user_search_file.get(requestQuery.user_id) == None:
+            file_search_by_keyword.add_file_to_db(requestQuery.file_names)
+            all_user_search_file[requestQuery.user_id] = file_search_by_keyword
+        else:
+            all_user_search_file[requestQuery.user_id] = all_user_search_file[requestQuery.user_id].add_file_to_db(requestQuery.file_names)
+
+            
+            
+
+
 @app.post("/ai/model/router")
 async def router(requestQuery: QueryRequest):
     image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id
@@ -236,39 +249,39 @@ async def router(requestQuery: QueryRequest):
 
 
 
-all_ids_mapping = dict()
-@app.post("/ai/model/run")
-async def normal_agent_chat(requestQuery: QueryRequest):
-    chat_history = None
-    memory = None
-    ids = requestQuery.user_id+"_"+requestQuery.chat_id
-    if all_ids_mapping.get(ids) != None:
-        chat_history = all_ids_mapping[ids][0]
-        memory = all_ids_mapping[ids][1]
-    elif all_ids_mapping.get(ids) == None:
-        chat_history = MessagesPlaceholder(variable_name="chat_history")
-        memory = ConversationBufferMemory(memory_key="chat_history",return_messages=True)
-        memory.output_key = "output"
-        all_ids_mapping[ids] = [chat_history, memory]
+# all_ids_mapping = dict()
+# @app.post("/ai/model/run")
+# async def normal_agent_chat(requestQuery: QueryRequest):
+#     chat_history = None
+#     memory = None
+#     ids = requestQuery.user_id+"_"+requestQuery.chat_id
+#     if all_ids_mapping.get(ids) != None:
+#         chat_history = all_ids_mapping[ids][0]
+#         memory = all_ids_mapping[ids][1]
+#     elif all_ids_mapping.get(ids) == None:
+#         chat_history = MessagesPlaceholder(variable_name="chat_history")
+#         memory = ConversationBufferMemory(memory_key="chat_history",return_messages=True)
+#         memory.output_key = "output"
+#         all_ids_mapping[ids] = [chat_history, memory]
 
-    agent = create_openai_functions_agent(llm, tools_structure.tools_list, prompts.MAIN_PROMPT)
-    agent_executor = AgentExecutor(agent=agent, 
-                    tools=tools_structure.tools_list, 
-                    verbose=True,
-                    handle_parsing_errors=True,
-                    memory = memory,
-                    return_intermediate_steps = True,
-                    )
-    output = agent_executor.invoke({"input":requestQuery.query, "chat_history":chat_history}) 
+#     agent = create_openai_functions_agent(llm, tools_structure.tools_list, prompts.MAIN_PROMPT)
+#     agent_executor = AgentExecutor(agent=agent, 
+#                     tools=tools_structure.tools_list, 
+#                     verbose=True,
+#                     handle_parsing_errors=True,
+#                     memory = memory,
+#                     return_intermediate_steps = True,
+#                     )
+#     output = agent_executor.invoke({"input":requestQuery.query, "chat_history":chat_history}) 
 
 
-    if len(output["intermediate_steps"]) != 0:
-        agent_action, _ = output["intermediate_steps"][0]
-        tool_name = agent_action.tool
-        output["intermediate_steps"] = [tool_name]
+#     if len(output["intermediate_steps"]) != 0:
+#         agent_action, _ = output["intermediate_steps"][0]
+#         tool_name = agent_action.tool
+#         output["intermediate_steps"] = [tool_name]
 
-    output["chat_id"] = requestQuery.chat_id
-    return output
+#     output["chat_id"] = requestQuery.chat_id
+#     return output
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=4200)
