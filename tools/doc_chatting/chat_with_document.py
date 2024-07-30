@@ -18,7 +18,7 @@ from transformers import pipeline
 import spacy
 
 class Chatwithdocument(CustomLogger):
-    def __init__(self, llm: ChatOpenAI, vector_db: Chroma, model, tokenizer):
+    def __init__(self, llm: ChatOpenAI, vector_db: Chroma):
         super().__init__(__name__)
         self.llm  = llm
         self.vector_db = vector_db
@@ -30,9 +30,7 @@ class Chatwithdocument(CustomLogger):
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
         #self.compressor = LLMLinguaCompressor(model_name="openai-community/gpt2", device_map="cpu")
         self.key = json.load(open("openai_keys/openai_cred.json", "r"))["API_COHERE_KEY"]
-        self.tokenizer = tokenizer
-        self.model  = model
-        
+        self.nlp = spacy.load("en_core_web_lg")
     def reciprocal_rank_fusion(self, results: list[list], k=30):
         """ Reciprocal_rank_fusion that takes multiple lists of ranked documents 
             and an optional parameter k used in the RRF formula """
@@ -93,15 +91,15 @@ class Chatwithdocument(CustomLogger):
         piepline_ner = pipeline(task="ner", model=self.model)
         ner_result = piepline_ner(output_answer)
         
-        # ner   = self.nlp(output_answer)
-        # tokens_with_label = []
-        # if ner.ents:
-        #     for ner_obj in ner.ents:
-        #         start_index = ner_obj.start_char
-        #         end_index   = ner_obj.end_char
-        #         label = ner_obj.label_
-        #         text  = ner_obj.text
-        #         tokens_with_label.append([start_index, end_index, label, text])
+        ner   = self.nlp(output_answer)
+        tokens_with_label = []
+        if ner.ents:
+            for ner_obj in ner.ents:
+                start_index = ner_obj.start_char
+                end_index   = ner_obj.end_char
+                label = ner_obj.label_
+                text  = ner_obj.text
+                tokens_with_label.append([start_index, end_index, label, text])
         
     
         sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
@@ -124,26 +122,3 @@ class Chatwithdocument(CustomLogger):
                 metadata = doc.metadata
             
         return [output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
-
-    # async def sentiment_token_classification(self, llm, content):
-    #     """
-    #     The function `sentiment_token_classification` prompts the user to perform token classification
-    #     and sentiment analysis on provided content using a language model.
-        
-    #     :param llm: The `llm` parameter in the `sentiment_token_classification` function is likely
-    #     referring to a language model (LLM) that is used for token classification and sentiment analysis
-    #     tasks. This language model could be a pre-trained model like BERT, GPT-3, or any other model
-    #     capable
-    #     :param content: Based on the provided code snippet, it seems like you are working on a function
-    #     that performs token classification and sentiment analysis on given content. The function takes in
-    #     a language model (llm) and the content for analysis
-    #     """
-    #     self.log_info("Computing sentiment_token......")
-    #     template = PromptTemplate.from_template(prompts.TOKEN_SENTIMENT_PROMPT)
-    #     chain = template | llm | StrOutputParser()
-    #     response = await chain.ainvoke({"content": content})
-    #     splitted_response = response.split("\n")[1:]
-    #     response = list(map(lambda x: x.replace("-","").strip(),  splitted_response))
-    #     response = list(filter(lambda x: x !="**Sentiment Analysis:**" and x!="Sentiment Analysis:" and x!='', response))
-    #     self.log_info("Done..")
-    #     return  response
