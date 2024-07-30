@@ -35,7 +35,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 all_chunks = [chunk.page_content for chunk in recursive_texts] 
                 metadatas = [chunk.metadata for chunk in recursive_texts]                   
                 self.vectordb_search.add_texts(
-                    texts = all_chunks
+                    texts = all_chunks,
                     metadatas = metadatas,
                     ids=[doc_id],
                 )
