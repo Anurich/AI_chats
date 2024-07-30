@@ -45,3 +45,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             
             os.remove(temp_file_path)
             self.log_info("File removed from temp folder !")
+    
+    def search(self, description):
+        response = self.vectordb_search.similarity_search(description)
+        print(response)
