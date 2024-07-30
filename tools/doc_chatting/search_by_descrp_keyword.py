@@ -32,14 +32,12 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     }
                 # we need to chunk it down to 
                 recursive_texts = self.text_split.split_documents(chunked_document)
-                
-                
-                new_embedding = self.embedding_function.embed_documents(recursive_texts)
-
-                self.vectordb_search.add_documents(
-                    documents=recursive_texts,
-                    ids=[self.doc_id],
-                    embeddings=[new_embedding]
+                all_chunks = [chunk.page_content for chunk in recursive_texts] 
+                metadatas = [chunk.metadata for chunk in recursive_texts]                   
+                self.vectordb_search.add_texts(
+                    texts = all_chunks
+                    metadatas = metadatas,
+                    ids=[doc_id],
                 )
                 self.doc_id+=1
                 self.log_info("Embedding stored successfully !")
