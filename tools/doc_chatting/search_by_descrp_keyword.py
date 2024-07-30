@@ -34,7 +34,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 recursive_texts = self.text_split.split_documents(chunked_document)
                 for chunk in recursive_texts:
                     doc_id = f"{file_path.split("/")[1].replace(".pdf","")}_page_{chunk.metadata['page']}_{self.doc_id}"
-                    new_embedding = self.embedding_function.embed(chunk.page_content)
+                    new_embedding = self.embedding_function.embed_query(chunk.page_content)
 
                     self.vectordb_search.add_documents(
                         documents=[{
