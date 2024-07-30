@@ -32,20 +32,16 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     }
                 # we need to chunk it down to 
                 recursive_texts = self.text_split.split_documents(chunked_document)
-                for chunk in recursive_texts:
-                    doc_id = f"{file_path.split("/")[1].replace(".pdf","")}_page_{chunk.metadata['page']}_{self.doc_id}"
-                    new_embedding = self.embedding_function.embed_query(chunk.page_content)
+                
+                doc_id = f"{file_path.split("/")[1].replace(".pdf","")}_page_{chunk.metadata['page']}_{self.doc_id}"
+                new_embedding = self.embedding_function.embed_documents(recursive_texts)
 
-                    self.vectordb_search.add_documents(
-                        documents=[{
-                            "text": chunk.page_content,
-                            "metadata": chunk.metadata
-                        }],
-                        ids=[doc_id],
-                        embeddings=[new_embedding]
-                    )
-                    self.doc_id+=1
-
+                self.vectordb_search.add_documents(
+                    documents=recursive_texts,
+                    ids=[doc_id],
+                    embeddings=[new_embedding]
+                )
+                self.doc_id+=1
                 self.log_info("Embedding stored successfully !")
             
             os.remove(temp_file_path)
