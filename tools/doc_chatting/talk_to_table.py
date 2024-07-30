@@ -7,11 +7,11 @@ from utils import history, prompts
 
 
 class TableChat:
-    def __init__(self, llm: ChatOpenAI, file_path, client):
+    def __init__(self,  file_path, client):
         self.table_file_path: str = file_path
         self.prompt: str = prompts.CHAT_WITH_TABLE
         self.template: PromptTemplate = PromptTemplate.from_template(self.prompt)
-        self.llm = llm
+        self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
         
         self.client = client
         self.max_token_limit: int = 500

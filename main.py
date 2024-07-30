@@ -80,7 +80,7 @@ async def chat_with_table(requestQuery: QueryRequest):
         if all_user_table_chat.get(ids) != None:
             chat_history, output  = all_user_table_chat[ids].run_chat(requestQuery.query)
         elif all_user_table_chat.get(ids) == None:
-            chatwithtable = TableChat(llm=llm, file_path=image_and_text_path, client=client)
+            chatwithtable = TableChat( file_path=image_and_text_path, client=client)
             all_user_table_chat[ids] = chatwithtable
             chat_history, output = all_user_table_chat[ids].run_chat(requestQuery.query)
 
