@@ -18,7 +18,8 @@ class Filesearchbykeyworddescrp(CustomLogger):
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
         assert len(file_paths) == 1, self.log_error("Must have atleast 1 file !")
-        for file_path in file_paths:
+        for path in file_paths:
+            file_path = path["filename"]
             temp_file_path = self.client.download_file_to_temp(file_path)
             self.log_info("File Download form bucket to temp folder!")
             if file_path.endswith("pdf"):
