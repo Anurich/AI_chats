@@ -94,6 +94,7 @@ class createVectorStore_DOC:
                 self.key_points.extend(keypoint_output.split("Key Points:")[1:])
 
 
+            print(outputs)
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
             if self.categorization.get(filename) == None:
