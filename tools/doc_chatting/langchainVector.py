@@ -6,6 +6,7 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from utils import utility, prompts
 from collections import Counter
+from langchain_openai import ChatOpenAI
 from tqdm import tqdm
 import re 
 import os
