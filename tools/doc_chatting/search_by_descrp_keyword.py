@@ -33,7 +33,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
             if file_path.endswith("pdf"):
                 loader = UnstructuredFileLoader(temp_file_path, mode="paged")
                 chunked_document = loader.load_and_split()
-                print(chunked_document)
                 for i in range(len(chunked_document)):
                     chunked_document[i].metadata = {
                         "source": file_path.split("/")[1],
@@ -86,7 +85,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
         response = self.vectordb_search.similarity_search(description, k= 100)
         relevance_score =dict()
         for content in tqdm(response):
-            print(content.page_content)
             metadata = content.metadata
             file_name = metadata["source"]
             page_number = metadata["page"]
@@ -95,9 +93,9 @@ class Filesearchbykeyworddescrp(CustomLogger):
             match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
             assert len(match) == 1
             if relevance_score.get(pdf_name) == None:
-                relevance_score[pdf] = [(float(match[0]), page_number, content.page_content)]
+                relevance_score[file_name] = [(float(match[0]), page_number, content.page_content)]
             else:
-                relevance_score[pdf].append((float(match[0]), page_number, content.page_content))
+                relevance_score[file_name].append((float(match[0]), page_number, content.page_content))
         
         
         html = generate_html_table_with_graph(relevance_score)
