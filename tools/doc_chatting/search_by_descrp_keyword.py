@@ -91,7 +91,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             file_name = metadata["source"]
             page_number = metadata["page"]
             output = self.chain.invoke({"pdf_name": file_name,"Context": content.page_content, "description": description})
-            
+            print(output)
             pdf_name, probability = output.split(":")
             match = re.findall(r"[-+]?\d*\.\d+|\d+", pdf_name)
             print(match)
