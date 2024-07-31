@@ -22,6 +22,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
         self.prompt_file_search = PromptTemplate.from_template(prompts.FILE_SEARCH_PROMPT)
+        self.chain = self.prompt_file_search | self.llm | StrOutputParser()
 
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
@@ -164,20 +165,21 @@ class Filesearchbykeyworddescrp(CustomLogger):
             ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
             rag_output = ragfusion_chain.invoke({"question": description})
-            print(rag_output)
-            
+            all_outputs =[]
+            for rg_doc in rag_output:
+                output = self.chain.invoke({"pdf_name": file_name,"Context": rg_doc.page_content, "description": description})
+                print(output)
 
-        #     output = self.chain.invoke({"pdf_name": file_name,"Context": content.page_content, "description": description})
-        #     pdf_name, probability, answer = output.split(":")
-        #     match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
-        #     assert len(match) == 1
-        #     if relevance_score.get(file_name) == None:
-        #         relevance_score[file_name] = [float(match[0]), page_number, answer]
-        #     else:
-        #         prob,_, _ = relevance_score[file_name]
-        #         if prob < float(match[0]):
-        #             relevance_score[file_name] = [float(match[0]), page_number, answer]        
-        
+                # pdf_name, probability, answer = output.split(":")
+                # match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
+                # assert len(match) == 1
+                # if relevance_score.get(file_name) == None:
+                #     relevance_score[file_name] = [float(match[0]), page_number, answer]
+                # else:
+                #     prob,_, _ = relevance_score[file_name]
+                #     if prob < float(match[0]):
+                #         relevance_score[file_name] = [float(match[0]), page_number, answer]        
+            
         # html = self.generate_html_table_with_graph(relevance_score)
         # return html
 
