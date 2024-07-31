@@ -94,7 +94,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             if relevance_score.get(file_name) == None:
                 relevance_score[file_name] = [float(match[0]), page_number, content.page_content]
             else:
-                prob,_, _relevance_score[file_name]
+                prob,_, _ = relevance_score[file_name]
                 if prob < float(match[0]):
                     relevance_score[file_name] = [float(match[0]), page_number, content.page_content]        
         
