@@ -178,17 +178,26 @@ Content:
 """
 
 FILE_SEARCH_PROMPT = """
-As an expert in matching PDF contexts with descriptions, analyze the provided PDF context and description to determine their relevance. 
+You are a relevance evaluator. Your task is to assess the connection between a given context and description.
+Evaluate the relevance by checking if the description is related to the context, and provide the probability score between 0 and 1.
 
-You will receive:
+When checking the relevance between context and description we need to check few things:
+1. Entity match: Are the entities mentioned in the description present in the context?
+2. Topic alignment: Is the topic of the description aligned with the context?
+3. Key phrase overlap: Are key phrases from the description present in the context?
+4. Semantic similarity: Is the meaning of the description similar to the context?
+
+You will be provided with:
 - pdf_name: {pdf_name}
 - Context: {Context}
 - Description: {description}
 
+
+
 Your tasks are:
-1. Assess the semantic meaning, context, and relevance between the description and PDF context.
+1. check the relevance between description and context.
 2. Calculate the probability (0-1) of the description matching the context.
-3. Extract the explaination in 100 tokens from the context depending on what kind of description is being asked 
+3. Extract the answer from the context as per asked in description, and also provide the 20 token explaination. 
 
 output should be in the format as shown below:
 pdf_name : probability : explaination
