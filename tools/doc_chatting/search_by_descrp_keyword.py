@@ -156,17 +156,13 @@ class Filesearchbykeyworddescrp(CustomLogger):
         response = self.vectordb_search.similarity_search(description, k= 100)
         relevance_score =dict()
         for content in tqdm(response):
-            metadata = content.metadata
-            file_name = metadata["source"]
-            page_number = metadata["page"]
-
             retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 100})
             multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
             ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
             rag_output = ragfusion_chain.invoke({"question": description})
             all_outputs =[]
-            for rg_doc in rag_output:
+            for score, rg_doc in rag_output:
                 print(rg_doc)
                 output = self.chain.invoke({"pdf_name": file_name,"Context": rg_doc.page_content, "description": description})
                 print(output)
