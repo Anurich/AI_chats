@@ -25,12 +25,14 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
         assert len(file_paths) == 1, self.log_error("Must have atleast 1 file !")
         for path in file_paths:
+            print(path)
             file_path = path["filename"]
             temp_file_path = self.client.download_file_to_temp(file_path)
             self.log_info("File Download form bucket to temp folder!")
             if file_path.endswith("pdf"):
                 loader = UnstructuredFileLoader(temp_file_path, mode="paged")
                 chunked_document = loader.load_and_split()
+                print(chunked_document)
                 for i in range(len(chunked_document)):
                     chunked_document[i].metadata = {
                         "source": file_path.split("/")[1],
