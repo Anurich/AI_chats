@@ -5,7 +5,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.output_parsers import StrOutputParser
-from langchain.prompts import PrompTemplate
+from langchain.prompts import PromptTemplate
 from tqdm import tqdm
 from utils import prompts
 
