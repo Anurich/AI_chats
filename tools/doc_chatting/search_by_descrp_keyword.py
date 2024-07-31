@@ -163,6 +163,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         all_outputs =[]
         for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
+            print(output)
             pdf_name, probability, answer  = output.split(":")[1:]
             match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
             assert len(match) == 1
