@@ -166,8 +166,8 @@ Content:
 """
 
 FILE_SEARCH_PROMPT = """
-As an expert in determining which PDF context matches a given description, your task is to analyze and check if the provided the provided PDF context and description you should check if the context is making sense based on description provided. 
-You should consider semantic meaning, context, and overall relevance to ensure an accurate match.
+As an expert in determining which PDF context matches a given description, your task is to analyze and check if the provided  PDF context and description is making sense based on description provided. 
+You should consider semantic meaning, context, and overall relevance to ensure an accurate match. You need to find also the answer for the description. 
 
 You will be provided with:
 - pdf_name: {pdf_name}
@@ -178,12 +178,14 @@ Your goal is to:
 1. Understand if the description relates to the context of PDF.
 2. Evaluate the semantic meaning, context, and relevance.
 3. Return the relevance probability for the match between context and description.
+4. Return the answer from the context using description as a query.
 
 Format your results as follows:
 - If relevant, indicate the PDF and the percentage probability of description relevance.  
-  Example: `pdf1.pdf : 0.80 description relevance`
+  Example: `pdf1.pdf : 0.80 : answer to the description from the context`
 - If not relevant, indicate the PDF with a 0% probability.  
-  Example: `pdf1.pdf : 0.0 description relevance`
+  Example: `pdf1.pdf : 0.0  : answer to the description from the context`
 Use your expertise to ensure a thorough and accurate evaluation of the relevance.
-We do not need any explaination return the pdf_name : probability with no explaination only these should be return.
+We do not need any explaination return the pdf_name : probability : answer.
+
 """
