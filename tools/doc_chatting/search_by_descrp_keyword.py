@@ -92,11 +92,11 @@ class Filesearchbykeyworddescrp(CustomLogger):
             match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
             assert len(match) == 1
             if relevance_score.get(file_name) == None:
-                relevance_score[file_name] = [(float(match[0]), page_number, content.page_content)]
+                relevance_score[file_name] = [float(match[0]), page_number, content.page_content]
             else:
                 prob,_, _relevance_score[file_name]
                 if prob < float(match[0]):
-                    relevance_score[file_name] = [(float(match[0]), page_number, content.page_content)]        
+                    relevance_score[file_name] = [float(match[0]), page_number, content.page_content]        
         
         print(relevance_score)
         html = self.generate_html_table_with_graph(relevance_score)
