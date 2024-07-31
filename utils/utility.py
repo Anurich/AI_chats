@@ -15,6 +15,8 @@ from surya.ocr import run_ocr
 from surya.model.recognition.model import load_model
 from surya.model.recognition.processor import load_processor
 from surya.model.detection import segformer
+from langchain_openai import ChatOpenAI
+
 
 
 def load_model_surya():
@@ -85,12 +87,13 @@ def batched_summarize(documents, tokenizer, batch_size=16):
         yield tokenized_ids
 
 # for summary of the pdf 
-def summarize_pdf(llm, txt_file_path,keypoints, splitted_docs, client):
+def summarize_pdf(txt_file_path,keypoints, splitted_docs, client):
     """
         Approach we can use 
         First let's summarize the whole pdf using the opensource model 
         than we can use chatgpt api to find the bullet point int those summarization 
     """
+    llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
     response= None
     tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
     model     = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
