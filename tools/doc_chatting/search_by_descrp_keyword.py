@@ -93,6 +93,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             output = self.chain.invoke({"pdf_name": file_name,"Context": content.page_content, "description": description})
             pdf_name, probability = output.split(":")
             match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
+            print(match)
             assert len(match) == 0
             if relevance_score.get(pdf_name) == None:
                 relevance_score[pdf] = [(float(match[0]), page_number, content.page_content)]
