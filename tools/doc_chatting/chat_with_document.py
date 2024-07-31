@@ -88,14 +88,16 @@ class Chatwithdocument(CustomLogger):
         
         ner   = self.nlp(output_answer)
         tokens_with_label = []
+        to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
         if ner.ents:
             for ner_obj in ner.ents:
-                start_index = ner_obj.start_char
-                end_index   = ner_obj.end_char
-                label = ner_obj.label_
-                text  = ner_obj.text
-                tokens_with_label.append([start_index, end_index, label, text])
-        
+                if ner_obj.label_ not in to_remove:
+                    start_index = ner_obj.start_char
+                    end_index   = ner_obj.end_char
+                    label = ner_obj.label_
+                    text  = ner_obj.text
+                    tokens_with_label.append([start_index, end_index, label, text])
+            
     
         sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
         output_answer += "\n **Sentiment:**\n "+sentiment
