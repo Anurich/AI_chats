@@ -94,11 +94,12 @@ class Filesearchbykeyworddescrp(CustomLogger):
             
             pdf_name, probability = output.split(":")
             match = re.findall(r"[-+]?\d*\.\d+|\d+", pdf_name)
+            print(match)
             assert len(match) == 0
             if relevance_score.get(pdf_name) == None:
                 relevance_score[pdf] = [(float(match[0]), page_number, content.page_content)]
             else:
-                relevance_score[pdf].append((probability, page_number, content.page_content))
+                relevance_score[pdf].append((float(match[0]), page_number, content.page_content))
         
         
         html = generate_html_table_with_graph(relevance_score)
