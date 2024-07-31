@@ -5,7 +5,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.output_parsers import StrOutputParser
-from langchain.prompts import PromptTemplate
+from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 import re
 import math
@@ -21,13 +21,11 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
         self.prompt_file_search = PromptTemplate.from_template(prompts.FILE_SEARCH_PROMPT)
-        self.chain = self.prompt_file_search | self.llm | StrOutputParser()
 
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
         assert len(file_paths) >= 1, self.log_error("Must have atleast 1 file !")
         for path in file_paths:
-            print(path)
             file_path = path["filename"]
             temp_file_path = self.client.download_file_to_temp(file_path)
             self.log_info("File Download form bucket to temp folder!")
@@ -122,6 +120,36 @@ class Filesearchbykeyworddescrp(CustomLogger):
         
         return html
 
+    def reciprocal_rank_fusion(self, results: list[list], k=30):
+        """ Reciprocal_rank_fusion that takes multiple lists of ranked documents 
+            and an optional parameter k used in the RRF formula """
+        # Initialize a dictionary to hold fused scores for each unique document
+        fused_scores = {}
+        # Iterate through each list of ranked documents
+        for docs in results:
+            # Iterate through each document in the list, with its rank (position in the list)
+            for rank, doc in enumerate(docs):
+                # Convert the document to a string format to use as a key (assumes documents can be serialized to JSON)
+                doc_str = dumps(doc)
+       
+                # If the document is not yet in the fused_scores dictionary, add it with an initial score of 0
+                if doc_str not in fused_scores:
+                    fused_scores[doc_str] = 0
+                # Retrieve the current score of the document, if any
+                previous_score = fused_scores[doc_str]
+                # Update the score of the document using the RRF formula: 1 / (rank + k)
+                fused_scores[doc_str] += 1 / (rank + k)
+
+        # Sort the documents based on their fused scores in descending order to get the final reranked results
+        reranked_results = [
+            (loads(doc), score)
+            for doc, score in sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
+        ]
+        # Return the reranked results as a list of tuples, each containing the document and its fused score
+        self.log_info("Sucessfully computred reranked-results.....")
+        
+        return reranked_results
+
     def search(self, description):
         response = self.vectordb_search.similarity_search(description, k= 100)
         relevance_score =dict()
@@ -129,19 +157,28 @@ class Filesearchbykeyworddescrp(CustomLogger):
             metadata = content.metadata
             file_name = metadata["source"]
             page_number = metadata["page"]
-            output = self.chain.invoke({"pdf_name": file_name,"Context": content.page_content, "description": description})
-            pdf_name, probability, answer = output.split(":")
-            match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
-            assert len(match) == 1
-            if relevance_score.get(file_name) == None:
-                relevance_score[file_name] = [float(match[0]), page_number, answer]
-            else:
-                prob,_, _ = relevance_score[file_name]
-                if prob < float(match[0]):
-                    relevance_score[file_name] = [float(match[0]), page_number, answer]        
+
+            retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 100})
+            multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
+            ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
+
+            rag_output = ragfusion_chain.invoke({"question": description})
+            print(rag_output)
+            
+
+        #     output = self.chain.invoke({"pdf_name": file_name,"Context": content.page_content, "description": description})
+        #     pdf_name, probability, answer = output.split(":")
+        #     match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
+        #     assert len(match) == 1
+        #     if relevance_score.get(file_name) == None:
+        #         relevance_score[file_name] = [float(match[0]), page_number, answer]
+        #     else:
+        #         prob,_, _ = relevance_score[file_name]
+        #         if prob < float(match[0]):
+        #             relevance_score[file_name] = [float(match[0]), page_number, answer]        
         
-        html = self.generate_html_table_with_graph(relevance_score)
-        return html
+        # html = self.generate_html_table_with_graph(relevance_score)
+        # return html
 
 
 

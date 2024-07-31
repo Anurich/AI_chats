@@ -193,7 +193,7 @@ Your tasks are:
 Format your response exactly as follows:
 - If relevant pdf_name : probability : Answer
 - If not relevant pdf_name : 0.0 : Not relevant based on description
-- If you can't find the answer  pdf_name : probability : Description don't find the answer
+- If you can't find the answer  pdf_name : probability : Description don't  find the answer
 
 Please provide accurate and concise responses without explanations.
 """
