@@ -191,9 +191,9 @@ Your tasks are:
 3. Extract the answer from the context based on the description.
 
 Format your response exactly as follows:
-- If relevant: `pdf_name : probability : answer`
-- If not relevant: `{pdf_name} : 0.0 : I don't know`
-- If you can't find the answer: `{pdf_name} : {probability} : I don't know`
+- If relevant pdf_name : probability : Answer
+- If not relevant pdf_name : 0.0 : Not relevant based on description
+- If you can't find the answer  pdf_name : probability : Description don't find the answer
 
 Please provide accurate and concise responses without explanations.
 """
