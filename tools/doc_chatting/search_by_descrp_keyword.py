@@ -167,6 +167,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             rag_output = ragfusion_chain.invoke({"question": description})
             all_outputs =[]
             for rg_doc in rag_output:
+                print(rg_doc)
                 output = self.chain.invoke({"pdf_name": file_name,"Context": rg_doc.page_content, "description": description})
                 print(output)
 
