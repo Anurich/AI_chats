@@ -7,6 +7,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate
 from tqdm import tqdm
+import re
 from utils import prompts
 
 class Filesearchbykeyworddescrp(CustomLogger):
