@@ -167,11 +167,11 @@ class Filesearchbykeyworddescrp(CustomLogger):
             match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
             assert len(match) == 1
             if relevance_score.get(rg_doc.metadata["source"]) == None:
-                relevance_score[rg_doc.metadata["source"]] = [float(match[0]), rg_doc.metadata["page_number"], answer]
+                relevance_score[rg_doc.metadata["source"]] = [float(match[0]), rg_doc.metadata["page"], answer]
             else:
                 prob,_, _ = relevance_score[rg_doc.metadata["source"]]
                 if prob < float(match[0]):
-                    relevance_score[rg_doc.metadata["source"]] = [float(match[0]), rg_doc.metadata["page_number"], answer]        
+                    relevance_score[rg_doc.metadata["source"]] = [float(match[0]), rg_doc.metadata["page"], answer]        
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
