@@ -56,34 +56,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
             self.log_info("File removed from temp folder !")
     
     def generate_html_table_with_graph(self, data):
-        def generate_pie_chart_svg(probability):
-            # Pie chart parameters
-            radius = 10
-            stroke_width = 2
-            cx, cy = radius + stroke_width, radius + stroke_width
-            r = radius - stroke_width / 2
-            
-            # Calculate the end angle
-            end_angle = 360 * probability
-            
-            # SVG pie chart path data
-            large_arc_flag = 1 if probability > 0.5 else 0
-            end_x = cx + r * math.cos(math.radians(end_angle))
-            end_y = cy - r * math.sin(math.radians(end_angle))
-            path_d = (
-                f"M {cx} {cy} "
-                f"L {cx + r} {cy} "
-                f"A {r} {r} 0 {large_arc_flag} 1 {end_x} {end_y} "
-                f"Z"
-            )
-            
-            return f"""
-            <svg width="{2 * radius + stroke_width}" height="{2 * radius + stroke_width}" viewBox="0 0 {2 * radius + stroke_width} {2 * radius + stroke_width}">
-                <circle cx="{cx}" cy="{cy}" r="{r}" fill="#ddd" />
-                <path d="{path_d}" fill="#4CAF50" />
-            </svg>
-            """
-
         html = """
         <table border='1' style='border-collapse: collapse; width: 100%;'>
         <tr>
@@ -93,22 +65,61 @@ class Filesearchbykeyworddescrp(CustomLogger):
             <th>Context</th>
         </tr>
         """
-        for pdf_name, (probability, page_number, context) in data.items():
-            pie_chart_svg = generate_pie_chart_svg(probability)
+        for i, (pdf_name, (probability, page_number, context)) in enumerate(data.items()):
             probability_percentage = probability * 100
-            html += """
+            html += f"""
             <tr>
-                <td>{}</td>
+                <td>{pdf_name}</td>
                 <td>
-                    {}
-                    <div style='text-align: center; margin-top: 5px;'>{:.2f}%</div>
+                    <canvas id='pieChart{i}' width='100' height='100'></canvas>
+                    <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
                 </td>
-                <td>{}</td>
-                <td>{}</td>
+                <td>{page_number}</td>
+                <td>{context}</td>
             </tr>
-        """.format(pdf_name, pie_chart_svg, probability_percentage, page_number, context)
+            """
         
-        html += "</table>"
+        html += """
+        </table>
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = [];
+            const chartsData = [
+        """
+        for i, (pdf_name, (probability, page_number, context)) in enumerate(data.items()):
+            html += f"""
+            {{
+                label: 'Probability',
+                data: [{probability * 100}, {100 - probability * 100}],
+                backgroundColor: ['#4CAF50', '#ddd'],
+                borderWidth: 1
+            }},
+            """
+        
+        html += """
+            ];
+            
+            for (let i = 0; i < chartsData.length; i++) {
+                ctx[i] = document.getElementById('pieChart' + i).getContext('2d');
+                new Chart(ctx[i], {
+                    type: 'pie',
+                    data: {
+                        datasets: [chartsData[i]]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        </script>
+        """
+        
         return html
 
     def search(self, description):
