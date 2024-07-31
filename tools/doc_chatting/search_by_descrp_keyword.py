@@ -7,6 +7,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
+from langchain.load import dumps, loads
 import re
 import math
 from utils import prompts
