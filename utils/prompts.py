@@ -164,45 +164,24 @@ Format the summary as follows:
 Content:
 {docs}
 """
-# TOKEN_SENTIMENT_PROMPT = """
-# Your task involves two parts: token classification and sentiment analysis.
-# As an expert in token classification and semantic understanding, your task is to thoroughly analyze the provided content and identify the most relevant tokens that encapsulate its main points. List the 5 most pertinent tokens in bullet points. If no relevant tokens are found, please indicate accordingly
-# Sentiment Analysis:
-# As an annotator, your job is to assess the sentiment of the given content. Dive deep into its meaning and determine whether the sentiment is positive or negative. Provide a brief explanation (not exceeding 20 tokens) for your sentiment assignment.
-# Content: {content}
-# Always address both parts of the task: token classification and sentiment analysis.
-# """
 
+FILE_SEARCH_PROMPT = """
+As an expert in determining which PDF context matches a given description, your task is to analyze and check if the provided the provided PDF context and description you should check if the context is making sense based on description provided. 
+You should consider semantic meaning, context, and overall relevance to ensure an accurate match.
 
-# TOKEN_SENTIMENT_PROMPT = """
-# Content Insights
-# Analyze the given content to uncover key insights.
+You will be provided with:
+- Context: {Context}.
+- Description: {description}.
 
-# Key Tokens:
-# Extract the top 5 tokens (words or phrases) that convey the main ideas and concepts. Present them in a bullet-point list.
+Your goal is to:
+1. Understand if the description relates to the context of PDF.
+2. Evaluate the semantic meaning, context, and relevance.
+3. Return the relevance probability for the match between context and description.
 
-# Sentiment Snapshot:
-# Assess the overall sentiment of the content as:
-# Positive (e.g., enthusiastic, optimistic)
-# Negative (e.g., critical, pessimistic)
-# Neutral (e.g., informative, objective)
-# Provide a brief explanation (max 20 tokens) for your sentiment assignment.
-
-# Content: {content}
-
-# Output Format:
-# Key Tokens:
-# Token 1
-# Token 2
-# Token 3
-# Token 4
-# Token 5
-# Sentiment: [Positive/Negative/Neutral]
-# Explanation: [brief explanation]
-# Tips:
-# 1. Focus on tokens that carry significant meaning and context.
-# 2. Consider the tone, language, and intent behind the content.
-# 3. Keep your explanation concise and clear.
-
-# By following this format, you'll provide valuable insights into the content's key tokens and sentiment.
-# """
+Format your results as follows:
+- If relevant, indicate the PDF and the percentage probability of description relevance.  
+  Example: `pdf1.pdf : 0.80 description relevance`
+- If not relevant, indicate the PDF with a 0% probability.  
+  Example: `pdf1.pdf : 0.0 description relevance`
+Use your expertise to ensure a thorough and accurate evaluation of the relevance.
+"""
