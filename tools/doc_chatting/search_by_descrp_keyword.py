@@ -98,7 +98,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 relevance_score[file_name].append((float(match[0]), page_number, content.page_content))
         
         
-        html = generate_html_table_with_graph(relevance_score)
+        html = self.generate_html_table_with_graph(relevance_score)
         return html
 
 
