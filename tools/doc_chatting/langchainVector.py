@@ -39,9 +39,10 @@ class UTILS:
 
 
 class createVectorStore_DOC:
-    def __init__(self, doc_object: dict, llm, client,again=False):
+    def __init__(self, doc_object: dict, client,again=False):
         # now we can exrtact the pdfs
-        self.llm = llm
+        self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+
         self.doc_object = doc_object
         self.client = client
         self.vector_storage = UTILS(self.doc_object)

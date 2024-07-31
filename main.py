@@ -116,7 +116,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     config.file_config["chat_with_pdf"]["persist_directory"] = "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb"
     
     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
-    vector_doc = createVectorStore_DOC(object_chat_with_pdf, llm,client)
+    vector_doc = createVectorStore_DOC(object_chat_with_pdf,client)
     chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm)
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
