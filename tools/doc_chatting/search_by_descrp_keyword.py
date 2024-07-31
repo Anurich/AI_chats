@@ -19,7 +19,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
         self.prompt_file_search = PromptTemplate.from_template(prompts.FILE_SEARCH_PROMPT)
-        self.chain = self.prompt_file_search | self.llm | StrOutputParser
+        self.chain = self.prompt_file_search | self.llm | StrOutputParser()
 
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
