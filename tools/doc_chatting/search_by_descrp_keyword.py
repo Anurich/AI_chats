@@ -81,9 +81,9 @@ class Filesearchbykeyworddescrp(CustomLogger):
         
         html += """
         </table>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const ctx = [];
             const chartsData = [
         """
         for i, (pdf_name, (probability, page_number, context)) in enumerate(data.items()):
@@ -100,8 +100,8 @@ class Filesearchbykeyworddescrp(CustomLogger):
             ];
             
             for (let i = 0; i < chartsData.length; i++) {
-                ctx[i] = document.getElementById('pieChart' + i).getContext('2d');
-                new Chart(ctx[i], {
+                const ctx = document.getElementById('pieChart' + i).getContext('2d');
+                new Chart(ctx, {
                     type: 'pie',
                     data: {
                         datasets: [chartsData[i]]
@@ -110,7 +110,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                         responsive: true,
                         plugins: {
                             legend: {
-                                display: true
+                                display: false
                             }
                         }
                     }
