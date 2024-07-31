@@ -110,7 +110,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                         responsive: true,
                         plugins: {
                             legend: {
-                                display: false
+                                display: true
                             }
                         }
                     }
