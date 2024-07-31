@@ -179,6 +179,7 @@ Content:
 
 FILE_SEARCH_PROMPT = """
 You are a relevance evaluator. Your task is to assess the connection between a given context and description.
+Evaluate the relevance by checking if the description is related to the context, and provide the probability score.
 
 Evaluate the relevance by checking:
 - Entity match
@@ -186,22 +187,19 @@ Evaluate the relevance by checking:
 - Key phrase overlap
 - Semantic similarity
 
-You will receive:
-- pdf_name: {pdf_name}
-- Context: {Context}
-- Description: {description}
+You will be provided with: 
+pdf_name: {pdf_name}
+Context: {Context}
+Description: {description}
+
 
 Your tasks are:
-1. Check the relevance between description and context.
+1. check the relevance between description and context.
 2. Calculate the probability (0-1) of the description matching the context.
-3. Extract the answer from the context based on the description.
+3. Extract the answer from the context based on  description, and also provide the 20 token explaination. 
 
-Format your response exactly as follows:
-- pdf_name : probability: answer
+output should be in the format as shown below
+pdf_name : probability : explaination
 
-Note: 
-- If not relevant, probability should be 0.0
-- If you can't find the answer, specify 'I don't know' as the answer
-
-Please provide accurate and concise responses without explanations.
+We want output only in the pattern mentioned, provide accurate and concise responses.
 """
