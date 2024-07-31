@@ -64,7 +64,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             <th>Context</th>
         </tr>
         """
-        for pdf_name, (probability, page_number, context) in entry.items():
+        for pdf_name, (probability, page_number, context) in data.items():
             probability_percentage = probability * 100
             html += """
             <tr>
@@ -94,8 +94,9 @@ class Filesearchbykeyworddescrp(CustomLogger):
             if relevance_score.get(pdf_name) == None:
                 relevance_score[file_name] = [(float(match[0]), page_number, content.page_content)]
             else:
-                relevance_score[file_name].append((float(match[0]), page_number, content.page_content))
-        
+                prob,_, _relevance_score[file_name]
+                if prob < float(match[0]):
+                    relevance_score[file_name] = [(float(match[0]), page_number, content.page_content)]        
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
