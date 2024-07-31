@@ -55,6 +55,34 @@ class Filesearchbykeyworddescrp(CustomLogger):
             self.log_info("File removed from temp folder !")
     
     def generate_html_table_with_graph(self, data):
+        def generate_pie_chart_svg(probability):
+            # Pie chart parameters
+            radius = 10
+            stroke_width = 2
+            cx, cy = radius + stroke_width, radius + stroke_width
+            r = radius - stroke_width / 2
+            
+            # Calculate the end angle
+            end_angle = 360 * probability
+            
+            # SVG pie chart path data
+            large_arc_flag = 1 if probability > 0.5 else 0
+            end_x = cx + r * math.cos(math.radians(end_angle))
+            end_y = cy - r * math.sin(math.radians(end_angle))
+            path_d = (
+                f"M {cx} {cy} "
+                f"L {cx + r} {cy} "
+                f"A {r} {r} 0 {large_arc_flag} 1 {end_x} {end_y} "
+                f"Z"
+            )
+            
+            return f"""
+            <svg width="{2 * radius + stroke_width}" height="{2 * radius + stroke_width}" viewBox="0 0 {2 * radius + stroke_width} {2 * radius + stroke_width}">
+                <circle cx="{cx}" cy="{cy}" r="{r}" fill="#ddd" />
+                <path d="{path_d}" fill="#4CAF50" />
+            </svg>
+            """
+
         html = """
         <table border='1' style='border-collapse: collapse; width: 100%;'>
         <tr>
@@ -65,18 +93,20 @@ class Filesearchbykeyworddescrp(CustomLogger):
         </tr>
         """
         for pdf_name, (probability, page_number, context) in data.items():
+            pie_chart_svg = generate_pie_chart_svg(probability)
             probability_percentage = probability * 100
             html += """
             <tr>
                 <td>{}</td>
                 <td>
-                <div style='background-color: #4CAF50; height: 20px; width: {}%;'></div>
-                <div style='text-align: center;'>{:.2f}</div>
+                    {}
+                    <div style='text-align: center; margin-top: 5px;'>{:.2f}%</div>
                 </td>
                 <td>{}</td>
                 <td>{}</td>
             </tr>
-        """.format(pdf_name, probability_percentage, probability, page_number, context)
+        """.format(pdf_name, pie_chart_svg, probability_percentage, page_number, context)
+        
         html += "</table>"
         return html
 

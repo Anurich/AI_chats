@@ -187,5 +187,6 @@ Format your results as follows:
   Example: `pdf1.pdf : 0.0  : answer to the description from the context`
 Use your expertise to ensure a thorough and accurate evaluation of the relevance.
 We do not need any explaination return the pdf_name : probability : answer.
+if you don't know the answer please specify I don't know.
 
 """
