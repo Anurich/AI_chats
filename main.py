@@ -226,7 +226,7 @@ async def chat_with_website(requestQuery: QueryRequest):
 
 @app.post("/ai/model/search_keyword")
 async def file_search(requestQuery: QueryRequest):
-    file_search_by_keyword = Filesearchbykeyworddescrp(client=client, persist_directory="search_by_keyword")
+    file_search_by_keyword = Filesearchbykeyworddescrp(llm=llm, client=client, persist_directory="search_by_keyword")
     if requestQuery.keyword_search == 0:
         if all_user_search_file.get(requestQuery.user_id) == None:
             file_search_by_keyword.add_file_to_db(requestQuery.file_names)
