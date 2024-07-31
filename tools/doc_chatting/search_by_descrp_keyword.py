@@ -54,6 +54,33 @@ class Filesearchbykeyworddescrp(CustomLogger):
             os.remove(temp_file_path)
             self.log_info("File removed from temp folder !")
     
+    def generate_html_table_with_graph(self, data):
+        html = """
+        <table border='1' style='border-collapse: collapse; width: 100%;'>
+        <tr>
+            <th>PDF Name</th>
+            <th>Probability</th>
+            <th>Page Number</th>
+            <th>Context</th>
+        </tr>
+        """
+        for entry in data:
+            for pdf_name, (probability, page_number, context) in entry.items():
+                probability_percentage = probability * 100
+                html += """
+                <tr>
+                    <td>{}</td>
+                    <td>
+                    <div style='background-color: #4CAF50; height: 20px; width: {}%;'></div>
+                    <div style='text-align: center;'>{:.2f}</div>
+                    </td>
+                    <td>{}</td>
+                    <td>{}</td>
+                </tr>
+                """.format(pdf_name, probability_percentage, probability, page_number, context)
+        html += "</table>"
+        return html
+
     def search(self, description):
         response = self.vectordb_search.similarity_search(description, k= 100)
         relevance_score =dict()
@@ -61,16 +88,20 @@ class Filesearchbykeyworddescrp(CustomLogger):
             print(content.page_content)
             metadata = content.metadata
             file_name = metadata["source"]
-            page_name = metadata["page"]
+            page_number = metadata["page"]
             output = self.chain.invoke({"pdf_name": file_name,"Context": content.page_content, "description": description})
-            print(output)
+            
             pdf_name, probability = output.split(":")
+            match = re.findall(r"[-+]?\d*\.\d+|\d+", pdf_name)
+            assert len(match) == 0
             if relevance_score.get(pdf_name) == None:
-                relevance_score[pdf] = [(probability, page_number)]
+                relevance_score[pdf] = [(float(match[0]), page_number, content.page_content)]
             else:
-                relevance_score[pdf].append((probability, page_number))
+                relevance_score[pdf].append((probability, page_number, content.page_content))
         
-        print(relevance_score)
+        
+        html = generate_html_table_with_graph(relevance_score)
+        return html
 
 
 
