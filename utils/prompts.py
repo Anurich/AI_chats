@@ -166,27 +166,22 @@ Content:
 """
 
 FILE_SEARCH_PROMPT = """
-As an expert in determining which PDF context matches a given description, your task is to analyze and check if the provided  PDF context and description is making sense based on description provided. 
-You should consider semantic meaning, context, and overall relevance to ensure an accurate match. You need to find also the answer for the description. 
+As an expert in matching PDF contexts with descriptions, analyze the provided PDF context and description to determine their relevance. 
 
-You will be provided with:
+You will receive:
 - pdf_name: {pdf_name}
-- Context: {Context}.
-- Description: {description}.
+- Context: {Context}
+- Description: {description}
 
-Your goal is to:
-1. Understand if the description relates to the context of PDF.
-2. Evaluate the semantic meaning, context, and relevance.
-3. Return the relevance probability for the match between context and description.
-4. Return the answer from the context using description as a query.
+Your tasks are:
+1. Assess the semantic meaning, context, and relevance between the description and PDF context.
+2. Calculate the probability (0-1) of the description matching the context.
+3. Extract the answer from the context based on the description.
 
-Format your results as follows:
-- If relevant, indicate the PDF and the percentage probability of description relevance.  
-  Example: `pdf1.pdf : 0.80 : answer to the description from the context`
-- If not relevant, indicate the PDF with a 0% probability.  
-  Example: `pdf1.pdf : 0.0  : answer to the description from the context`
-Use your expertise to ensure a thorough and accurate evaluation of the relevance.
-We do not need any explaination return the pdf_name : probability : answer.
-if you don't know the answer please specify I don't know.
+Format your response exactly as follows:
+- If relevant: `pdf_name : probability : answer`
+- If not relevant: `{pdf_name} : 0.0 : I don't know`
+- If you can't find the answer: `{pdf_name} : {probability} : I don't know`
 
+Please provide accurate and concise responses without explanations.
 """

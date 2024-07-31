@@ -140,7 +140,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 if prob < float(match[0]):
                     relevance_score[file_name] = [float(match[0]), page_number, answer]        
         
-        print(relevance_score)
         html = self.generate_html_table_with_graph(relevance_score)
         return html
 
