@@ -56,6 +56,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         response = self.vectordb_search.similarity_search(description, k= 100)
         relevance_score =dict()
         for content in tqdm(response):
+            print(content.page_content)
             metadata = content.metadata
             file_name = metadata["source"]
             page_name = metadata["page"]
