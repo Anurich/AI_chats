@@ -153,33 +153,28 @@ class Filesearchbykeyworddescrp(CustomLogger):
         return reranked_results
 
     def search(self, description):
-        response = self.vectordb_search.similarity_search(description, k= 100)
+        
         relevance_score =dict()
-        for content in tqdm(response):
-            retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 100})
-            multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
-            ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
+        retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 100})
+        multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
+        ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
-            rag_output = ragfusion_chain.invoke({"question": description})
-            all_outputs =[]
-            for rg_doc, score in rag_output:
-                print("---"*100)
-                print(rg_doc)
-                output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
-                print(output)
-
-                # pdf_name, probability, answer = output.split(":")
-                # match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
-                # assert len(match) == 1
-                # if relevance_score.get(file_name) == None:
-                #     relevance_score[file_name] = [float(match[0]), page_number, answer]
-                # else:
-                #     prob,_, _ = relevance_score[file_name]
-                #     if prob < float(match[0]):
-                #         relevance_score[file_name] = [float(match[0]), page_number, answer]        
-            
-        # html = self.generate_html_table_with_graph(relevance_score)
-        # return html
+        rag_output = ragfusion_chain.invoke({"question": description})
+        all_outputs =[]
+        for rg_doc, score in tqdm(rag_output):           
+            output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
+            pdf_name, probability, answer  = output.split(":")[1:]
+            match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
+            assert len(match) == 1
+            if relevance_score.get(file_name) == None:
+                relevance_score[file_name] = [float(match[0]), page_number, answer]
+            else:
+                prob,_, _ = relevance_score[file_name]
+                if prob < float(match[0]):
+                    relevance_score[file_name] = [float(match[0]), page_number, answer]        
+        
+        html = self.generate_html_table_with_graph(relevance_score)
+        return html
 
 
 
