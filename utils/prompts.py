@@ -188,12 +188,10 @@ You will receive:
 Your tasks are:
 1. Assess the semantic meaning, context, and relevance between the description and PDF context.
 2. Calculate the probability (0-1) of the description matching the context.
-3. Extract the answer from the context based on the description.
+3. Extract the explaination in 100 tokens from the context depending on what kind of description is being asked 
 
-Format your response exactly as follows:
-- If relevant pdf_name : probability : Answer
-- If not relevant pdf_name : 0.0 : Not relevant based on description
-- If you can't find the answer  pdf_name : probability : Description don't  find the answer
+output should be in the format as shown below:
+pdf_name : probability : explaination
 
-Please provide accurate and concise responses without explanations.
+Please provide accurate and concise responses.
 """
