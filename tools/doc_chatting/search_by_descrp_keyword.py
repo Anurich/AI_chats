@@ -24,7 +24,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
-        self.parser = PydanticOutputParser(pydantic_object=OutputParse)
         self.prompt_file_search = PromptTemplate(template = prompts.FILE_SEARCH_PROMPT, input_variables=["pdf_name", "Context", "description"])
         self.chain = self.prompt_file_search | self.llm | StrOutputParser()
 
