@@ -142,6 +142,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 for key in left_key:
                     output[key] ="Not Found!"
             
+            print(output)
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
             explaination = output["explanation"]
