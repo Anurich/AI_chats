@@ -68,7 +68,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             <th>Context</th>
         </tr>
         """
-        for pdf_name, (probability, page_number, explaination) in data.items():
+        for pdf_name, (probability, page_number, explaination, extracted_value) in data.items():
             probability_percentage = probability * 100
             html += f"""
             <tr>
@@ -79,6 +79,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 </td>
                 <td>{page_number}</td>
                 <td>{explaination}</td>
+                <td>{extracted_value}</td>
             </tr>
             """
         
@@ -130,14 +131,15 @@ class Filesearchbykeyworddescrp(CustomLogger):
             print(type(output))
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
-            explaination = output["explaination"]
+            explaination = output["explanation"]
+            extracted_value = output["extracted_value"]
 
             if relevance_score.get(rg_doc.metadata["source"]) == None:
-                relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination]
+                relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]
             else:
                 prob,_, _ = relevance_score[rg_doc.metadata["source"]]
                 if prob < probability:
-                    relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination]        
+                    relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
