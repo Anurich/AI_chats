@@ -200,8 +200,7 @@ Your tasks are:
 3. Extract the answer from the context based on  description, and also provide the 20 token explaination. 
 
 ** Important ** 
-1. output should be in the format as shown contain only pdf_name, probability, explaination.
-2. Do NOT use any other format.
+1. output should contain key, value pair in JSON format. It should contain key as pdf_name, probability, explaination and it's corresponding extracted value.
 3. Ensure your explanation is concise and within the 20-token limit. Provide accurate and precise responses.
 
 We will only accept responses in the specified format. Deviations will be considered incorrect.

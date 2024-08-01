@@ -8,19 +8,12 @@ from utils.custom_logger import CustomLogger
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
-from langchain.output_parsers import PydanticOutputParser
 from tqdm import tqdm
 from langchain.load import dumps, loads
 import re
 import math
 from utils import prompts
-from pydantic import BaseModel, Field
 
-class OutputParse(BaseModel):
-    pdf_name: str = Field(description="Contain the name of the pdf file.")
-    probability: str= Field(description="Contain the probability assigned based on description and context")
-    page_number: str = Field(description="Page number in which we found the highest match in context.")
-    explaination: str = Field(description="Explaination  based on answer extracted from the context")
 
 class Filesearchbykeyworddescrp(CustomLogger):
     def __init__(self, llm, client, persist_directory) -> None:
@@ -32,9 +25,8 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
         self.parser = PydanticOutputParser(pydantic_object=OutputParse)
-        self.prompt_file_search = PromptTemplate(template = prompts.FILE_SEARCH_PROMPT, input_variables=["pdf_name", "Context", "description"], \
-            partial_variables={"format_instructions": self.parser.get_format_instructions()} )
-        self.chain = self.prompt_file_search | self.llm | self.parser
+        self.prompt_file_search = PromptTemplate(template = prompts.FILE_SEARCH_PROMPT, input_variables=["pdf_name", "Context", "description"])
+        self.chain = self.prompt_file_search | self.llm | StrOutputParser()
 
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
