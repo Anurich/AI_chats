@@ -203,6 +203,6 @@ Your tasks are:
 1. output should contain key, value pair in JSON format. It should contain key as pdf_name, probability, explaination and it's corresponding extracted value.
 3. Ensure your explaination is concise and within the 20-token limit. Provide accurate and precise responses.
 
-
+Make sure to return all the keys and if you don't know the answer of any key return the key with value information not available. But return all the keys.
 We will only accept responses in the specified format. Deviations will be considered incorrect.
 """
