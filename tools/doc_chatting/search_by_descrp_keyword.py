@@ -17,7 +17,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         super().__init__(__name__)
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
         self.client =client
-        self.llm = llm
+        self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
