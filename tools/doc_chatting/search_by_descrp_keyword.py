@@ -131,7 +131,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             print(type(output))
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
-            explaination = output["explanation"]
+            explaination = output["explaination"]
             extracted_value = output["extracted_value"]
 
             if relevance_score.get(rg_doc.metadata["source"]) == None:
