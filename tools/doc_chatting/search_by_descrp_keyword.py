@@ -66,6 +66,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             <th>Probability</th>
             <th>Page Number</th>
             <th>Context</th>
+            <th>Expected Answer</th>
         </tr>
         """
         for pdf_name, (probability, page_number, explaination, extracted_value) in data.items():
@@ -142,7 +143,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 for key in left_key:
                     output[key] ="Not Found!"
             
-            print(output)
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
             explaination = output["explanation"]
