@@ -6,7 +6,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from utils.custom_logger import CustomLogger
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_core.output_parsers import  JsonOutputParser
+from langchain_core.output_parsers import  StrOutputParser, JsonOutputParser
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 from langchain.load import dumps, loads
