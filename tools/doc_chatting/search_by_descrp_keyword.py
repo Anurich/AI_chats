@@ -127,7 +127,14 @@ class Filesearchbykeyworddescrp(CustomLogger):
         all_outputs =[]
         for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
-            output = {"explaination": value if key == "explanation" else key: value for key, value in output.items()}
+            n_output = dict()
+            for k, v in output.items():
+                if k == "explanation":
+                    n_output["explaination"] = v
+                else:
+                    n_output[k] = v
+            output = n_output
+            del n_output
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
             explaination = output["explaination"]
