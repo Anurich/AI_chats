@@ -55,7 +55,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             os.remove(temp_file_path)
             self.log_info("File removed from temp folder !")
     
-    def generate_html_table_with_graph(self, data):
+    def generate_html_table_with_graph(data):
         html = """
         <table border='1' style='border-collapse: collapse; width: 100%;'>
         <tr>
@@ -65,61 +65,22 @@ class Filesearchbykeyworddescrp(CustomLogger):
             <th>Context</th>
         </tr>
         """
-        for i, (pdf_name, (probability, page_number, context)) in enumerate(data.items()):
-            probability_percentage = probability * 100
-            html += f"""
-            <tr>
-                <td>{pdf_name}</td>
-                <td>
-                    <canvas id='pieChart{i}' width='100' height='100'></canvas>
+        for entry in data:
+            for pdf_name, (probability, page_number, explaination) in entry.items():
+                probability_percentage = probability * 100
+                html += f"""
+                <tr>
+                    <td>{pdf_name}</td>
+                    <td>
+                    <div style='background-color: #4CAF50; height: 20px; width: {probability_percentage}%;'></div>
                     <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
-                </td>
-                <td>{page_number}</td>
-                <td>{context}</td>
-            </tr>
-            """
-        
-        html += """
-        </table>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const chartsData = [
-        """
-        for i, (pdf_name, (probability, page_number, context)) in enumerate(data.items()):
-            html += f"""
-            {{
-                label: 'Probability',
-                data: [{probability * 100}, {100 - probability * 100}],
-                backgroundColor: ['#4CAF50', '#ddd'],
-                borderWidth: 1
-            }},
-            """
-        
-        html += """
-            ];
+                    </td>
+                    <td>{page_number}</td>
+                    <td>{explaination}</td>
+                </tr>
+                """
             
-            for (let i = 0; i < chartsData.length; i++) {
-                const ctx = document.getElementById('pieChart' + i).getContext('2d');
-                new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        datasets: [chartsData[i]]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        </script>
-        """
-        
+        html += "</table>"
         return html
 
     def reciprocal_rank_fusion(self, results: list[list], k=30):
