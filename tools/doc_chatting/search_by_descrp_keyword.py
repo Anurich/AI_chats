@@ -124,16 +124,16 @@ class Filesearchbykeyworddescrp(CustomLogger):
         all_outputs =[]
         for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
-            print(output)
-            pdf_name, probability, answer  = output.replace("pdf_name:","").replace("probability:","").split(":")
-            match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
-            assert len(match) == 1
+            pdf_name = output["pdf_name"]
+            probability = float(output["probability"])
+            explaination = output["explaination"]
+
             if relevance_score.get(rg_doc.metadata["source"]) == None:
-                relevance_score[rg_doc.metadata["source"]] = [float(match[0]), rg_doc.metadata["page"], answer]
+                relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], answer]
             else:
                 prob,_, _ = relevance_score[rg_doc.metadata["source"]]
-                if prob < float(match[0]):
-                    relevance_score[rg_doc.metadata["source"]] = [float(match[0]), rg_doc.metadata["page"], answer]        
+                if prob < probability:
+                    relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], answer]        
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
