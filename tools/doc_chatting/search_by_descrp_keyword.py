@@ -137,7 +137,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             if relevance_score.get(rg_doc.metadata["source"]) == None:
                 relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]
             else:
-                prob,_, _ = relevance_score[rg_doc.metadata["source"]]
+                prob,_, _,_ = relevance_score[rg_doc.metadata["source"]]
                 if prob < probability:
                     relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
         
