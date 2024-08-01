@@ -132,11 +132,11 @@ class Filesearchbykeyworddescrp(CustomLogger):
             explaination = output["explaination"]
 
             if relevance_score.get(rg_doc.metadata["source"]) == None:
-                relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], answer]
+                relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination]
             else:
                 prob,_, _ = relevance_score[rg_doc.metadata["source"]]
                 if prob < probability:
-                    relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], answer]        
+                    relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination]        
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
