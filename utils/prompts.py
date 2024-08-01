@@ -173,6 +173,7 @@ Format the summary as follows:
 3.
 4.
 5.
+Note: only provide the available points. Do not include empty or placeholder points.
 Content:
 {docs}
 """
