@@ -164,7 +164,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
             print(output)
-            pdf_name, probability, answer  = output.split(":")
+            pdf_name, probability, answer  = output.replace("pdf_name:","").split(":")
             match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
             assert len(match) == 1
             if relevance_score.get(rg_doc.metadata["source"]) == None:
