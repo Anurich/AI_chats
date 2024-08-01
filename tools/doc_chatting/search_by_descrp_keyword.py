@@ -1,4 +1,5 @@
 import os
+import json
 from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
@@ -124,7 +125,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         all_outputs =[]
         for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
-            print(output)
+            output = json.loads(output)
             print(type(output))
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
