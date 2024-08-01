@@ -113,7 +113,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             for doc, score in sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
         ]
         # Return the reranked results as a list of tuples, each containing the document and its fused score
-        self.log_info("Sucessfully computred reranked-results.....")
+        self.log_info("Sucessfully computed reranked-results.....")
         
         return reranked_results
 
@@ -126,7 +126,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
         rag_output = ragfusion_chain.invoke({"question": description})
         all_outputs =[]
-        for rg_doc, score in tqdm(rag_output):           
+        for rg_doc, score in tqdm(rag_output[:21]):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
             n_output = dict()
             for k, v in output.items():
