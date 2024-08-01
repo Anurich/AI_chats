@@ -180,6 +180,8 @@ Content:
 
 FILE_SEARCH_PROMPT = """
 You are a relevance evaluator. Your task is to assess the connection between a given context and description.
+Evaluate the relevance by checking if the description is related to the context, and provide the probability score.
+
 Evaluate the relevance by checking:
 - Entity match
 - Topic alignment
@@ -191,17 +193,17 @@ pdf_name: {pdf_name}
 Context: {Context}
 Description: {description}
 
-Your tasks are:
-1. Check the relevance between description and context.
-2. Calculate the probability (0-1) of the description matching the context.
-3. Extract the answer from the context based on the description, and provide a 20-token explanation.
 
-**IMPORTANT:** 
-- Your response MUST be in the exact format:
-  {{"pdf_name": "probability" : "explaination"}}
-- Do NOT use any other format, including JSON or other syntax.
-- Ensure your explanation is concise and within the 20-token limit.
-- Provide accurate and precise responses.
+Your tasks are:
+1. check the relevance between description and context.
+2. Calculate the probability (0-1) of the description matching the context.
+3. Extract the answer from the context based on  description, and also provide the 20 token explaination. 
+
+** Important ** 
+1. output should be in the format as shown below
+ {{"pdf_name" : "probability" : "explaination"}}
+2. Do NOT use any other format.
+3. Ensure your explanation is concise and within the 20-token limit. Provide accurate and precise responses.
 
 We will only accept responses in the specified format. Deviations will be considered incorrect.
 """
