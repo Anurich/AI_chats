@@ -18,7 +18,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         super().__init__(__name__)
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
         self.client =client
-        self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+        self.llm = llm
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
@@ -125,7 +125,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
             print(output)
-            pdf_name, probability, answer  = output.replace("pdf_name:","").split(":")
+            pdf_name, probability, answer  = output.replace("pdf_name:","").replace("probability:","").split(":")
             match = re.findall(r"[-+]?\d*\.\d+|\d+", probability)
             assert len(match) == 1
             if relevance_score.get(rg_doc.metadata["source"]) == None:
