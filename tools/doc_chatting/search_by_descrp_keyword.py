@@ -134,6 +134,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 else:
                     n_output[k] = v
             output = n_output
+            print(output)
             del n_output
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
