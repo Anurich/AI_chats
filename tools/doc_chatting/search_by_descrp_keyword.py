@@ -55,7 +55,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             os.remove(temp_file_path)
             self.log_info("File removed from temp folder !")
     
-    def generate_html_table_with_graph(data):
+    def generate_html_table_with_graph(self,data):
         html = """
         <table border='1' style='border-collapse: collapse; width: 100%;'>
         <tr>
