@@ -117,7 +117,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         return reranked_results
 
     def search(self, description):
-        
+        all_keys = ["pdf_name", "probability", "explanation", "expected_answer"]
         relevance_score =dict()
         retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 100})
         multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
@@ -129,13 +129,19 @@ class Filesearchbykeyworddescrp(CustomLogger):
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
             n_output = dict()
             for k, v in output.items():
-                if k == "explanation":
-                    n_output["explaination"] = v
+                if k == "explaination":
+                    n_output["explanation"] = v
                 else:
                     n_output[k] = v
+            
+                
             output = n_output
-            print(output)
             del n_output
+            if len(all_keys) != len(list(output.keys())):
+                left_key  = set(all_keys) - set(list(output.keys()))
+                for key in left_key:
+                    output[key] ="Not Found!"
+            
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
             explaination = output["explaination"]

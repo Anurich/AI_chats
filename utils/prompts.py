@@ -193,16 +193,15 @@ pdf_name: {pdf_name}
 Context: {Context}
 Description: {description}
 
-
 Your tasks are:
-1. check the relevance between description and context.
+1. Check the relevance between the description and context.
 2. Calculate the probability (0-1) of the description matching the context.
-3. Extract the answer from the context based on  description, and also provide the 20 token explaination. 
+3. Extract the answer from the context based on the description, and also provide a 20-token explanation. 
 
 ** Important ** 
-1. output should contain key, value pair in JSON format. It should contain key as pdf_name, probability, explaination and it's corresponding extracted value.
-3. Ensure your explaination is concise and within the 20-token limit. Provide accurate and precise responses.
+1. The output should contain key-value pairs in JSON format. It should contain keys: pdf_name, probability, explanation, and expected_answer with their corresponding values.
+2. Ensure your explanation is concise and within the 20-token limit. Provide accurate and precise responses.
+3. If any information is not available, include the key with the value "information not available".
 
-Make sure to return all the keys and if you don't know the answer of any key return the key with value information not available. But return all the keys.
-We will only accept responses in the specified format. Deviations will be considered incorrect.
+Make sure to return all the keys. We will only accept responses in the specified format. Deviations will be considered incorrect.
 """
