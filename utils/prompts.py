@@ -199,7 +199,7 @@ Your tasks are:
 3. Extract the answer from the context based on  description, and also provide the 20 token explaination. 
 
 output should be in the format as shown below
-pdf_name : probability : explaination
+{{"pdf_name" : "probability" : "explaination"}}
 
 We want output only in the pattern mentioned, provide accurate and concise responses.
 """
