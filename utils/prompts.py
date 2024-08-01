@@ -201,7 +201,7 @@ Your tasks are:
 
 ** Important ** 
 1. output should be in the format as shown below
- {{"pdf_name" : "probability" : "explaination"}}
+ {{"pdf_name":, "probability":, "explaination":}}
 2. Do NOT use any other format.
 3. Ensure your explanation is concise and within the 20-token limit. Provide accurate and precise responses.
 
