@@ -6,7 +6,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from utils.custom_logger import CustomLogger
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import  JsonOutputParser
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 from langchain.load import dumps, loads
@@ -25,7 +25,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.text_split = RecursiveCharacterTextSplitter(chunk_size =2000, chunk_overlap=500, length_function=len)
         self.doc_id = 0
         self.prompt_file_search = PromptTemplate(template = prompts.FILE_SEARCH_PROMPT, input_variables=["pdf_name", "Context", "description"])
-        self.chain = self.prompt_file_search | self.llm | StrOutputParser()
+        self.chain = self.prompt_file_search | self.llm | JsonOutputParser()
 
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
@@ -127,7 +127,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
         for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
             print(output)
-            output = json.loads(output)
             print(type(output))
             pdf_name = output["pdf_name"]
             probability = float(output["probability"])
