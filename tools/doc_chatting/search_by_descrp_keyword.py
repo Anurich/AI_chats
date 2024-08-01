@@ -65,21 +65,20 @@ class Filesearchbykeyworddescrp(CustomLogger):
             <th>Context</th>
         </tr>
         """
-        for entry in data:
-            for pdf_name, (probability, page_number, explaination) in entry.items():
-                probability_percentage = probability * 100
-                html += f"""
-                <tr>
-                    <td>{pdf_name}</td>
-                    <td>
-                    <div style='background-color: #4CAF50; height: 20px; width: {probability_percentage}%;'></div>
-                    <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
-                    </td>
-                    <td>{page_number}</td>
-                    <td>{explaination}</td>
-                </tr>
-                """
-            
+        for pdf_name, (probability, page_number, explaination) in data.items():
+            probability_percentage = probability * 100
+            html += f"""
+            <tr>
+                <td>{pdf_name}</td>
+                <td>
+                <div style='background-color: #4CAF50; height: 20px; width: {probability_percentage}%;'></div>
+                <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
+                </td>
+                <td>{page_number}</td>
+                <td>{explaination}</td>
+            </tr>
+            """
+        
         html += "</table>"
         return html
 
