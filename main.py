@@ -105,6 +105,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     all_file_names=[]
     file_ids = dict()
     for files in requestQuery.file_names:
+        print(files)
         all_file_names.append(files["filename"])
         file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
 
