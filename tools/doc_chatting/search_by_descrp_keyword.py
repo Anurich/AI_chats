@@ -170,7 +170,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         input_batch = []
 
         for rag_doc, score in tqdm(rag_output):
-            input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description,"page_number": rag_doc.metadata["page_number"]})
+            input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description,"page_number": rag_doc.metadata["page"]})
         
         outputs = self.chain.batch(input_batch)
         
