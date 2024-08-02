@@ -192,7 +192,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
             # Update relevance_score dictionary
             if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
-                relevance_score[pdf_name] = [probability, output["page"], explanation, extracted_value]        
+                relevance_score[pdf_name] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
