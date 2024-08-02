@@ -236,7 +236,8 @@ async def file_search(requestQuery: QueryRequest):
     elif requestQuery.keyword_search == 1:
         response = all_user_search_file[requestQuery.user_id].search(requestQuery.query)
         return {
-            "output": response
+            "output": response,
+            "chat_id": requestQuery.chat_id
         }
 
             
