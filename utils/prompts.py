@@ -73,7 +73,7 @@ AI:
 
 Example:
     <span> <b>filename-Table 1</b> </span>
-    <table border="1">
+    <table border="1" class="pdf_chat">
     <tr>
         <th>Column 1</th>
         <th>Column 2</th>
@@ -94,7 +94,7 @@ Example:
     <br/>
     <br/>
     <span> <b>filename-Table 2</b> </span>
-    <table border="1">
+    <table border="1" class="pdf_chat">
     <tr>
         <th>Column A</th>
         <th>Column B</th>

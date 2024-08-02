@@ -103,7 +103,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
     def generate_html_table_with_graph(self,data):
         html = """
-        <table border='1' style='border-collapse: collapse; width: 100%;'>
+        <table border='1' style='border-collapse: collapse; width: 100%; class='file_filteration'>
         <tr>
             <th>PDF Name</th>
             <th>Probability</th>
