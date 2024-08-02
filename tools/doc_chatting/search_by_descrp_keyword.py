@@ -172,8 +172,31 @@ class Filesearchbykeyworddescrp(CustomLogger):
         for rag_doc, score in tqdm(rag_output):
             input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description})
         
-        output = self.chain.batch(input_batch)
-        print(output)
+        outputs = self.chain.batch(input_batch)
+        
+        for output in tqdm(outputs):
+            # Rename 'explaination' to 'explanation' if it exists
+            if 'explaination' in output:
+                output['explanation'] = output.pop('explaination')
+
+            # Ensure all keys from 'all_keys' are present in the output
+            for key in all_keys:
+                if output.get(key) == None:
+                    output[key] = "Not Found !"
+
+            # Extract relevant values
+            pdf_name = output["pdf_name"]
+            probability = float(output["probability"])
+            explanation = output["explanation"]
+            extracted_value = output["expected_answer"]
+
+            # Update relevance_score dictionary
+            if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
+                relevance_score[pdf_name] = [probability, output["page"], explanation, extracted_value]        
+        
+        html = self.generate_html_table_with_graph(relevance_score)
+        return html
+
 
         # for rg_doc, score in tqdm(rag_output):          
         #     output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
@@ -204,9 +227,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         #         if prob < probability:
         #             relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
         
-        # html = self.generate_html_table_with_graph(relevance_score)
-        # return html
-
+        
 
 
     
