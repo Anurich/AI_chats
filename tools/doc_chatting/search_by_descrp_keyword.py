@@ -120,13 +120,13 @@ class Filesearchbykeyworddescrp(CustomLogger):
     def search(self, description):
         all_keys = ["pdf_name", "probability", "explanation", "expected_answer"]
         relevance_score =dict()
-        retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 100})
+        retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
         multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
         rag_output = ragfusion_chain.invoke({"question": description})
         all_outputs =[]
-        for rg_doc, score in tqdm(rag_output[:21]):           
+        for rg_doc, score in tqdm(rag_output):           
             output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
             n_output = dict()
             for k, v in output.items():
