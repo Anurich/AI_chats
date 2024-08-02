@@ -233,6 +233,7 @@ async def file_search(requestQuery: QueryRequest):
         else:
             all_user_search_file[requestQuery.user_id] = all_user_search_file[requestQuery.user_id].add_file_to_db(requestQuery.file_names)
     elif requestQuery.keyword_search == 1:
+        print(all_user_search_file)
         response = all_user_search_file[requestQuery.user_id].search(requestQuery.query)
         return {
             "output": response,
