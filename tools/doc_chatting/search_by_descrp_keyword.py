@@ -27,37 +27,79 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.prompt_file_search = PromptTemplate(template = prompts.FILE_SEARCH_PROMPT, input_variables=["pdf_name", "Context", "description"])
         self.chain = self.prompt_file_search | self.llm | JsonOutputParser()
 
+    # def add_file_to_db(self, file_paths):
+    #     self.log_info(f"Total of {len(file_paths)} files uploaded !")
+    #     assert len(file_paths) >= 1, self.log_error("Must have atleast 1 file !")
+    #     for path in file_paths:
+    #         file_path = path["filename"]
+    #         temp_file_path = self.client.download_file_to_temp(file_path)
+    #         self.log_info("File Download form bucket to temp folder!")
+    #         if file_path.endswith("pdf"):
+    #             loader = UnstructuredFileLoader(temp_file_path, mode="paged")
+    #             chunked_document = loader.load_and_split()
+    #             for i in range(len(chunked_document)):
+    #                 chunked_document[i].metadata = {
+    #                     "source": file_path.split("/")[1],
+    #                     "page": str(chunked_document[i].metadata["page_number"])
+    #                 }
+    #             # we need to chunk it down to 
+    #             recursive_texts = self.text_split.split_documents(chunked_document)
+    #             all_chunks = [chunk.page_content for chunk in recursive_texts]
+    #             all_ids = [str(i + self.doc_id) for i in range(len(all_chunks))]
+    #             metadatas = [chunk.metadata for chunk in recursive_texts]                   
+    #             self.vectordb_search.add_texts(
+    #                 texts = all_chunks,
+    #                 metadatas = metadatas,
+    #                 ids=all_ids,
+    #             )
+    #             self.doc_id+= len(all_ids)
+    #             self.log_info("Embedding stored successfully !")
+            
+    #         os.remove(temp_file_path)
+    #         self.log_info("File removed from temp folder !")
+    
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
-        assert len(file_paths) >= 1, self.log_error("Must have atleast 1 file !")
-        for path in file_paths:
+        assert len(file_paths) >= 1, self.log_error("Must have at least 1 file !")
+
+        def process_file(path):
             file_path = path["filename"]
             temp_file_path = self.client.download_file_to_temp(file_path)
-            self.log_info("File Download form bucket to temp folder!")
+            self.log_info("File Downloaded from bucket to temp folder!")
+
             if file_path.endswith("pdf"):
                 loader = UnstructuredFileLoader(temp_file_path, mode="paged")
                 chunked_document = loader.load_and_split()
+
                 for i in range(len(chunked_document)):
                     chunked_document[i].metadata = {
                         "source": file_path.split("/")[1],
                         "page": str(chunked_document[i].metadata["page_number"])
                     }
-                # we need to chunk it down to 
+
+                # Chunk it down further
                 recursive_texts = self.text_split.split_documents(chunked_document)
                 all_chunks = [chunk.page_content for chunk in recursive_texts]
                 all_ids = [str(i + self.doc_id) for i in range(len(all_chunks))]
-                metadatas = [chunk.metadata for chunk in recursive_texts]                   
+                metadatas = [chunk.metadata for chunk in recursive_texts]
+
+                # Adding texts to the vector database in batches
                 self.vectordb_search.add_texts(
-                    texts = all_chunks,
-                    metadatas = metadatas,
+                    texts=all_chunks,
+                    metadatas=metadatas,
                     ids=all_ids,
                 )
-                self.doc_id+= len(all_ids)
-                self.log_info("Embedding stored successfully !")
-            
+                self.doc_id += len(all_ids)
+                self.log_info("Embedding stored successfully!")
+
             os.remove(temp_file_path)
-            self.log_info("File removed from temp folder !")
-    
+            self.log_info("File removed from temp folder!")
+
+        # Use ThreadPoolExecutor to parallelize the file processing
+        with ThreadPoolExecutor() as executor:
+            executor.map(process_file, file_paths)
+
+
     def generate_html_table_with_graph(self,data):
         html = """
         <table border='1' style='border-collapse: collapse; width: 100%;'>
@@ -117,46 +159,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
         
         return reranked_results
 
-    # def search(self, description):
-    #     all_keys = ["pdf_name", "probability", "explanation", "expected_answer"]
-    #     relevance_score =dict()
-    #     retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
-    #     multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
-    #     ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
-
-    #     rag_output = ragfusion_chain.invoke({"question": description})
-    #     all_outputs =[]
-    #     for rg_doc, score in tqdm(rag_output):           
-    #         output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
-    #         n_output = dict()
-    #         for k, v in output.items():
-    #             if k == "explaination":
-    #                 n_output["explanation"] = v
-    #             else:
-    #                 n_output[k] = v
-            
-                
-    #         output = n_output
-    #         del n_output
-    #         if len(all_keys) != len(list(output.keys())):
-    #             left_key  = set(all_keys) - set(list(output.keys()))
-    #             for key in left_key:
-    #                 output[key] ="Not Found!"
-            
-    #         pdf_name = output["pdf_name"]
-    #         probability = float(output["probability"])
-    #         explaination = output["explanation"]
-    #         extracted_value = output["expected_answer"]
-
-    #         if relevance_score.get(rg_doc.metadata["source"]) == None:
-    #             relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]
-    #         else:
-    #             prob,_, _,_ = relevance_score[rg_doc.metadata["source"]]
-    #             if prob < probability:
-    #                 relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
-        
-    #     html = self.generate_html_table_with_graph(relevance_score)
-    #     return html
 
 
     def search(self, description):
@@ -195,38 +197,3 @@ class Filesearchbykeyworddescrp(CustomLogger):
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
-
-
-        # for rg_doc, score in tqdm(rag_output):          
-        #     output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
-        #     n_output = dict()
-        #     for k, v in output.items():
-        #         if k == "explaination":
-        #             n_output["explanation"] = v
-        #         else:
-        #             n_output[k] = v
-            
-                
-        #     output = n_output
-        #     del n_output
-        #     if len(all_keys) != len(list(output.keys())):
-        #         left_key  = set(all_keys) - set(list(output.keys()))
-        #         for key in left_key:
-        #             output[key] ="Not Found!"
-            
-        #     pdf_name = output["pdf_name"]
-        #     probability = float(output["probability"])
-        #     explaination = output["explanation"]
-        #     extracted_value = output["expected_answer"]
-
-        #     if relevance_score.get(rg_doc.metadata["source"]) == None:
-        #         relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]
-        #     else:
-        #         prob,_, _,_ = relevance_score[rg_doc.metadata["source"]]
-        #         if prob < probability:
-        #             relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
-        
-        
-
-
-    
