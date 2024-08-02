@@ -192,6 +192,7 @@ You will be provided with:
 pdf_name: {pdf_name}
 Context: {Context}
 Description: {description}
+page_number: {page_number}
 
 Your tasks are:
 1. Check the relevance between the description and context.
@@ -199,7 +200,7 @@ Your tasks are:
 3. Extract the answer from the context based on the description, and also provide a 20-token explanation. 
 
 ** Important ** 
-1. The output should contain key-value pairs in JSON format. It should contain keys: pdf_name, probability, explanation, and expected_answer with their corresponding values.
+1. The output should contain key-value pairs in JSON format. It should contain keys: pdf_name, probability, explanation, expected_answer, page_number with their corresponding values.
 2. Ensure your explanation is concise and within the 20-token limit. Provide accurate and precise responses.
 3. If any information is not available, include the key with the value "information not available".
 

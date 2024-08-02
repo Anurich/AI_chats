@@ -160,7 +160,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
 
     def search(self, description):
-        all_keys = ["pdf_name", "probability", "explanation", "expected_answer"]
+        all_keys = ["pdf_name", "probability", "explanation", "expected_answer","page_number"]
         relevance_score =dict()
         retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
         multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
@@ -170,7 +170,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         input_batch = []
 
         for rag_doc, score in tqdm(rag_output):
-            input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description})
+            input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description,"page_number": rag_doc.metadata["page_number"]})
         
         outputs = self.chain.batch(input_batch)
         
@@ -192,7 +192,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
             # Update relevance_score dictionary
             if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
-                relevance_score[pdf_name] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
+                relevance_score[pdf_name] = [probability, output["page"], explaination, extracted_value]        
         
         html = self.generate_html_table_with_graph(relevance_score)
         return html
