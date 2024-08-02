@@ -117,6 +117,48 @@ class Filesearchbykeyworddescrp(CustomLogger):
         
         return reranked_results
 
+    # def search(self, description):
+    #     all_keys = ["pdf_name", "probability", "explanation", "expected_answer"]
+    #     relevance_score =dict()
+    #     retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
+    #     multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
+    #     ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
+
+    #     rag_output = ragfusion_chain.invoke({"question": description})
+    #     all_outputs =[]
+    #     for rg_doc, score in tqdm(rag_output):           
+    #         output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
+    #         n_output = dict()
+    #         for k, v in output.items():
+    #             if k == "explaination":
+    #                 n_output["explanation"] = v
+    #             else:
+    #                 n_output[k] = v
+            
+                
+    #         output = n_output
+    #         del n_output
+    #         if len(all_keys) != len(list(output.keys())):
+    #             left_key  = set(all_keys) - set(list(output.keys()))
+    #             for key in left_key:
+    #                 output[key] ="Not Found!"
+            
+    #         pdf_name = output["pdf_name"]
+    #         probability = float(output["probability"])
+    #         explaination = output["explanation"]
+    #         extracted_value = output["expected_answer"]
+
+    #         if relevance_score.get(rg_doc.metadata["source"]) == None:
+    #             relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]
+    #         else:
+    #             prob,_, _,_ = relevance_score[rg_doc.metadata["source"]]
+    #             if prob < probability:
+    #                 relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
+        
+    #     html = self.generate_html_table_with_graph(relevance_score)
+    #     return html
+
+
     def search(self, description):
         all_keys = ["pdf_name", "probability", "explanation", "expected_answer"]
         relevance_score =dict()
@@ -125,38 +167,45 @@ class Filesearchbykeyworddescrp(CustomLogger):
         ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
         rag_output = ragfusion_chain.invoke({"question": description})
-        all_outputs =[]
-        for rg_doc, score in tqdm(rag_output):           
-            output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
-            n_output = dict()
-            for k, v in output.items():
-                if k == "explaination":
-                    n_output["explanation"] = v
-                else:
-                    n_output[k] = v
+        input_batch = []
+
+        for rag_doc, score in tqdm(rag_output):
+            input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description})
+        
+        output = self.chain.batch(input_batch)
+        print(output)
+
+        # for rg_doc, score in tqdm(rag_output):          
+        #     output = self.chain.invoke({"pdf_name": rg_doc.metadata["source"],"Context": rg_doc.page_content, "description": description})
+        #     n_output = dict()
+        #     for k, v in output.items():
+        #         if k == "explaination":
+        #             n_output["explanation"] = v
+        #         else:
+        #             n_output[k] = v
             
                 
-            output = n_output
-            del n_output
-            if len(all_keys) != len(list(output.keys())):
-                left_key  = set(all_keys) - set(list(output.keys()))
-                for key in left_key:
-                    output[key] ="Not Found!"
+        #     output = n_output
+        #     del n_output
+        #     if len(all_keys) != len(list(output.keys())):
+        #         left_key  = set(all_keys) - set(list(output.keys()))
+        #         for key in left_key:
+        #             output[key] ="Not Found!"
             
-            pdf_name = output["pdf_name"]
-            probability = float(output["probability"])
-            explaination = output["explanation"]
-            extracted_value = output["expected_answer"]
+        #     pdf_name = output["pdf_name"]
+        #     probability = float(output["probability"])
+        #     explaination = output["explanation"]
+        #     extracted_value = output["expected_answer"]
 
-            if relevance_score.get(rg_doc.metadata["source"]) == None:
-                relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]
-            else:
-                prob,_, _,_ = relevance_score[rg_doc.metadata["source"]]
-                if prob < probability:
-                    relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
+        #     if relevance_score.get(rg_doc.metadata["source"]) == None:
+        #         relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]
+        #     else:
+        #         prob,_, _,_ = relevance_score[rg_doc.metadata["source"]]
+        #         if prob < probability:
+        #             relevance_score[rg_doc.metadata["source"]] = [probability, rg_doc.metadata["page"], explaination, extracted_value]        
         
-        html = self.generate_html_table_with_graph(relevance_score)
-        return html
+        # html = self.generate_html_table_with_graph(relevance_score)
+        # return html
 
 
 

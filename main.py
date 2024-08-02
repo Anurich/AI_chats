@@ -40,7 +40,6 @@ all_user_vector_db  = dict()
 all_user_table_chat =dict()
 all_user_search_file=dict()
 client = BucketDigitalOcean()
-
 ####################
 
 class QueryRequest(BaseModel):
