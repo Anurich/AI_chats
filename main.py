@@ -106,7 +106,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     file_ids = dict()
     for files in requestQuery.file_names:
         all_file_names.append(files["filename"])
-        file_ids[files["filename"]] = files["base_64_content"]
+        file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
 
     responses = client.s3_object_list(image_and_text_path)
     if len(responses) >0:
