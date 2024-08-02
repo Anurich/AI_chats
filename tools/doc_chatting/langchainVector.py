@@ -73,6 +73,7 @@ class createVectorStore_DOC:
         
         self.page_texts = []
         
+        print(self.file_ids)
         for filename in self.doc_object.filenames:
             print(filename)
             file_uuid = self.file_ids[filename.split("/")[-1]]
