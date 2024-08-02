@@ -10,6 +10,7 @@ from langchain_core.output_parsers import  StrOutputParser, JsonOutputParser
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 from langchain.load import dumps, loads
+from concurrent.futures import ThreadPoolExecutor
 import re
 import math
 from utils import prompts
