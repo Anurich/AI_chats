@@ -129,6 +129,8 @@ def summarize_pdf(txt_file_path,keypoints, splitted_docs, client):
     return response
 
 
+def delete_vector_db(vectordb, file_id):
+    print(vectordb.get())
 
 
 def search_queries(content, queries):

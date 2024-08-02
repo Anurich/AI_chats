@@ -103,8 +103,10 @@ async def summarization_doc(requestQuery: QueryRequest):
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/all_files_text.txt"
     all_file_names=[]
+    file_ids = dict()
     for files in requestQuery.file_names:
         all_file_names.append(files["filename"])
+        file_ids[files["filename"]] = files["file_id"]
 
     responses = client.s3_object_list(image_and_text_path)
     if len(responses) >0:
@@ -115,7 +117,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     config.file_config["chat_with_pdf"]["persist_directory"] = "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb"
     
     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
-    vector_doc = createVectorStore_DOC(object_chat_with_pdf,client)
+    vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,file_ids)
     chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm)
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
@@ -252,6 +254,20 @@ async def router(requestQuery: QueryRequest):
     all_images = client.s3_object_list(image_and_text_path)
     json_output = chain.invoke({"query": requestQuery.query, "table": str(len(all_images))})
     return json_output
+
+
+
+@app.post("/ai/model/delete_vectordb")
+async def delete_vector_db(requestQuery: QueryRequest):
+    ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
+    db, _, _ = all_user_vector_db[ids]
+
+
+    file_ids = []
+    for files in requestQuery.file_names:
+        file_ids.append(files["file_id"])
+    assert len(file_ids) == 1
+    utility.delete_vector_db(db,file_ids[0])
 
 
 

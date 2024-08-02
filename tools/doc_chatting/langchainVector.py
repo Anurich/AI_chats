@@ -30,7 +30,8 @@ class UTILS:
         """
             Creating and Storing the vector store
         """
-        self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, persist_directory=persist_directory)
+        self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
+             persist_directory=persist_directory, )
 
     def readVectorStore(self,persist_directory):
         """
@@ -40,11 +41,11 @@ class UTILS:
 
 
 class createVectorStore_DOC:
-    def __init__(self, doc_object: dict, client,again=False):
+    def __init__(self, doc_object: dict, file_ids, client,again=False):
         # now we can exrtact the pdfs
         self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
-
         self.doc_object = doc_object
+        self.file_ids  = file_ids
         self.client = client
         self.vector_storage = UTILS(self.doc_object)
         self.chain = PromptTemplate.from_template(prompts.CATEGORIZATION) | self.llm | StrOutputParser()
@@ -73,6 +74,7 @@ class createVectorStore_DOC:
         self.page_texts = []
         
         for filename in self.doc_object.filenames:
+            file_uuid = self.file_ids[filename]
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
                 loader = UnstructuredFileLoader(temp_file_path,mode="paged")
@@ -87,7 +89,8 @@ class createVectorStore_DOC:
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {
                     "source": filename,
-                    "page": str(document_chunked[i].metadata["page_number"])
+                    "page": str(document_chunked[i].metadata["page_number"]),
+                    "uuid": file_uuid
                 }
             
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
