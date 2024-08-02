@@ -41,7 +41,7 @@ class UTILS:
 
 
 class createVectorStore_DOC:
-    def __init__(self, doc_object: dict, file_ids, client,again=False):
+    def __init__(self, doc_object: dict, client, file_ids: dict,again=False):
         # now we can exrtact the pdfs
         self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
         self.doc_object = doc_object
@@ -75,7 +75,6 @@ class createVectorStore_DOC:
         
         print(self.file_ids)
         for filename in self.doc_object.filenames:
-            print(filename)
             file_uuid = self.file_ids[filename.split("/")[-1]]
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
