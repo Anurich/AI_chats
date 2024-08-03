@@ -94,11 +94,11 @@ class createVectorStore_DOC:
                 }
             
             outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
-            page_contents = [data.page_content for data in document_chunked]
+            page_contents = [{"Context": data.page_content} for data in document_chunked]
             # for page in tqdm(document_chunked):
             #     keypoint_output = self.chain_keyword.invoke({"Context":page.page_content})
             #     self.key_points.extend(keypoint_output.split("Key Points:")[1:])
-            key_word_outputs = self.chain_keyword.batch({"Context": page_contents})
+            key_word_outputs = self.chain_keyword.batch(page_contents)
             print(key_word_outputs)
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
