@@ -97,6 +97,7 @@ def summarize_pdf(txt_file_path,keypoints, splitted_docs, client):
     response= None
     tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
     model     = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
+    model.to_bettertransformer()
     documents_for_summarization = []
     non_summary = []
     splitted_docs = random.sample(splitted_docs, k=200) if len(splitted_docs) > 1000  else splitted_docs
