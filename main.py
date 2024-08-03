@@ -109,7 +109,6 @@ async def summarization_doc(requestQuery: QueryRequest):
         all_file_names.append(files["filename"])
         file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
 
-    
     responses = client.s3_object_list(image_and_text_path)
     if len(responses) >0:
         txt_file =requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/all_files_text.txt"

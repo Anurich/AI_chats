@@ -75,6 +75,7 @@ class TableExtraction(CustomLogger):
                     filename = img.replace(".jpg","")
                     path_to_write_txt = os.path.join(self.path_for_image_and_text, filename+".txt")
                     image_path = os.path.join(self.path_for_image_and_text, img)
+                    print(image_path)
                     df, df_markdown= utility.ocr_extraction(self.det_model, self.det_processor, \
                     self.rec_model, self.rec_processor,image_path, self.client_s3, lang = [self.language])
                     # now we can write it to txt file and also save the dataframe 

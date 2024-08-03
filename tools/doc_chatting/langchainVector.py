@@ -73,7 +73,6 @@ class createVectorStore_DOC:
         
         self.page_texts = []
         
-        print(self.file_ids)
         for filename in self.doc_object.filenames:
             file_uuid = self.file_ids[filename.split("/")[-1]]
             temp_file_path = self.client.download_file_to_temp(filename)
