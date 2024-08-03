@@ -94,8 +94,7 @@ class createVectorStore_DOC:
                 }
             
             categories = [{"Context": page.page_content} for page in tqdm(document_chunked)]
-            # outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
-            print(self.chain.batch(categories))
+            outputs = self.chain.batch(categories)
             page_contents = [{"Context": data.page_content} for data in document_chunked]
             self.key_points = self.chain_keyword.batch(page_contents)[0]
             counts = Counter(outputs)

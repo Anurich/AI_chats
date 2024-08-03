@@ -31,3 +31,4 @@ unstructured[all-docs]
 chromadb
 numpy
 duckduckgo-search
+optimum
