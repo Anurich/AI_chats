@@ -151,7 +151,7 @@ class TableExtraction(CustomLogger):
                     class_label = self.id2label[int(label)]
                     if class_label == 'no object':
                         continue 
-                    elif float(score) > 0.90:
+                    elif float(score) > 0.95:
                         objects.append({'label': class_label, 'score': float(score),
                             'bbox': [float(elem) for elem in bbox],"image":org_img, "filename":filename})
         
