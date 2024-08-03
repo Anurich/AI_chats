@@ -93,13 +93,11 @@ class createVectorStore_DOC:
                     "uuid": file_uuid
                 }
             
-            outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
+            categories = [{"Context": page.page_content} for page in tqdm(document_chunked)]
+            # outputs  = [self.chain.invoke({"Context": page.page_content}) for page in tqdm(document_chunked)]
+            print(self.chain.batch(categories))
             page_contents = [{"Context": data.page_content} for data in document_chunked]
-            # for page in tqdm(document_chunked):
-            #     keypoint_output = self.chain_keyword.invoke({"Context":page.page_content})
-            #     self.key_points.extend(keypoint_output.split("Key Points:")[1:])
-            key_word_outputs = self.chain_keyword.batch(page_contents)
-            print(key_word_outputs)
+            self.key_points = self.chain_keyword.batch(page_contents)[0]
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
             if self.categorization.get(filename) == None:
