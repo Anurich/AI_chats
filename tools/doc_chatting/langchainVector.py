@@ -97,6 +97,7 @@ class createVectorStore_DOC:
             outputs = self.chain.batch(categories)
             page_contents = [{"Context": data.page_content} for data in document_chunked]
             self.key_points = self.chain_keyword.batch(page_contents)[0]
+            print(outputs)
             counts = Counter(outputs)
             category = counts.most_common(1)[0][0]
             if self.categorization.get(filename) == None:
