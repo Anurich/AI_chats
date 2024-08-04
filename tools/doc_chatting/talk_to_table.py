@@ -6,7 +6,7 @@ from langchain.prompts import PromptTemplate
 from utils import history, prompts
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
-from langchain.callbacks import get_openai_callbacks
+from langchain_community.callbacks import get_openai_callback
 import time
 
 
