@@ -15,7 +15,7 @@ class TableChat:
         self.table_file_path: str = file_path
         self.prompt: str = prompts.CHAT_WITH_TABLE
         self.template: PromptTemplate = PromptTemplate.from_template(self.prompt)
-        self.llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, max_tokens=512)
+        self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0, max_tokens=512)
         set_llm_cache(InMemoryCache())
         self.client = client
         self.max_token_limit: int = 500

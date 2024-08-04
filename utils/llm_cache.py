@@ -11,3 +11,4 @@ def get_hashed_name(name):
 def init_gptcache(cache_obj: Cache, llm: str):
     hashed_llm = get_hashed_name(llm)
     init_similar_cache(cache_obj=cache_obj, data_dir=f"similar_cache_{hashed_llm}")
+
