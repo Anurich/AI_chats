@@ -23,7 +23,7 @@ class TableChat:
         self.chatHistory= history.chatHistory(max_token_limit=self.max_token_limit)
         
     def run_chat(self, query: str)-> List[Any]:
-        with get_openai_callbacks()  as cb:
+        with get_openai_callback()  as cb:
             start_time = time.time()
             path = os.path.join(self.table_file_path,"all_files_text.txt")
             texts = self.client.read_from_bucket(path).decode("utf-8")
