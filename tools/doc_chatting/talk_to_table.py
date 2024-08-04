@@ -39,10 +39,11 @@ class TableChat:
                         history.append(data["content"])
 
                 output = chain.invoke({"history": history, "input": query})
-            
+                self.llm_cache_in_memory.add_to_cache(query, output)
+                
             if self.llm_cache_in_memory.check_cache(query) != None:
                 output = self.llm_cache_in_memory.check_cache(query)
-
+            
             self.chatHistory.append_data_to_history(query, output)
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
