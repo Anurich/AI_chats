@@ -11,7 +11,6 @@ from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 from langchain.load import dumps, loads
 from concurrent.futures import ThreadPoolExecutor
-from utils.llm_cache import init_gptcache
 from langchain_community.cache import GPTCache
 from langchain.globals import set_llm_cache
 
