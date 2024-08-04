@@ -1,14 +1,16 @@
-import hashlib
 
-from gptcache import Cache
-from gptcache.adapter.api import init_similar_cache
+class CacheInMemory:
+    def __init__(self):
+        self.cache_in_memory = dict()
+    
+    def check_cache(self, query):
+        if query in self.cache_in_memory:
+            return self.cache_in_memory[query]
+        return None
 
+    def add_to_cache(self, query, response):
+        if self.cache_in_memory.get(query) == None:
+            self.cache_in_memory[query]  = response
+        
 
-def get_hashed_name(name):
-    return hashlib.sha256(name.encode()).hexdigest()
-
-
-def init_gptcache(cache_obj: Cache, llm: str):
-    hashed_llm = get_hashed_name(llm)
-    init_similar_cache(cache_obj=cache_obj, data_dir=f"similar_cache_{hashed_llm}")
 
