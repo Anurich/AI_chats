@@ -124,7 +124,8 @@ def summarize_pdf(txt_file_path,keypoints, splitted_docs, client):
     # than we can create like a prompt to create an 
     chain= PromptTemplate.from_template(prompts.map_template) | llm | StrOutputParser()
     response = chain.invoke({"docs": all_summaries_text})
-    response_with_keypoints = "Summary: \n"+ response +" \n KeyPoints: "+ "\n".join(list(set(keypoints)))
+    keypoints.replace("Key Points:", "")
+    response_with_keypoints = "Summary: \n"+ response +" \n KeyPoints: "+ keypoints)
     client.write_data_as_txt(response_with_keypoints, txt_file_path)
     # client.write_data_as_txt()
     return response
