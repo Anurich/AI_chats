@@ -4,9 +4,9 @@ from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate
 from utils import history, prompts
-from utils.llm_cache import get_hashed_name, init_gptcache
 from langchain.globals import set_llm_cache
-from langchain.cache import GPTCache
+from langchain.cache import InMemoryCache
+
 
 
 
@@ -16,7 +16,7 @@ class TableChat:
         self.prompt: str = prompts.CHAT_WITH_TABLE
         self.template: PromptTemplate = PromptTemplate.from_template(self.prompt)
         self.llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, max_tokens=512)
-        set_llm_cache(GPTCache(init_gptcache))
+        set_llm_cache(InMemoryCache())
         self.client = client
         self.max_token_limit: int = 500
         self.chatHistory= history.chatHistory(max_token_limit=self.max_token_limit)
