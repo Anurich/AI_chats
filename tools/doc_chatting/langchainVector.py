@@ -106,15 +106,9 @@ class createVectorStore_DOC:
             
 
             self.page_texts.extend(document_chunked)
-        # now that we have the pdf_documents
-        # we can combine the page_content form the pdf 
-        # than we can create the text splitter     
-        # for doc in pdf_docs:
-            os.remove(temp_file_path)
-        # self.page_texts = []
-        # for doc in self.docs:
-        #     self.page_texts.append(doc.page_content)
 
+            os.remove(temp_file_path)
+    
 class createVectorStore_WEB:
     def __init__(self, doc_object: dict) -> None:
         self.doc_object = doc_object

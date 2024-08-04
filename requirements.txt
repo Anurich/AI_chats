@@ -32,3 +32,4 @@ chromadb
 numpy
 duckduckgo-search
 optimum
+gptcache
