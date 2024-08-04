@@ -6,7 +6,8 @@ from langchain.prompts import PromptTemplate
 from utils import history, prompts
 from langchain.globals import set_llm_cache
 from langchain.cache import InMemoryCache
-
+from langchain.callbacks import get_openai_callbacks
+import time
 
 
 
@@ -22,20 +23,26 @@ class TableChat:
         self.chatHistory= history.chatHistory(max_token_limit=self.max_token_limit)
         
     def run_chat(self, query: str)-> List[Any]:
-        path = os.path.join(self.table_file_path,"all_files_text.txt")
-        texts = self.client.read_from_bucket(path).decode("utf-8")
-        self.chatHistory.texts.append(texts)
-        self.chatHistory.save_context_to_memory()
+        with get_openai_callbacks()  as cb:
+            start_time = time.time()
+            path = os.path.join(self.table_file_path,"all_files_text.txt")
+            texts = self.client.read_from_bucket(path).decode("utf-8")
+            self.chatHistory.texts.append(texts)
+            self.chatHistory.save_context_to_memory()
 
-        chain = self.template | self.llm | StrOutputParser()
-        filtered_list = [d for d in self.chatHistory.chat_history if 'summary' not in d]
-        history = []
-        history.append(texts)
-        for idx, data in enumerate(filtered_list):
-            if idx % 2 !=0:
-                history.append(data["content"])
+            chain = self.template | self.llm | StrOutputParser()
+            filtered_list = [d for d in self.chatHistory.chat_history if 'summary' not in d]
+            history = []
+            history.append(texts)
+            for idx, data in enumerate(filtered_list):
+                if idx % 2 !=0:
+                    history.append(data["content"])
 
-        output = chain.invoke({"history": history, "input": query})
-        self.chatHistory.append_data_to_history(query, output)
+            output = chain.invoke({"history": history, "input": query})
+            self.chatHistory.append_data_to_history(query, output)
+            end_time = time.time()
+            print(f"Total Time Taken: {end_time - start_time:0.2f}")
+            print(f"{cb}")
+        
         return self.chatHistory.chat_history, output
     
