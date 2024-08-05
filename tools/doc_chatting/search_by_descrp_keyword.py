@@ -138,7 +138,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         with get_openai_callback()  as cb:
             
             start_time = time.time()
-            print(self.llm_cache_in_semantic_memory(description))
+            print(self.llm_cache_in_semantic_memory.get_similar_response(description))
 
             all_keys = ["pdf_name", "probability", "explanation", "expected_answer","page_number"]
             relevance_score =dict()
