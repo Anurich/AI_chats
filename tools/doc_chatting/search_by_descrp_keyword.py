@@ -41,7 +41,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             self.log_info("File Downloaded from bucket to temp folder!")
 
             if file_path.endswith("pdf"):
-                loader = UnstructuredFileLoader(temp_file_path, mode="by_page")
+                loader = UnstructuredFileLoader(temp_file_path, mode="paged")
                 chunked_document = loader.load_and_split()
 
                 for i in range(len(chunked_document)):

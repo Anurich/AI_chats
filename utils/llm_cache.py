@@ -23,7 +23,6 @@ class SemanticMemory:
         self.embedding_func = embedding_func
         self.threshold = threshold
         self.vectordb = chromadb.Client()
-        
 
     def add_query_response():
         pass
