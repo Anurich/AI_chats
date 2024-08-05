@@ -1,3 +1,7 @@
+from utils.prompts import SEMANTIC_CACHING
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+import chromadb
 
 class CacheInMemory:
     def __init__(self):
@@ -12,5 +16,26 @@ class CacheInMemory:
         if self.cache_in_memory.get(query) == None:
             self.cache_in_memory[query]  = response
         
+
+
+class SemanticMemory:
+    def __init__(self, embedding_func, threshold=0.8):
+        self.embedding_func = embedding_func
+        self.threshold = threshold
+        self.vectordb = chromadb.Client()
+        
+
+    def add_query_response():
+        pass
+    def check_cache(self, query):
+        pass
+
+
+    
+        
+
+    
+
+
 
 

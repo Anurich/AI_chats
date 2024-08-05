@@ -206,3 +206,11 @@ Your tasks are:
 
 Make sure to return all the keys. We will only accept responses in the specified format. Deviations will be considered incorrect.
 """
+
+SEMANTIC_CACHING = """
+    Please compare the following two sentences and determine if they are asking for the same thing or have the same context.
+    If the sentences are semantically the same or their context is the same, return "Yes". Otherwise, return "No".
+    Sentence 1: {s1}
+    Sentence 2: {s2}
+    Output should be either yes or no.
+"""
