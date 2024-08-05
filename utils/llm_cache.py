@@ -22,7 +22,9 @@ class SemanticMemory:
     def __init__(self, embedding_func, threshold=0.8):
         self.embedding_func = embedding_func
         self.threshold = threshold
-        self.collection = chromadb.Client()
+        chroma_client = chromadb.Client()
+        self.collection = chroma_client.get_or_create_collection(name="my_collection")
+
 
     def add_query_response(self, query, response):
         embedding = self.embedding_func.embed_query(query)
@@ -33,7 +35,7 @@ class SemanticMemory:
         )
     def get_similar_response(self, query, threshold=0.5):
         new_embedding = self.embedding_func.embed_query(query)
-        results = self.collection.query(
+        results = self.collection.(
             query_embeddings=[new_embedding],
             n_results=1
         )
