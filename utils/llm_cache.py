@@ -38,7 +38,7 @@ class SemanticMemory:
             n_results=1
         )
         
-       print(results)
+        print(results)
 
     def clear_cache(self):
         self.collection.delete_all()
