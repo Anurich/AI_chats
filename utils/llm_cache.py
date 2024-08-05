@@ -25,14 +25,14 @@ class SemanticMemory:
         self.collection = chromadb.Client()
 
     def add_query_response(self, query, response):
-        embedding = self.embedding_func.encode(query)
+        embedding = self.embedding_func.embed_query(query)
         self.collection.add(
             embeddings=[embedding],
             metadatas=[{"query": query, "response": response}],
             ids=[str(len(self.collection))]
         )
     def get_similar_response(self, query, threshold=0.5):
-        new_embedding = self.embedding_func.encode(query)
+        new_embedding = self.embedding_func.embed_query(query)
         results = self.collection.query(
             query_embeddings=[new_embedding],
             n_results=1
