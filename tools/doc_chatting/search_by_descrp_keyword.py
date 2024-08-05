@@ -7,13 +7,13 @@ from langchain_openai import ChatOpenAI
 from utils.custom_logger import CustomLogger
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.output_parsers import  StrOutputParser, JsonOutputParser
+from langchain_community.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 from langchain.load import dumps, loads
 from concurrent.futures import ThreadPoolExecutor
-from langchain_community.cache import GPTCache
-from langchain.globals import set_llm_cache
-
+from utils.llm_cache import SemanticMemory
+import time
 import re
 import math
 from utils import prompts
@@ -23,6 +23,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
     def __init__(self, llm, client, persist_directory) -> None:
         super().__init__(__name__)
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
+        self.llm_cache_in_semantic_memory = SemanticMemory(self.embedding_function)
         self.client =client
         self.llm = llm
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)
@@ -134,39 +135,46 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
 
     def search(self, description):
-        all_keys = ["pdf_name", "probability", "explanation", "expected_answer","page_number"]
-        relevance_score =dict()
-        retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
-        multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
-        ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
+        with get_openai_callback()  as cb:
+            
+            start_time = time.time()
+            print(self.llm_cache_in_semantic_memory(description))
 
-        rag_output = ragfusion_chain.invoke({"question": description})
-        input_batch = []
+            all_keys = ["pdf_name", "probability", "explanation", "expected_answer","page_number"]
+            relevance_score =dict()
+            retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
+            multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
+            ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
-        for rag_doc, score in tqdm(rag_output):
-            input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description,"page_number": rag_doc.metadata["page"]})
-        
-        outputs = self.chain.batch(input_batch)
-        for output in tqdm(outputs):
-            # Rename 'explaination' to 'explanation' if it exists
-            if 'explaination' in output:
-                output['explanation'] = output.pop('explaination')
+            rag_output = ragfusion_chain.invoke({"question": description})
+            input_batch = []
 
-            # Ensure all keys from 'all_keys' are present in the output
-            for key in all_keys:
-                if output.get(key) == None:
-                    output[key] = "Not Found !"
+            for rag_doc, score in tqdm(rag_output):
+                input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description,"page_number": rag_doc.metadata["page"]})
+            
+            outputs = self.chain.batch(input_batch)
+            for output in tqdm(outputs):
+                # Rename 'explaination' to 'explanation' if it exists
+                if 'explaination' in output:
+                    output['explanation'] = output.pop('explaination')
 
-            # Extract relevant values
-            pdf_name = output["pdf_name"]
-            probability = float(output["probability"])
-            explanation = output["explanation"]
-            extracted_value = output["expected_answer"]
+                # Ensure all keys from 'all_keys' are present in the output
+                for key in all_keys:
+                    if output.get(key) == None:
+                        output[key] = "Not Found !"
 
-            # Update relevance_score dictionary
-            if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
-                relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
-        
-        print(relevance_score)
-        html = self.generate_html_table_with_graph(relevance_score)
-        return html
+                # Extract relevant values
+                pdf_name = output["pdf_name"]
+                probability = float(output["probability"])
+                explanation = output["explanation"]
+                extracted_value = output["expected_answer"]
+
+                # Update relevance_score dictionary
+                if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
+                    relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
+            
+            html = self.generate_html_table_with_graph(relevance_score)
+            end_time = time.time()
+            print(f"Total Time Taken: {end_time - start_time:0.2f}")
+            print(f"{cb}")
+            return html
