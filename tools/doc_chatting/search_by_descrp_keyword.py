@@ -177,7 +177,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     # we need to save into cache 
                 self.llm_cache_in_semantic_memory.add_query_response(description, html)
             elif cache_response != None:
-                print(cache_response)
                 html =  cache_response
 
             end_time = time.time()
