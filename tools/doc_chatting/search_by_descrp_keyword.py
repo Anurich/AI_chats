@@ -176,6 +176,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     # we need to save into cache 
                 self.llm_cache_in_semantic_memory.add_query_response(description, relevance_score)
             elif cache_response != None:
+                print(cache_response)
                 corrected_str = re.sub(r"(?<!\\)'", '"', cache_response)
                 relevance_score = json.loads(corrected_str)
 
