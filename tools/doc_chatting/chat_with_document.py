@@ -11,6 +11,7 @@ from utils.llm_cache import SemanticMemory
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils import history, prompts
 import ast
+import time
 from typing import List
 from langchain_community.vectorstores import Chroma
 from typing import  List, Any
@@ -132,4 +133,7 @@ class Chatwithdocument(CustomLogger):
             elif cache_response != None:
                 response_list = ast.literal_eval(cache_response)
 
+            end_time = time.time()
+            print(f"Total Time Taken: {end_time - start_time:0.2f}")
+            print(f"{cb}")
         return response_list
