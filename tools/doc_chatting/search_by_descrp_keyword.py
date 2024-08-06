@@ -174,7 +174,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                         relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
 
                     # we need to save into cache 
-                    self.llm_cache_in_semantic_memory.add_query_response(description, relevance_score)
+                self.llm_cache_in_semantic_memory.add_query_response(description, relevance_score)
             elif cache_response != None:
                 corrected_str = re.sub(r"(?<!\\)'", '"', cache_response)
                 relevance_score = json.loads(corrected_str)
