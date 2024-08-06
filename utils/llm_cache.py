@@ -45,10 +45,7 @@ class SemanticMemory:
         
         nearest_distance = results["distances"][0]
         if len(nearest_distance) > 0:
-            if nearest_distance[0] < threshold:
-                return results["metadatas"][0][0]["response"]
-            else:
-                return None
+            return results["metadatas"][0][0]["response"]
         else:
             return None
 
