@@ -20,7 +20,6 @@ class CacheInMemory:
 
 class SemanticMemory:
     def __init__(self, embedding_func, threshold=0.8):
-        self.embedding_func = embedding_func
         self.threshold = threshold
         chroma_client = chromadb.Client()
         self.collection = chroma_client.get_or_create_collection(name="my_collection")
@@ -33,14 +32,22 @@ class SemanticMemory:
             metadatas=[{"query": query, "response": response}],
             ids=[str(len(self.collection))]
         )
-    def get_similar_response(self, query, threshold=0.5):
+    def get_similar_response(self, query, threshold=0.8):
         new_embedding = self.embedding_func.embed_query(query)
         results = self.collection.query(
             query_embeddings=[new_embedding],
             n_results=1
         )
         
-        print(results)
+        nearest_distance = results["distances"][0][0]
+        if nearest_distance < threshold:
+            return results["metadatas"][0][0]["response"]
+        else:
+            return None
+
+
+
+
 
     def clear_cache(self):
         self.collection.delete_all()

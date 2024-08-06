@@ -50,7 +50,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                         "source": file_path.split("/")[1],
                         "page": str(chunked_document[i].metadata["page_number"])
                     }
-                
+
                 # Chunk it down further
                 recursive_texts = self.text_split.split_documents(chunked_document)
                 all_chunks = [chunk.page_content for chunk in recursive_texts]
@@ -138,41 +138,46 @@ class Filesearchbykeyworddescrp(CustomLogger):
         with get_openai_callback()  as cb:
             
             start_time = time.time()
-            print(self.llm_cache_in_semantic_memory.get_similar_response(description))
+            cache_response = self.llm_cache_in_semantic_memory.get_similar_response(description))
+            if cache_response == None:
+                all_keys = ["pdf_name", "probability", "explanation", "expected_answer","page_number"]
+                relevance_score =dict()
+                retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
+                multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
+                ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
-            all_keys = ["pdf_name", "probability", "explanation", "expected_answer","page_number"]
-            relevance_score =dict()
-            retriever = self.vectordb_search.as_retriever(search_kwargs={"k": 20})
-            multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
-            ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
+                rag_output = ragfusion_chain.invoke({"question": description})
+                input_batch = []
 
-            rag_output = ragfusion_chain.invoke({"question": description})
-            input_batch = []
+                for rag_doc, score in tqdm(rag_output):
+                    input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description,"page_number": rag_doc.metadata["page"]})
+                
+                outputs = self.chain.batch(input_batch)
+                for output in tqdm(outputs):
+                    # Rename 'explaination' to 'explanation' if it exists
+                    if 'explaination' in output:
+                        output['explanation'] = output.pop('explaination')
 
-            for rag_doc, score in tqdm(rag_output):
-                input_batch.append({"pdf_name": rag_doc.metadata["source"],"Context": rag_doc.page_content, "description": description,"page_number": rag_doc.metadata["page"]})
-            
-            outputs = self.chain.batch(input_batch)
-            for output in tqdm(outputs):
-                # Rename 'explaination' to 'explanation' if it exists
-                if 'explaination' in output:
-                    output['explanation'] = output.pop('explaination')
+                    # Ensure all keys from 'all_keys' are present in the output
+                    for key in all_keys:
+                        if output.get(key) == None:
+                            output[key] = "Not Found !"
 
-                # Ensure all keys from 'all_keys' are present in the output
-                for key in all_keys:
-                    if output.get(key) == None:
-                        output[key] = "Not Found !"
+                    # Extract relevant values
+                    pdf_name = output["pdf_name"]
+                    probability = float(output["probability"])
+                    explanation = output["explanation"]
+                    extracted_value = output["expected_answer"]
 
-                # Extract relevant values
-                pdf_name = output["pdf_name"]
-                probability = float(output["probability"])
-                explanation = output["explanation"]
-                extracted_value = output["expected_answer"]
+                    # Update relevance_score dictionary
+                    if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
+                        relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
 
-                # Update relevance_score dictionary
-                if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
-                    relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
-            
+                    # we need to save into cache 
+                    self.llm_cache_in_semantic_memory.add_query_response(description, relevance_score)
+            elif cache_response != None:
+                relevance_score = cache_response
+
             html = self.generate_html_table_with_graph(relevance_score)
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
