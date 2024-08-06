@@ -8,6 +8,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.callbacks import get_openai_callback
 from utils.llm_cache import SemanticMemory
+from langchain_openai.embeddings import OpenAIEmbeddings
 from utils import history, prompts
 import ast
 from typing import List
