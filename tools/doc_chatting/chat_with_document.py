@@ -6,7 +6,10 @@ from langchain_openai import ChatOpenAI
 from langchain.load import dumps, loads
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain_community.callbacks import get_openai_callback
+from utils.llm_cache import SemanticMemory
 from utils import history, prompts
+import ast
 from typing import List
 from langchain_community.vectorstores import Chroma
 from typing import  List, Any
@@ -23,6 +26,8 @@ class Chatwithdocument(CustomLogger):
         self.num_docs_final: int = 30
         self.num_retrieved_docs: int = 20
         self.chat_history: List[Any] = []
+        self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
+        self.llm_cache_in_semantic_memory = SemanticMemory(self.embedding_function)
         self.prompt: ChatPromptTemplate = ChatPromptTemplate.from_template(prompts.CHAT_WITH_PDF)
         self.max_token_limit: int = 500
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
@@ -61,60 +66,69 @@ class Chatwithdocument(CustomLogger):
     def run_chat(self, query: str):
         # Summarize docs need not to be run every time because if the document is summarized I can save it 
         # and next time when someone asks a question I can simply use the saved one 
-        retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs})
-        multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
-        ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
+        response_list = None
+        with get_openai_callback()  as cb:
+            start_time = time.time()
+            cache_response = self.llm_cache_in_semantic_memory.get_similar_response(query)
+            if cache_response == None:
+                retriever = self.vector_db.as_retriever(search_kwargs={"k": self.num_retrieved_docs})
+                multi_query_generated = (ChatPromptTemplate.from_template(prompts.RAG_FUSION) | self.llm | StrOutputParser() | (lambda x: x.split("\n")))
+                ragfusion_chain = multi_query_generated | retriever.map() | self.reciprocal_rank_fusion
 
-        rag_chain = (RunnablePassthrough.assign(context = (lambda x: x["context"]))
-            | self.prompt 
-            | self.llm
-            | StrOutputParser() 
-        )
+                rag_chain = (RunnablePassthrough.assign(context = (lambda x: x["context"]))
+                    | self.prompt 
+                    | self.llm
+                    | StrOutputParser() 
+                )
 
-        retriever_with_rag_fusion = (lambda x: x["question"]) | ragfusion_chain
-        rag_chain_with_source = RunnablePassthrough.assign(context=retriever_with_rag_fusion).assign(answer = rag_chain)
-        
-        # Async processing
-        response =  rag_chain_with_source.invoke({"question": query})
+                retriever_with_rag_fusion = (lambda x: x["question"]) | ragfusion_chain
+                rag_chain_with_source = RunnablePassthrough.assign(context=retriever_with_rag_fusion).assign(answer = rag_chain)
+                
+                # Async processing
+                response =  rag_chain_with_source.invoke({"question": query})
 
-        output = response["answer"]
-        self.chatHistory.append_data_to_history(query, output)
-        
-        # Let's take always top last 5 in chat history 
-        # to find the answer
-        
-        output_answer = output.split("Sentiment:")[0].strip().replace("Answer:","")
-        
-        ner   = self.nlp(output_answer)
-        tokens_with_label = []
-        to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
-        if ner.ents:
-            for ner_obj in ner.ents:
-                if ner_obj.label_ not in to_remove:
-                    start_index = ner_obj.start_char
-                    end_index   = ner_obj.end_char
-                    label = ner_obj.label_
-                    text  = ner_obj.text
-                    tokens_with_label.append([start_index, end_index, label, text])
+                output = response["answer"]
+                self.chatHistory.append_data_to_history(query, output)
+                
+                # Let's take always top last 5 in chat history 
+                # to find the answer
+                
+                output_answer = output.split("Sentiment:")[0].strip().replace("Answer:","")
+                
+                ner   = self.nlp(output_answer)
+                tokens_with_label = []
+                to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
+                if ner.ents:
+                    for ner_obj in ner.ents:
+                        if ner_obj.label_ not in to_remove:
+                            start_index = ner_obj.start_char
+                            end_index   = ner_obj.end_char
+                            label = ner_obj.label_
+                            text  = ner_obj.text
+                            tokens_with_label.append([start_index, end_index, label, text])
+                    
             
-    
-        sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
-        output_answer += "\n **Sentiment:**\n "+sentiment
-        
-        max_count = 0
-        metadata = None
-        
-        splitted_response = response["answer"].lower().split()
-        for i in range(len(response["context"])):
-            consider = 0
-            doc,_ = response["context"][i]
-            data = doc.page_content.lower()
-            for res in splitted_response:
-                if res in data:
-                    consider +=1
+                sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
+                output_answer += "\n **Sentiment:**\n "+sentiment
+                
+                max_count = 0
+                metadata = None
+                
+                splitted_response = response["answer"].lower().split()
+                for i in range(len(response["context"])):
+                    consider = 0
+                    doc,_ = response["context"][i]
+                    data = doc.page_content.lower()
+                    for res in splitted_response:
+                        if res in data:
+                            consider +=1
 
-            if consider > max_count:
-                max_count  = consider
-                metadata = doc.metadata
-            
-        return [output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
+                    if consider > max_count:
+                        max_count  = consider
+                        metadata = doc.metadata
+                response_list=[output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
+                self.llm_cache_in_semantic_memory.add_query_response(description, html)
+            elif cache_response != None:
+                response_list = ast.literal_eval(cache_response)
+
+        return response_list
