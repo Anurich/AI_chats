@@ -20,6 +20,7 @@ class CacheInMemory:
 
 class SemanticMemory:
     def __init__(self, embedding_func, threshold=0.8):
+        self.embedding_func = embedding_func
         self.threshold = threshold
         chroma_client = chromadb.Client()
         self.collection = chroma_client.get_or_create_collection(name="my_collection")
