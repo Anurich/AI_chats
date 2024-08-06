@@ -129,7 +129,7 @@ class Chatwithdocument(CustomLogger):
                         max_count  = consider
                         metadata = doc.metadata
                 response_list=[output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
-                self.llm_cache_in_semantic_memory.add_query_response(description, html)
+                self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
                 response_list = ast.literal_eval(cache_response)
 
