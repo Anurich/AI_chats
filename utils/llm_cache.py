@@ -31,11 +31,11 @@ class SemanticMemory:
         embedding = self.embedding_func.embed_query(query)
         self.collection.add(
             embeddings=[embedding],
-            metadatas=[{"query": query, "response": response}],
+            metadatas=[{"query": query, "response": str(response)}],
             ids=[str(self.counter)]
         )
         self.counter +=1
-        
+
     def get_similar_response(self, query, threshold=0.8):
         new_embedding = self.embedding_func.embed_query(query)
         results = self.collection.query(
@@ -49,7 +49,6 @@ class SemanticMemory:
                 return results["metadatas"][0][0]["response"]
             else:
                 return None
-
         else:
             return None
 
