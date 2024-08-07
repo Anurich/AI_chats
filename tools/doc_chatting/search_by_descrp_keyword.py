@@ -21,10 +21,10 @@ from utils import prompts
 
 
 class Filesearchbykeyworddescrp(CustomLogger):
-    def __init__(self, llm, client, persist_directory) -> None:
+    def __init__(self, llm, client, persist_directory, user_id) -> None:
         super().__init__(__name__)
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
-        self.llm_cache_in_semantic_memory = SemanticMemory(self.embedding_function)
+        self.llm_cache_in_semantic_memory = SemanticMemory(embedding_func = self.embedding_function, user_id=user_id)
         self.client =client
         self.llm = llm
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)

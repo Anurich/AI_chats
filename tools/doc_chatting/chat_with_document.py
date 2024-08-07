@@ -21,7 +21,7 @@ from utils.custom_logger import CustomLogger
 import spacy
 
 class Chatwithdocument(CustomLogger):
-    def __init__(self, llm: ChatOpenAI, vector_db: Chroma):
+    def __init__(self, llm: ChatOpenAI, vector_db: Chroma, user_id):
         super().__init__(__name__)
         self.llm  = llm
         self.vector_db = vector_db
@@ -29,7 +29,7 @@ class Chatwithdocument(CustomLogger):
         self.num_retrieved_docs: int = 20
         self.chat_history: List[Any] = []
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
-        self.llm_cache_in_semantic_memory = SemanticMemory(self.embedding_function)
+        self.llm_cache_in_semantic_memory = SemanticMemory(embedding_func = self.embedding_function, user_id= user_id)
         self.prompt: ChatPromptTemplate = ChatPromptTemplate.from_template(prompts.CHAT_WITH_PDF)
         self.max_token_limit: int = 500
         self.chatHistory = history.chatHistory(max_token_limit=self.max_token_limit)
