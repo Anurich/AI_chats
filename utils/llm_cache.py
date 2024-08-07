@@ -24,7 +24,7 @@ class SemanticMemory:
         self.threshold = threshold
         self.counter =0
         chroma_client = chromadb.Client()
-        self.collection = chroma_client.get_or_create_collection(name=f"my_collection/{user_id}")
+        self.collection = chroma_client.get_or_create_collection(name=f"my_collection_{user_id}")
 
 
     def add_query_response(self, query, response):
