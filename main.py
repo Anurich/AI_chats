@@ -119,7 +119,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     
     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
     vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,file_ids)
-    chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm)
+    chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm, user_id=requestQuery.user_id)
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
     if os.path.isdir(SAVE_SUMMAIZE_DIR):
@@ -159,7 +159,7 @@ async def chat_with_pdf(requestQuery: QueryRequest):
         config.file_config["chat_with_pdf"]["persist_directory"] = "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb"
         object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
         vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,again=True)
-        chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm)
+        chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm, user_id=requestQuery.user_id)
         all_user_vector_db[ids] = [vector_db, data, chat_tool]
 
     if all_user_vector_db.get(ids) != None:
@@ -228,8 +228,7 @@ async def chat_with_website(requestQuery: QueryRequest):
 
 @app.post("/ai/model/search_keyword")
 async def file_search(requestQuery: QueryRequest):
-    print(requestQuery.user_id)
-    file_search_by_keyword = Filesearchbykeyworddescrp(llm=llm, client=client, persist_directory="search_by_keyword")
+    file_search_by_keyword = Filesearchbykeyworddescrp(llm=llm, client=client, persist_directory="search_by_keyword",user_id=requestQuery.user_id)
     if requestQuery.keyword_search == 0:
         if all_user_search_file.get(requestQuery.user_id) == None:
             file_search_by_keyword.add_file_to_db(requestQuery.file_names)
