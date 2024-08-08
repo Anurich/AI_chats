@@ -2,6 +2,7 @@ from utils.prompts import SEMANTIC_CACHING
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import chromadb
+import os 
 
 class CacheInMemory:
     def __init__(self):
@@ -24,7 +25,8 @@ class SemanticMemory:
         self.threshold = threshold
         self.counter =0
         chroma_client = chromadb.Client()
-        self.collection = chroma_client.get_or_create_collection(name=f"my_collection_{user_id}")
+        os.makedirs("my_collection", exist_ok=True)
+        self.collection = chroma_client.get_or_create_collection(name=os.path.join("my_collection", user_id))
 
 
     def add_query_response(self, query, response):

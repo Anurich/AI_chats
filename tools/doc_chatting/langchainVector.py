@@ -37,7 +37,8 @@ class UTILS:
         """
             read the document from persis directory 
         """
-        return Chroma(persist_directory = persist_directory, embedding_function = self.embedding_function)
+        os.makedirs("chat_with_pdf", exist_ok=True)
+        return Chroma(persist_directory = os.path.join("chat_with_pdf", persist_directory), embedding_function = self.embedding_function)
 
 
 class createVectorStore_DOC:
