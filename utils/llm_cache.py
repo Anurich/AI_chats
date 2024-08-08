@@ -24,9 +24,8 @@ class SemanticMemory:
         self.embedding_func = embedding_func
         self.threshold = threshold
         self.counter =0
-        chroma_client = chromadb.Client()
-        os.makedirs("my_collection", exist_ok=True)
-        self.collection = chroma_client.get_or_create_collection(name=os.path.join("my_collection", user_id))
+        chroma_client = chromadb.Client(persist_directory="filter_file_with_keyword")
+        self.collection = chroma_client.get_or_create_collection(name=user_id)
 
 
     def add_query_response(self, query, response):
