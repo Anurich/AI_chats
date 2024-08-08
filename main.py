@@ -158,7 +158,11 @@ async def chat_with_pdf(requestQuery: QueryRequest):
         config.file_config["chat_with_pdf"]["filenames"] = ""
         config.file_config["chat_with_pdf"]["persist_directory"] = "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb"
         object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
-        vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,again=True)
+        file_ids = dict()
+        for files in requestQuery.file_names:
+            all_file_names.append(files["filename"])
+            file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
+        vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,file_ids,again=True)
         chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm, user_id=requestQuery.user_id)
         all_user_vector_db[ids] = [vector_db, data, chat_tool]
 
