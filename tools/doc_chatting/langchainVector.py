@@ -31,13 +31,13 @@ class UTILS:
             Creating and Storing the vector store
         """
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
-             persist_directory=os.path.join("/var/chat_with_pdf",persist_directory))
+             persist_directory=os.path.join("chat_with_pdf",persist_directory))
 
     def readVectorStore(self,persist_directory):
         """
             read the document from persis directory 
         """
-        return Chroma(persist_directory = os.path.join("/var/chat_with_pdf", persist_directory), embedding_function = self.embedding_function)
+        return Chroma(persist_directory = os.path.join("chat_with_pdf", persist_directory), embedding_function = self.embedding_function)
 
 
 class createVectorStore_DOC:
