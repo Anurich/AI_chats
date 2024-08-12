@@ -244,7 +244,8 @@ async def file_search(requestQuery: QueryRequest):
         response = all_user_search_file[requestQuery.user_id].search(requestQuery.query)
         return {
             "output": response,
-            "chat_id": requestQuery.chat_id
+            "chat_id": requestQuery.chat_id,
+            "query": requestQuery.query,
         }
 
             
