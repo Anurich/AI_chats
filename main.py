@@ -309,5 +309,5 @@ async def delete_vector_db(requestQuery: QueryRequest):
 #     output["chat_id"] = requestQuery.chat_id
 #     return output
 
-if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=4200, workers=4)
+# if __name__ == '__main__':
+#     uvicorn.run(app, host='0.0.0.0', port=4200)
