@@ -75,6 +75,9 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
 
     def generate_html_table_with_graph(self,data):
+        if not any(probability > 0.6 for probability, _, _, _ in data.values()):
+            return "No file found with the given description."
+
         html = """
         <table border='1' style='border-collapse: collapse; width: 100%; class='file_filteration'>
         <tr>
@@ -86,20 +89,20 @@ class Filesearchbykeyworddescrp(CustomLogger):
         </tr>
         """
         for pdf_name, (probability, page_number, explaination, extracted_value) in data.items():
-            probability_percentage = probability * 100
-            html += f"""
-            <tr>
-                <td>{pdf_name}</td>
-                <td>
-                <div style='background-color: #4CAF50; height: 20px; width: {probability_percentage}%;'></div>
-                <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
-                </td>
-                <td>{page_number}</td>
-                <td>{explaination}</td>
-                <td>{extracted_value}</td>
-            </tr>
-            """
-        
+            if probability > 0.6:
+                probability_percentage = probability * 100 
+                html += f"""
+                <tr>
+                    <td>{pdf_name}</td>
+                    <td>
+                    <div style='background-color: #4CAF50; height: 20px; width: {probability_percentage}%;'></div>
+                    <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
+                    </td>
+                    <td>{page_number}</td>
+                    <td>{explaination}</td>
+                    <td>{extracted_value}</td>
+                </tr>
+                """
         html += "</table>"
         return html
 
@@ -180,7 +183,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
             elif cache_response != None:
                 html =  cache_response
 
-            print(html)
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
             print(f"{cb}")
