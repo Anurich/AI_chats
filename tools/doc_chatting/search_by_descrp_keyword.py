@@ -180,6 +180,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             elif cache_response != None:
                 html =  cache_response
 
+            print(html)
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
             print(f"{cb}")
