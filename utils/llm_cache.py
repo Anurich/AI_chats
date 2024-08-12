@@ -37,7 +37,7 @@ class SemanticMemory:
         )
         self.counter +=1
 
-    def get_similar_response(self, query, threshold=0.40):
+    def get_similar_response(self, query, threshold=0.20):
         new_embedding = self.embedding_func.embed_query(query)
         results = self.collection.query(
             query_embeddings=[new_embedding],
