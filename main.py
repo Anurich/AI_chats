@@ -122,7 +122,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     
     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
     vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,file_ids)
-    chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm, user_id=requestQuery.user_id)
+    chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db if len(vector_doc.page_texts) > 0 else "" ,llm=llm, user_id=requestQuery.user_id)
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
     if os.path.isdir(SAVE_SUMMAIZE_DIR):
