@@ -33,36 +33,37 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.chain = self.prompt_file_search | self.llm | JsonOutputParser()
 
     def add_file_to_db(self, file_paths):
-        file_path = file_paths["filename"]
-        if file_path.endswith("pdf"):
-            temp_file_path = self.client.download_file_to_temp(file_path)
-            self.log_info("File Downloaded from bucket to temp folder!")
-            loader = UnstructuredFileLoader(temp_file_path, mode="paged")
-            chunked_document = loader.load_and_split()
+        assert len(file_paths) >= 1, f"At least have one file!"
+        for file_path in tqdm(file_paths["filename"]):
+            if file_path.endswith("pdf"):
+                temp_file_path = self.client.download_file_to_temp(file_path)
+                self.log_info("File Downloaded from bucket to temp folder!")
+                loader = UnstructuredFileLoader(temp_file_path, mode="paged")
+                chunked_document = loader.load_and_split()
 
-            for i in tqdm(range(len(chunked_document))):
-                chunked_document[i].metadata = {
-                    "source": file_path.split("/")[1],
-                    "page": str(chunked_document[i].metadata["page_number"])
-                }
+                for i in tqdm(range(len(chunked_document))):
+                    chunked_document[i].metadata = {
+                        "source": file_path.split("/")[1],
+                        "page": str(chunked_document[i].metadata["page_number"])
+                    }
 
-            # Chunk it down further
-            recursive_texts = self.text_split.split_documents(chunked_document)
-            all_chunks = [chunk.page_content for chunk in recursive_texts]
-            all_ids = [str(i + self.doc_id) for i in range(len(all_chunks))]
-            metadatas = [chunk.metadata for chunk in recursive_texts]
-            
-            # Adding texts to the vector database in batches
-            self.vectordb_search.add_texts(
-                texts=all_chunks,
-                metadatas=metadatas,
-                ids=all_ids,
-            )
-            self.doc_id += len(all_ids)
-            self.log_info("Embedding stored successfully!")
+                # Chunk it down further
+                recursive_texts = self.text_split.split_documents(chunked_document)
+                all_chunks = [chunk.page_content for chunk in recursive_texts]
+                all_ids = [str(i + self.doc_id) for i in range(len(all_chunks))]
+                metadatas = [chunk.metadata for chunk in recursive_texts]
+                
+                # Adding texts to the vector database in batches
+                self.vectordb_search.add_texts(
+                    texts=all_chunks,
+                    metadatas=metadatas,
+                    ids=all_ids,
+                )
+                self.doc_id += len(all_ids)
+                self.log_info("Embedding stored successfully!")
 
-            os.remove(temp_file_path)
-            self.log_info("File removed from temp folder!")
+                os.remove(temp_file_path)
+                self.log_info("File removed from temp folder!")
 
 
     def generate_html_table_with_graph(self,data):
