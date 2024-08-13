@@ -83,7 +83,7 @@ class createVectorStore_DOC:
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {
                     "source": filename,
-                    "page": str(document_chunked[i].metadata["page_number"]),
+                    "page": str(document_chunked[i].metadata["page"]),
                     "uuid": file_uuid
                 }
             
