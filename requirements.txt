@@ -17,7 +17,7 @@ opencv_python_headless
 pandas
 Pillow
 pydantic
-surya-ocr
+surya-ocr==v0.4.12
 torch
 torchvision
 tqdm
