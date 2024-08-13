@@ -75,15 +75,12 @@ class createVectorStore_DOC:
         
         self.page_texts = []
         self.file_with_out_page_texts =[]
-        print(self.doc_object.filenames)
-        for filename in self.doc_object.filenames:
-            print(filename, "*"*100)
-            file_uuid = self.file_ids[filename.split("/")[-1]]
+        for filename in self.doc_object.filenames:            
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
+                file_uuid = self.file_ids[filename.split("/")[-1]]
                 loader = PyPDFLoader(temp_file_path)
             if filename.endswith("txt"):
-                print("I am here -----")
                 loader = TextLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
