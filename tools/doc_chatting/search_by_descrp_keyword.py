@@ -1,6 +1,7 @@
 import os
 import json
-from langchain_unstructured import UnstructuredLoader
+from langchain_community.document_loaders import UnstructuredFileLoader
+
 from langchain_chroma import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
@@ -41,7 +42,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             self.log_info("File Downloaded from bucket to temp folder!")
 
             if file_path.endswith("pdf"):
-                loader = UnstructuredLoader(temp_file_path, mode="paged")
+                loader = UnstructuredFileLoader(temp_file_path, mode="paged")
                 chunked_document = loader.load_and_split()
 
                 for i in range(len(chunked_document)):

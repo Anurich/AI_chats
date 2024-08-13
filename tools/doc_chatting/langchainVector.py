@@ -1,4 +1,4 @@
-from langchain_unstructured import UnstructuredLoader
+from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
@@ -77,7 +77,7 @@ class createVectorStore_DOC:
             file_uuid = self.file_ids[filename.split("/")[-1]]
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
-                loader = UnstructuredLoader(temp_file_path,mode="paged")
+                loader = UnstructuredFileLoader(temp_file_path,mode="paged")
             
             document_chunked = loader.load_and_split()
             for i in range(len(document_chunked)):
