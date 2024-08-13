@@ -10,7 +10,7 @@ from langchain_community.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 from langchain.load import dumps, loads
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from utils.llm_cache import SemanticMemory
 import time
 import re
@@ -68,7 +68,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
             self.log_info("File removed from temp folder!")
 
         # Use ThreadPoolExecutor to parallelize the file processing
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=4) as executor:
             executor.map(process_file, file_paths)
 
 
