@@ -1,8 +1,4 @@
-from langchain import hub
 
-
-
-MAIN_PROMPT =  hub.pull("hwchase17/openai-functions-agent")
 RAG_FUSION  =  """You are a helpful assistant that generates multiple search queries based on a single input query. \n
 Generate multiple search queries related to: {question} \n
 Output (2 queries):"""
