@@ -48,6 +48,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                         "source": file_path.split("/")[1],
                         "page": str(chunked_document[i].metadata["page"])
                     }
+                    print(chunked_document[i])
 
                 # Chunk it down further
                 recursive_texts = self.text_split.split_documents(chunked_document)

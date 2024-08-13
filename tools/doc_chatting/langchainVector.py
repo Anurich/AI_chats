@@ -54,15 +54,16 @@ class createVectorStore_DOC:
         self.categorization = dict()
         self.key_points = []
         self.create_pdf_texts()
-        # split the pdf into texts
-        self.vector_storage.text_splitters(self.page_texts)
-         # this is used for the computing the embedding 
-        # if not os.path.isdir(self.doc_object.persist_directory):
-        # if not os.path.isdir(self.doc_object.persist_directory):
-        if not again:
-            self.vector_storage.createVectorStore(self.doc_object.persist_directory)
-        self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
-
+        if len(self.page_texts) > 0:
+            # split the pdf into texts
+            self.vector_storage.text_splitters(self.page_texts)
+            # this is used for the computing the embedding 
+            # if not os.path.isdir(self.doc_object.persist_directory):
+            # if not os.path.isdir(self.doc_object.persist_directory):
+            if not again:
+                self.vector_storage.createVectorStore(self.doc_object.persist_directory)
+            self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
+            
         
         
     def create_pdf_texts(self):
@@ -80,26 +81,27 @@ class createVectorStore_DOC:
                 loader = PyPDFLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
-            for i in range(len(document_chunked)):
-                document_chunked[i].metadata = {
-                    "source": filename,
-                    "page": str(document_chunked[i].metadata["page"]),
-                    "uuid": file_uuid
-                }
-            
-            categories = [{"Context": page.page_content} for page in tqdm(document_chunked)]
-            outputs = self.chain.batch(categories)
-            page_contents = [{"Context": data.page_content} for data in document_chunked]
-            self.key_points = self.chain_keyword.batch(page_contents)[0]
-            counts = Counter(outputs)
-            category = counts.most_common(1)[0][0]
-            if self.categorization.get(filename) == None:
-                self.categorization[filename] = category
-            else:
-                self.categorization[filename].append(category)
-            
+            if len(document_chunked) != 0:
+                for i in range(len(document_chunked)):
+                    document_chunked[i].metadata = {
+                        "source": filename,
+                        "page": str(document_chunked[i].metadata["page"]),
+                        "uuid": file_uuid
+                    }
+                
+                categories = [{"Context": page.page_content} for page in tqdm(document_chunked)]
+                outputs = self.chain.batch(categories)
+                page_contents = [{"Context": data.page_content} for data in document_chunked]
+                self.key_points = self.chain_keyword.batch(page_contents)[0]
+                counts = Counter(outputs)
+                category = counts.most_common(1)[0][0]
+                if self.categorization.get(filename) == None:
+                    self.categorization[filename] = category
+                else:
+                    self.categorization[filename].append(category)
+                
 
-            self.page_texts.extend(document_chunked)
+                self.page_texts.extend(document_chunked)
 
             os.remove(temp_file_path)
     

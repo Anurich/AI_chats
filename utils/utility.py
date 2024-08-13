@@ -93,7 +93,7 @@ def summarize_pdf(txt_file_path,keypoints, splitted_docs, client):
         First let's summarize the whole pdf using the opensource model 
         than we can use chatgpt api to find the bullet point int those summarization 
     """
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(model="gpt-4o", temperature=2)
     response= None
     tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
     model     = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")

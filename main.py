@@ -129,8 +129,13 @@ async def summarization_doc(requestQuery: QueryRequest):
         shutil.rmtree(SAVE_SUMMAIZE_DIR)
     
     save_file_path = os.path.join(SAVE_SUMMAIZE_DIR,"summary.txt")
+    if len(vector_doc.page_texts) >0:
+        output_summary = utility.summarize_pdf(save_file_path,vector_doc.key_points,vector_doc.vector_storage.recursive_texts, client)
+    else:
+        output_summary ="1. All Pages are images in the pdf! Please check the Images sections ! \n"
 
-    output_summary = utility.summarize_pdf(save_file_path,vector_doc.key_points,vector_doc.vector_storage.recursive_texts, client)
+
+
     all_user_vector_db[ids] = [vector_doc, output_summary, chat_tool]
     response= {
         "summary": output_summary,
