@@ -1,6 +1,6 @@
 import os
 import json
-from langchain_community.document_loaders import UnstructuredFileLoader
+from langchain_unstructured import UnstructuredLoader
 from langchain_chroma import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
