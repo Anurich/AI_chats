@@ -81,6 +81,7 @@ class createVectorStore_DOC:
             if filename.endswith("pdf"):
                 loader = PyPDFLoader(temp_file_path)
             if filename.endswith("txt"):
+                print("I am here -----")
                 loader = TextLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
