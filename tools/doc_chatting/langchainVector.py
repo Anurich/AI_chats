@@ -105,7 +105,6 @@ class createVectorStore_DOC:
                 else:
                     self.categorization[filename].append(category)
                 
-
                 self.page_texts.extend(document_chunked)
             else:
                 self.categorization[filename] = ["Others black"]
