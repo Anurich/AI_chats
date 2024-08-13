@@ -10,7 +10,7 @@ from langchain_community.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
 from tqdm import tqdm
 from langchain.load import dumps, loads
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from utils.llm_cache import SemanticMemory
 import time
 import re
