@@ -1,6 +1,6 @@
 import os
 import json
-from langchain_community.document_loaders import UnstructuredFileLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
@@ -33,14 +33,15 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.chain = self.prompt_file_search | self.llm | JsonOutputParser()
 
     def add_file_to_db(self, file_paths):
-        assert len(file_paths) >= 1, f"At least have one file!"
-
-        for path in file_paths:
+        self.log_info(f"Total of {len(file_paths)} files uploaded !")
+        assert len(file_paths) >= 1, self.log_error("Must have at least 1 file !")
+        def process_file(path):
             file_path = path["filename"]
+            temp_file_path = self.client.download_file_to_temp(file_path)
+            self.log_info("File Downloaded from bucket to temp folder!")
+
             if file_path.endswith("pdf"):
-                temp_file_path = self.client.download_file_to_temp(file_path)
-                self.log_info("File Downloaded from bucket to temp folder!")
-                loader = UnstructuredFileLoader(temp_file_path, mode="paged")
+                loader = PyPDFLoader(temp_file_path)
                 chunked_document = loader.load_and_split()
 
                 for i in tqdm(range(len(chunked_document))):
@@ -54,7 +55,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 all_chunks = [chunk.page_content for chunk in recursive_texts]
                 all_ids = [str(i + self.doc_id) for i in range(len(all_chunks))]
                 metadatas = [chunk.metadata for chunk in recursive_texts]
-                
                 # Adding texts to the vector database in batches
                 self.vectordb_search.add_texts(
                     texts=all_chunks,
@@ -64,8 +64,12 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 self.doc_id += len(all_ids)
                 self.log_info("Embedding stored successfully!")
 
-                os.remove(temp_file_path)
-                self.log_info("File removed from temp folder!")
+            os.remove(temp_file_path)
+            self.log_info("File removed from temp folder!")
+
+        # Use ThreadPoolExecutor to parallelize the file processing
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            executor.map(process_file, file_paths)
 
 
     def generate_html_table_with_graph(self,data):

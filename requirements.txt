@@ -1,7 +1,7 @@
 boto3
 fastapi
 nltk
-langchain==v0.1.15
+langchain
 langchainhub
 langchain_cohere
 langchain_community
