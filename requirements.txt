@@ -3,7 +3,6 @@ fastapi
 nltk
 langchain==v0.1.15
 langchainhub
-langchain-chroma
 langchain_cohere
 langchain_community
 langchain_core
