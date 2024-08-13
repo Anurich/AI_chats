@@ -43,12 +43,10 @@ class Filesearchbykeyworddescrp(CustomLogger):
             if file_path.endswith("pdf"):
                 loader = PyPDFLoader(temp_file_path)
                 chunked_document = loader.load_and_split()
-                print(chunked_document)
                 for i in tqdm(range(len(chunked_document))):
-                    print(chunked_document[i])
                     chunked_document[i].metadata = {
                         "source": file_path.split("/")[1],
-                        "page": str(chunked_document[i].metadata["page_number"])
+                        "page": str(chunked_document[i].metadata["page"])
                     }
 
                 # Chunk it down further
