@@ -108,7 +108,6 @@ async def summarization_doc(requestQuery: QueryRequest):
     all_file_names=[]
     file_ids = dict()
     for files in requestQuery.file_names:
-       
         all_file_names.append(files["filename"])
         file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
 
@@ -132,8 +131,8 @@ async def summarization_doc(requestQuery: QueryRequest):
     if len(vector_doc.page_texts) >0:
         output_summary = utility.summarize_pdf(save_file_path,vector_doc.key_points,vector_doc.vector_storage.recursive_texts, client)
     else:
-        output_summary ="1. All Pages are image in the pdf! Please check the table sections ! \n"
-    
+        output_summary ="1. All Pages are image in the pdf! Please check the table sections! \n"
+
 
 
     all_user_vector_db[ids] = [vector_doc, output_summary, chat_tool]
@@ -141,9 +140,9 @@ async def summarization_doc(requestQuery: QueryRequest):
         "summary": output_summary,
         "chat_id": requestQuery.chat_id,
         "intermediate_steps": ["chat_with_pdf"],
-        "categories": [vector_doc.categorization] if len(vector_doc.page_texts) > 0 else ["Others black"]
+        "categories": [vector_doc.categorization]
     }
-    print(response)
+
     return response
 
 

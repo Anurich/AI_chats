@@ -74,8 +74,9 @@ class createVectorStore_DOC:
         """
         
         self.page_texts = []
-        
+        self.file_with_out_page_texts =[]
         for filename in self.doc_object.filenames:
+            print(filename, "*"*100)
             file_uuid = self.file_ids[filename.split("/")[-1]]
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
@@ -106,6 +107,8 @@ class createVectorStore_DOC:
                 
 
                 self.page_texts.extend(document_chunked)
+            else:
+                self.categorization[filename] = ["Others black"]
 
             os.remove(temp_file_path)
     
