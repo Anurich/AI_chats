@@ -1,0 +1,5 @@
+utils/__pycache__
+.DS_Store
+configuration/__pycache__
+tools/__pycache__
+tools/doc_chatting/__pycache__
