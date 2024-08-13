@@ -133,7 +133,7 @@ async def summarization_doc(requestQuery: QueryRequest):
         output_summary = utility.summarize_pdf(save_file_path,vector_doc.key_points,vector_doc.vector_storage.recursive_texts, client)
     else:
         output_summary ="1. All Pages are image in the pdf! Please check the table sections ! \n"
-
+    
 
 
     all_user_vector_db[ids] = [vector_doc, output_summary, chat_tool]

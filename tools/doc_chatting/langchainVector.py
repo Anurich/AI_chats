@@ -1,4 +1,5 @@
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
@@ -79,6 +80,8 @@ class createVectorStore_DOC:
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
                 loader = PyPDFLoader(temp_file_path)
+            if filename.endswith("txt"):
+                loader = TextLoader(temp_file_path)
             
             document_chunked = loader.load_and_split()
             if len(document_chunked) != 0:
