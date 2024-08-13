@@ -1,6 +1,6 @@
-from langchain_community.document_loaders import UnstructuredFileLoader,TextLoader, Docx2txtLoader,UnstructuredPowerPointLoader
+from langchain_unstructured import UnstructuredFileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -78,13 +78,7 @@ class createVectorStore_DOC:
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
                 loader = UnstructuredFileLoader(temp_file_path,mode="paged")
-            elif filename.endswith("txt"):
-                loader = TextLoader(temp_file_path)
-            elif filename.endswith("pptx"):
-                loader = UnstructuredPowerPointLoader(temp_file_path)
-            elif filename.endswith("docx"):
-                loader = Docx2txtLoader(temp_file_path)
-            
+
             document_chunked = loader.load_and_split()
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {

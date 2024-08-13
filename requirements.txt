@@ -3,6 +3,7 @@ fastapi
 nltk
 langchainhub
 langchain
+langchain-chroma
 langchain_cohere
 langchain_community
 langchain_core
@@ -28,6 +29,7 @@ PyMuPDF
 pdf2image
 frontend
 matplotlib
+langchain-unstructured
 unstructured[all-docs]
 chromadb
 numpy
