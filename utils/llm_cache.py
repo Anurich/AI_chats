@@ -20,9 +20,8 @@ class CacheInMemory:
 
 
 class SemanticMemory:
-    def __init__(self, embedding_func,  user_id, threshold=0.8):
+    def __init__(self, embedding_func,  user_id):
         self.embedding_func = embedding_func
-        self.threshold = threshold
         self.counter =0
         chroma_client = chromadb.PersistentClient(path="filter_file_with_keyword")
         self.collection = chroma_client.get_or_create_collection(name=user_id)
