@@ -34,8 +34,9 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
     def add_file_to_db(self, file_paths):
         assert len(file_paths) >= 1, f"At least have one file!"
-        print(file_paths, "**"*10)
-        for file_path in tqdm(file_paths["filename"]):
+
+        for path in file_paths:
+            file_path = path["filename"]
             if file_path.endswith("pdf"):
                 temp_file_path = self.client.download_file_to_temp(file_path)
                 self.log_info("File Downloaded from bucket to temp folder!")
