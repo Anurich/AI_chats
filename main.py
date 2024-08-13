@@ -132,7 +132,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     if len(vector_doc.page_texts) >0:
         output_summary = utility.summarize_pdf(save_file_path,vector_doc.key_points,vector_doc.vector_storage.recursive_texts, client)
     else:
-        output_summary ="1. All Pages are images in the pdf! Please check the Images sections ! \n"
+        output_summary ="1. All Pages are image in the pdf! Please check the table sections ! \n"
 
 
 
@@ -141,7 +141,7 @@ async def summarization_doc(requestQuery: QueryRequest):
         "summary": output_summary,
         "chat_id": requestQuery.chat_id,
         "intermediate_steps": ["chat_with_pdf"],
-        "categories": [vector_doc.categorization]
+        "categories": [vector_doc.categorization] if len(vector_doc.page_texts) > 0 else ["Others black"]
     }
     return response
 
