@@ -104,7 +104,7 @@ async def chat_with_table(requestQuery: QueryRequest):
 async def summarization_doc(requestQuery: QueryRequest):
 
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
-    image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/all_files_text.txt"
+    image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"
     all_file_names=[]
     file_ids = dict()
     for files in requestQuery.file_names:
