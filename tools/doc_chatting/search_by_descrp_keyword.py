@@ -35,7 +35,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
         assert len(file_paths) >= 1, self.log_error("Must have at least 1 file !")
-        print(file_paths)
         def process_file(path):
             file_path = path["filename"]
             temp_file_path = self.client.download_file_to_temp(file_path)
