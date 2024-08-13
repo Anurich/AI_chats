@@ -143,6 +143,7 @@ async def summarization_doc(requestQuery: QueryRequest):
         "intermediate_steps": ["chat_with_pdf"],
         "categories": [vector_doc.categorization] if len(vector_doc.page_texts) > 0 else ["Others black"]
     }
+    print(response)
     return response
 
 
