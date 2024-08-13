@@ -1,8 +1,7 @@
 import os
 import json
 from langchain_community.document_loaders import UnstructuredFileLoader
-
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -45,7 +44,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 loader = UnstructuredFileLoader(temp_file_path, mode="paged")
                 chunked_document = loader.load_and_split()
 
-                for i in range(len(chunked_document)):
+                for i in tqdm(range(len(chunked_document))):
                     chunked_document[i].metadata = {
                         "source": file_path.split("/")[1],
                         "page": str(chunked_document[i].metadata["page_number"])
