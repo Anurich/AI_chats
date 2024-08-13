@@ -29,7 +29,6 @@ PyMuPDF
 pdf2image
 frontend
 matplotlib
-langchain-unstructured
 unstructured[all-docs]
 chromadb
 numpy
