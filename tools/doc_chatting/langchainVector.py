@@ -111,10 +111,8 @@ class createVectorStore_DOC:
                         document_chunkeds[pdf_file_name] = chunked_docs
                     else:
                         document_chunkeds[pdf_file_name].extend(chunked_docs)
-
             os.remove(temp_file_path)
-        
-        print(document_chunkeds.keys())
+            
         for filename, chunked_docs in document_chunkeds.items():
             if len(chunked_docs) > 0:
                 categories = [{"Context": page.page_content} for page in tqdm(chunked_docs)]
