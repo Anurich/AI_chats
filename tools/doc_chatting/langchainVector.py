@@ -96,13 +96,13 @@ class createVectorStore_DOC:
                 document_chunked = loader.load_and_split()
                 chunked_docs = self.change_metadata(document_chunked, filename, file_uuid=file_uuid)
                 if chunked_docs != None:
-                    document_chunkeds.extend(document_chunkeds)
+                    document_chunkeds.extend(chunked_docs)
             if filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
                 document_chunked = loader.load_and_split()
                 chunked_docs = self.change_metadata(document_chunked, pdf_file_name, file_uuid=file_uuid, table=True)
                 if chunked_docs != None:
-                    document_chunkeds.extend(document_chunkeds)
+                    document_chunkeds.extend(chunked_docs)
             
             
             if len(document_chunkeds) > 0:
