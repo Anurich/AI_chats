@@ -105,18 +105,22 @@ async def summarization_doc(requestQuery: QueryRequest):
 
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"
+    responses = client.s3_object_list(image_and_text_path)
     all_file_names=[]
     file_ids = dict()
     for files in requestQuery.file_names:
-        all_file_names.append(files["filename"])
+        txt_file = filter(lambda x: x in response, [files["filename"]])
+        txt_file_path= requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"+txt_file[0]
+        all_file_names.extend([files["filename"], txt_file_path])
         file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
 
-    responses = client.s3_object_list(image_and_text_path)
     
-    if len(responses) >0:
-        txt_file =requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/all_files_text.txt"
-        all_file_names.append(txt_file)
+    
+    # if len(responses) >0:
+    #     txt_file =requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/all_files_text.txt"
+    #     all_file_names.append(txt_file)
 
+    print(all_file_names, "**"*10)
     config.file_config["chat_with_pdf"]["filenames"] = all_file_names
     config.file_config["chat_with_pdf"]["persist_directory"] = "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb"
     
