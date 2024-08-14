@@ -119,7 +119,7 @@ class createVectorStore_DOC:
                 
                 self.page_texts.extend(document_chunkeds)
             else:
-                self.categorization[pdf_file_name] = ["Others Black"]
+                self.categorization[pdf_file_name] = "Others Black"
 
             os.remove(temp_file_path)
     
