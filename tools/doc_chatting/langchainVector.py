@@ -115,6 +115,8 @@ class createVectorStore_DOC:
                 os.remove(temp_file_path)
         
         for filename, chunked_docs in document_chunkeds.items():
+            print(filename, "**"*10)
+            print(chunked_docs)
             if len(chunked_docs) > 0:
                 categories = [{"Context": page.page_content} for page in tqdm(chunked_docs)]
                 outputs = self.chain.batch(categories)
@@ -130,7 +132,6 @@ class createVectorStore_DOC:
                 
                 self.page_texts.extend(document_chunkeds)
             
-        
             else:
                 self.categorization[pdf_file_name] = "Others Black" 
 
