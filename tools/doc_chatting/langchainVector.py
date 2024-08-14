@@ -71,7 +71,7 @@ class createVectorStore_DOC:
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {
                     "source": filename,
-                    "page": str(document_chunked[i].metadata["page"]) if table ==False else "Table",
+                    "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
                     "uuid": file_uuid
                 }
             return document_chunked
@@ -104,7 +104,6 @@ class createVectorStore_DOC:
                 if chunked_docs != None:
                     document_chunkeds.extend(chunked_docs)
             
-            
             if len(document_chunkeds) > 0:
                 categories = [{"Context": page.page_content} for page in tqdm(document_chunkeds)]
                 outputs = self.chain.batch(categories)
@@ -112,16 +111,17 @@ class createVectorStore_DOC:
                 self.key_points = self.chain_keyword.batch(page_contents)[0]
                 counts = Counter(outputs)
                 category = counts.most_common(1)[0][0]
-                if self.categorization.get(filename) == None:
-                    self.categorization[filename] = category
+                if self.categorization.get(pdf_file_name) == None:
+                    self.categorization[pdf_file_name] = category
                 else:
-                    self.categorization[filename].append(category)
+                    self.categorization[pdf_file_name].append(category)
                 
                 self.page_texts.extend(document_chunkeds)
-            else:
-                self.categorization[pdf_file_name] = "Others Black"
-
             os.remove(temp_file_path)
+        
+        if len(document_chunkeds) == 0:
+            self.categorization[pdf_file_name] = "Others Black" 
+
     
 class createVectorStore_WEB:
     def __init__(self, doc_object: dict) -> None:
