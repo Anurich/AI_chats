@@ -70,22 +70,28 @@ class TableExtraction(CustomLogger):
 
             all_tables = ""
             all_images = self.client_s3.s3_object_list(self.path_for_image_and_text)
+            table_per_filename = dict()
             for idx, img in enumerate(tqdm(all_images)):
                 if img.endswith("jpg"):
                     filename = img.replace(".jpg","")
                     path_to_write_txt = os.path.join(self.path_for_image_and_text, filename+".txt")
                     image_path = os.path.join(self.path_for_image_and_text, img)
-                    print(image_path)
-                    df, df_markdown= utility.ocr_extraction(self.det_model, self.det_processor, \
+                    _, df_markdown= utility.ocr_extraction(self.det_model, self.det_processor, \
                     self.rec_model, self.rec_processor,image_path, self.client_s3, lang = [self.language])
                     # now we can write it to txt file and also save the dataframe 
-                    path_to_write_xlsx = os.path.join(self.path_for_image_and_text, filename+".xlsx")
-                    self.client_s3.write_data_excel(df, path_to_write_xlsx)
+                    # path_to_write_xlsx = os.path.join(self.path_for_image_and_text, filename+".xlsx")
+                    # self.client_s3.write_data_excel(df, path_to_write_xlsx)
                     all_tables += f"{filename}"+"\n"+df_markdown+"\n"
-                    self.client_s3.write_data_as_txt(df_markdown,path_to_write_txt)
-            
+                    # self.client_s3.write_data_as_txt(df_markdown,path_to_write_txt)
+                    if table_per_filename.get(filename.split("Table")[0].strip()) == None:
+                        table_per_filename[filename.split("Table")[0].strip()] = f"{filename}"+"\n"+df_markdown+"\n"
+                    else:
+                        table_per_filename[filename.split("Table")[0].strip()] += f"{filename}"+"\n"+df_markdown+"\n"
             # write the table
             path_to_write_all_files = os.path.join(self.path_for_image_and_text,"all_files_text.txt")
+            for fname, data in table_per_filename.items():
+                path_to_file = os.path.join(self.path_for_image_and_text, fname+".txt")
+                self.client_s3.write_data_as_txt(data, path_to_file)
             self.client_s3.write_data_as_txt(all_tables, path_to_write_all_files)
 
         else:
