@@ -88,12 +88,10 @@ class TableExtraction(CustomLogger):
                     else:
                         table_per_filename[filename.split("Table")[0].strip()] += f"{filename}"+"\n"+df_markdown+"\n"
             # write the table
-            path_to_write_all_files = os.path.join(self.path_for_image_and_text,"all_files_text.txt")
+            table_per_filename["all_files_text"] = all_tables
             for fname, data in table_per_filename.items():
                 path_to_file = os.path.join(self.path_for_image_and_text, fname+".txt")
                 self.client_s3.write_data_as_txt(data, path_to_file)
-            self.client_s3.write_data_as_txt(all_tables, path_to_write_all_files)
-
         else:
             self.log_info("No images are available!")
 
