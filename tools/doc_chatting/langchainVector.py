@@ -74,21 +74,23 @@ class createVectorStore_DOC:
         """
         
         self.page_texts = []
-        self.file_with_out_page_texts =[]
+        table=False
         for filename in self.doc_object.filenames:            
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
                 file_uuid = self.file_ids[filename.split("/")[-1]]
                 loader = PyPDFLoader(temp_file_path)
+                table=False
             if filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
+                table = True
             
             document_chunked = loader.load_and_split()
             if len(document_chunked) != 0:
                 for i in range(len(document_chunked)):
                     document_chunked[i].metadata = {
                         "source": filename,
-                        "page": str(document_chunked[i].metadata["page"]),
+                        "page": str(document_chunked[i].metadata["page"]) if table ==False else "Table",
                         "uuid": file_uuid
                     }
                 
