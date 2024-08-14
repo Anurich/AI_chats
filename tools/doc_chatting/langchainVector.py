@@ -87,7 +87,9 @@ class createVectorStore_DOC:
         document_chunkeds = []
         pdf_file_name = None
         file_uuid=  None
-        for filename in self.doc_object.filenames:            
+        
+        for filename in self.doc_object.filenames: 
+            no_pdf_ocr = False           
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
                 pdf_file_name = filename
@@ -97,6 +99,17 @@ class createVectorStore_DOC:
                 chunked_docs = self.change_metadata(document_chunked, filename, file_uuid=file_uuid)
                 if chunked_docs != None:
                     document_chunkeds.extend(chunked_docs)
+                    categories = [{"Context": page.page_content} for page in tqdm(chunked_docs)]
+                    outputs = self.chain.batch(categories)
+                    page_contents = [{"Context": data.page_content} for data in chunked_docs]
+                    self.key_points = self.chain_keyword.batch(page_contents)[0]
+                    counts = Counter(outputs)
+                    category = counts.most_common(1)[0][0]
+                    if self.categorization.get(pdf_file_name) == None:
+                        self.categorization[pdf_file_name] = category
+                    else:
+                        self.categorization[pdf_file_name].append(category)
+
             if filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
                 document_chunked = loader.load_and_split()
@@ -105,18 +118,6 @@ class createVectorStore_DOC:
                     document_chunkeds.extend(chunked_docs)
             
             if len(document_chunkeds) > 0:
-                categories = [{"Context": page.page_content} for page in tqdm(document_chunkeds)]
-                outputs = self.chain.batch(categories)
-                page_contents = [{"Context": data.page_content} for data in document_chunkeds]
-                self.key_points = self.chain_keyword.batch(page_contents)[0]
-                counts = Counter(outputs)
-                category = counts.most_common(1)[0][0]
-                print(category, "**"*100)
-                if self.categorization.get(pdf_file_name) == None:
-                    self.categorization[pdf_file_name] = category
-                else:
-                    self.categorization[pdf_file_name].append(category)
-                
                 self.page_texts.extend(document_chunkeds)
             os.remove(temp_file_path)
         
