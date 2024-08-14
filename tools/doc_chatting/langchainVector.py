@@ -66,7 +66,17 @@ class createVectorStore_DOC:
             self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
             
         
-        
+    def change_metadata(self,document_chunked, filename, file_uuid= None):
+        if len(document_chunked) != 0:
+            for i in range(len(document_chunked)):
+                document_chunked[i].metadata = {
+                    "source": filename,
+                    "page": str(document_chunked[i].metadata["page"]),
+                    "uuid": file_uuid
+                }
+            return document_chunked
+        return None
+
     def create_pdf_texts(self):
         """
             we flatten the pdf and create the one complete text 
@@ -74,29 +84,31 @@ class createVectorStore_DOC:
         """
         
         self.page_texts = []
-        table=False
+        document_chunkeds = []
+        pdf_file_name = None
+        file_uuid=  None
         for filename in self.doc_object.filenames:            
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
+                pdf_file_name = filename
                 file_uuid = self.file_ids[filename.split("/")[-1]]
                 loader = PyPDFLoader(temp_file_path)
-                table=False
+                document_chunked = loader.load_and_split()
+                chunked_docs = self.change_metadata(document_chunked, filename, file_uuid=file_uuid)
+                if chunked_docs != None:
+                    document_chunkeds.extend(document_chunkeds)
             if filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
-                table = True
+                document_chunked = loader.load_and_split()
+                chunked_docs = self.change_metadata(document_chunked, pdf_file_name, file_uuid=file_uuid)
+                if chunked_docs != None:
+                    document_chunkeds.extend(document_chunkeds)
             
-            document_chunked = loader.load_and_split()
-            if len(document_chunked) != 0:
-                for i in range(len(document_chunked)):
-                    document_chunked[i].metadata = {
-                        "source": filename,
-                        "page": str(document_chunked[i].metadata["page"]) if table ==False else "Table",
-                        "uuid": file_uuid
-                    }
-                
-                categories = [{"Context": page.page_content} for page in tqdm(document_chunked)]
+            
+            if len(document_chunkeds) > 0:
+                categories = [{"Context": page.page_content} for page in tqdm(document_chunkeds)]
                 outputs = self.chain.batch(categories)
-                page_contents = [{"Context": data.page_content} for data in document_chunked]
+                page_contents = [{"Context": data.page_content} for data in document_chunkeds]
                 self.key_points = self.chain_keyword.batch(page_contents)[0]
                 counts = Counter(outputs)
                 category = counts.most_common(1)[0][0]
@@ -105,11 +117,9 @@ class createVectorStore_DOC:
                 else:
                     self.categorization[filename].append(category)
                 
-                self.page_texts.extend(document_chunked)
+                self.page_texts.extend(document_chunkeds)
             else:
-                
-                self.categorization[filename] = ["Others black"]
-                print(self.categorization)
+                self.categorization[pdf_file_name] = ["Others Black"]
 
             os.remove(temp_file_path)
     
