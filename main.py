@@ -109,7 +109,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     all_file_names=[]
     file_ids = dict()
     for files in requestQuery.file_names:
-        txt_file = filter(lambda x: x in response, [files["filename"]])
+        txt_file = list(filter(lambda x: x in responses, [files["filename"]]))
         txt_file_path= requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"+txt_file[0]
         all_file_names.extend([files["filename"], txt_file_path])
         file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
