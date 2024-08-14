@@ -110,7 +110,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     file_ids = dict()
     print(responses)
     for files in requestQuery.file_names:
-        txt_file = list(filter(lambda x: files["filename"] in x , responses))
+        txt_file = list(filter(lambda x: files["filename"].split("/")[-1].split(".pdf")[0].strip() in x , responses))
         print(txt_file)
         if len(txt_file) > 0:
             txt_file_path= requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"+txt_file[0]
