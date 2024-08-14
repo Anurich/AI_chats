@@ -102,13 +102,12 @@ async def chat_with_table(requestQuery: QueryRequest):
 
 @app.post("/ai/model/summarize")
 async def summarization_doc(requestQuery: QueryRequest):
-    
+
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"
-    responses = client.s3_object_list(image_and_text_path)
+    responses = client.s3_object_list_txt(image_and_text_path)
     all_file_names=[]
     file_ids = dict()
-    print(responses)
     for files in requestQuery.file_names:
         txt_file = list(filter(lambda x: files["filename"] in x , responses))
         if len(txt_file) > 0:

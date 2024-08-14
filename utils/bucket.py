@@ -174,6 +174,26 @@ class BucketDigitalOcean(CustomLogger):
         except Exception as e:
             self.logger.error(f"Unable to list objects in folder '{folder_path}'. {e}")
             return []
+    
+    def s3_object_list_txt(self, folder_path: str):
+        """
+        Lists all TXT files in a specified folder path in the bucket.
+
+        Args:
+            folder_path (str): The path to list objects from in the bucket.
+
+        Returns:
+            list: List of TXT file names in the specified folder path.
+                  Returns an empty list if no TXT files are found or if there's an error.
+        """
+        try:
+            response = self.client_object.list_objects_v2(Bucket="ai-server-bucket")
+            all_keys = [obj['Key'] for obj in response.get('Contents', [])]
+            filtered_keys = [key.split('/')[-1] for key in all_keys if key.startswith(folder_path) and key.endswith('.txt')]
+            return filtered_keys
+        except Exception as e:
+            self.logger.error(f"Unable to list objects in folder '{folder_path}'. {e}")
+            return []
 
     def download_file_to_temp(self, folder_path: str):
         """
