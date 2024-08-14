@@ -108,17 +108,15 @@ async def summarization_doc(requestQuery: QueryRequest):
     responses = client.s3_object_list(image_and_text_path)
     all_file_names=[]
     file_ids = dict()
+    print(responses)
     for files in requestQuery.file_names:
-        txt_file = list(filter(lambda x: x in responses, [files["filename"]]))
-        txt_file_path= requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"+txt_file[0]
-        all_file_names.extend([files["filename"], txt_file_path])
+        txt_file = list(filter(lambda x: files["filename"] in x , responses))
+        if len(txt_file) > 0:
+            txt_file_path= requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"+txt_file[0]
+            all_file_names.extend([files["filename"], txt_file_path])
+        else:
+            all_file_names.append(files["filename"])
         file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
-
-    
-    
-    # if len(responses) >0:
-    #     txt_file =requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/all_files_text.txt"
-    #     all_file_names.append(txt_file)
 
     print(all_file_names, "**"*10)
     config.file_config["chat_with_pdf"]["filenames"] = all_file_names
