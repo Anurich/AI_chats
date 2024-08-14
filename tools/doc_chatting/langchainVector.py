@@ -111,6 +111,7 @@ class createVectorStore_DOC:
                 self.key_points = self.chain_keyword.batch(page_contents)[0]
                 counts = Counter(outputs)
                 category = counts.most_common(1)[0][0]
+                print(category, "**"*100)
                 if self.categorization.get(pdf_file_name) == None:
                     self.categorization[pdf_file_name] = category
                 else:
