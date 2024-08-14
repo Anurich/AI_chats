@@ -108,8 +108,10 @@ async def summarization_doc(requestQuery: QueryRequest):
     responses = client.s3_object_list_txt(image_and_text_path)
     all_file_names=[]
     file_ids = dict()
+    print(responses)
     for files in requestQuery.file_names:
         txt_file = list(filter(lambda x: files["filename"] in x , responses))
+        print(txt_file)
         if len(txt_file) > 0:
             txt_file_path= requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"+txt_file[0]
             all_file_names.extend([files["filename"], txt_file_path])
