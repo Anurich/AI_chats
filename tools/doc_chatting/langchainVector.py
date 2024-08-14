@@ -66,12 +66,12 @@ class createVectorStore_DOC:
             self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
             
         
-    def change_metadata(self,document_chunked, filename, file_uuid= None):
+    def change_metadata(self,document_chunked, filename, file_uuid= None, table=False):
         if len(document_chunked) != 0:
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {
                     "source": filename,
-                    "page": str(document_chunked[i].metadata["page"]),
+                    "page": str(document_chunked[i].metadata["page"]) if table ==False else "Table",
                     "uuid": file_uuid
                 }
             return document_chunked
@@ -100,7 +100,7 @@ class createVectorStore_DOC:
             if filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
                 document_chunked = loader.load_and_split()
-                chunked_docs = self.change_metadata(document_chunked, pdf_file_name, file_uuid=file_uuid)
+                chunked_docs = self.change_metadata(document_chunked, pdf_file_name, file_uuid=file_uuid, table=True)
                 if chunked_docs != None:
                     document_chunkeds.extend(document_chunkeds)
             
