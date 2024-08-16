@@ -137,7 +137,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
     def search(self, description):
         with get_openai_callback()  as cb:
-            
             start_time = time.time()
             cache_response = self.llm_cache_in_semantic_memory.get_similar_response(description)
             if cache_response == None:

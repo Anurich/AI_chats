@@ -23,8 +23,8 @@ class SemanticMemory:
     def __init__(self, embedding_func,  user_id):
         self.embedding_func = embedding_func
         self.counter =0
-        chroma_client = chromadb.PersistentClient(path="filter_file_with_keyword")
-        self.collection = chroma_client.get_or_create_collection(name=user_id)
+        chroma_client = chromadb.PersistentClient(path=f"filter_file_with_keyword/{user_id}")
+        self.collection = chroma_client.get_or_create_collection(name="db_with_file_search")
 
 
     def add_query_response(self, query, response):
