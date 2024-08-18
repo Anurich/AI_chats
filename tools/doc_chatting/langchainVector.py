@@ -6,8 +6,11 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from utils import utility, prompts
+from langchain_core.documents import Document
+import pytesseract
 from collections import Counter
 from langchain_openai import ChatOpenAI
+from pdf2image import convert_from_path
 from tqdm import tqdm
 import re 
 import os
@@ -100,7 +103,15 @@ class createVectorStore_DOC:
                     if document_chunkeds.get(pdf_file_name) == None:
                         document_chunkeds[pdf_file_name] = chunked_docs
                 else:
-                    document_chunkeds[pdf_file_name] = []
+                    # let's try pytesseract ocr so that we don't miss the record 
+                    all_pages = convert_from_path(temp_file_path)
+                    docs = []
+                    if len(all_pages) > 0:
+                        for idx, page in enumerate(all_pages):
+                            text = pytesseract.image_to_string(page)
+                            docs.append(Document(page_content=text, metadata={"source": filename, "page":idx+1}))
+
+                    document_chunkeds[pdf_file_name] = docs
 
             if filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
