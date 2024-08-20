@@ -67,19 +67,19 @@ class createVectorStore_DOC:
             # if not os.path.isdir(self.doc_object.persist_directory):
             # if not os.path.isdir(self.doc_object.persist_directory):
             self.vector_storage.createVectorStore(self.doc_object.persist_directory, self.metada_collections)
-            self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
+            # self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
+            self.vector_db = self.vector_storage.vector_db_chroma
             
     def delete_vectordb_from_chroma(self, metada_id):
         ids_to_delete = []
-        print(self.vector_storage.vector_db_chroma._client.list_collections())
-        print(self.vector_db._client.list_collections())
-        for collection in self.vector_storage.vector_db_chroma._client.list_collections():
+        all_docs = self.vector_db._collection.get()
+        for collection in all_docs:
             print(collection)
-            if collection.metadata["uuid"] == metada_id:
-                ids_to_delete.append(collection.id)
+        #     if collection.metadata["uuid"] == metada_id:
+        #         ids_to_delete.append(collection.id)
         
-        # now we can delete it
-        self.vector_db._collection.delete(ids=ids_to_delete)
+        # # now we can delete it
+        # self.vector_db._collection.delete(ids=ids_to_delete)
 
     def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
