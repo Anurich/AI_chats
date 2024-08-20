@@ -35,7 +35,7 @@ class UTILS:
             Creating and Storing the vector store
         """
      
-        self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
+        self.vector_db_chroma = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
              persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), collection_metadata=metadata)
 
     def readVectorStore(self,persist_directory):
@@ -71,8 +71,10 @@ class createVectorStore_DOC:
             
     def delete_vectordb_from_chroma(self, metada_id):
         ids_to_delete = []
+        print(self.vector_storage.vector_db_chroma._client.list_collections())
         print(self.vector_db._client.list_collections())
-        for collection in self.vector_db._client.list_collections():
+        for collection in self.vector_storage.vector_db_chroma._client.list_collections():
+            print(collection)
             if collection.metadata["uuid"] == metada_id:
                 ids_to_delete.append(collection.id)
         
