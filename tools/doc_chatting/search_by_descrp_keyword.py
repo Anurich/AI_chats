@@ -43,7 +43,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
         ids_to_delete = []
         for metadata, id in zip(metdatas, ids):
             if metadata["uuid"] == uuid:
-                ids_to_delete.append(ids)
+                ids_to_delete.append(id)
         
         if len(ids_to_delete) > 0:
             self.vectordb_search._collection.delete(ids=ids_to_delete)
