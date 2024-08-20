@@ -73,13 +73,11 @@ class createVectorStore_DOC:
     def delete_vectordb_from_chroma(self, metada_id):
         ids_to_delete = []
         all_docs = self.vector_db._collection.get()
-        for collection in all_docs:
-            print(collection)
-        #     if collection.metadata["uuid"] == metada_id:
-        #         ids_to_delete.append(collection.id)
-        
+        for ids, metadata in zip(all_docs["ids"], all_docs["metadatas"]):
+            if metadata == metada_id:
+                ids_to_delete.append(ids)
         # # now we can delete it
-        # self.vector_db._collection.delete(ids=ids_to_delete)
+        self.vector_db._collection.delete(ids=ids_to_delete)
 
     def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
