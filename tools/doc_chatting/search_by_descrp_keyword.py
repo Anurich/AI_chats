@@ -32,6 +32,11 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.prompt_file_search = PromptTemplate(template = prompts.FILE_SEARCH_PROMPT, input_variables=["pdf_name", "Context", "description"])
         self.chain = self.prompt_file_search | self.llm | JsonOutputParser()
 
+
+    def delete_vectordb_from_chroma(self):
+        all_docs = self.vectordb_search._collection.get()
+        print(all_docs)
+
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
         assert len(file_paths) >= 1, self.log_error("Must have at least 1 file !")

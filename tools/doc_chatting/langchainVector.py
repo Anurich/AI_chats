@@ -77,7 +77,6 @@ class createVectorStore_DOC:
             if metadata["uuid"] == metada_id and metadata["source"] == filename:
                 ids_to_delete.append(ids)
         # # now we can delete it
-        print(ids_to_delete)
         if len(ids_to_delete) > 0:
             self.vector_db._collection.delete(ids=ids_to_delete)
 
