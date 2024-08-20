@@ -33,11 +33,8 @@ class UTILS:
         """
             Creating and Storing the vector store
         """
-        print(self.recursive_texts)
-        print(len(self.recursive_texts))
-        print(file_uuid)
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
-             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[str(file_uuid)])
+             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[str(file_uuid)]*len(self.recursive_texts))
 
     def readVectorStore(self,persist_directory):
         """
@@ -119,7 +116,7 @@ class createVectorStore_DOC:
             if filename.endswith("txt"):
                 loader = TextLoader(temp_file_path)
                 document_chunked = loader.load_and_split()
-                chunked_docs = self.change_metadata(document_chunked, pdf_file_name, file_uuid=file_uuid, table=True)
+                chunked_docs = self.change_metadata(document_chunked, pdf_file_name,  table=True)
                 if chunked_docs != None:
                     if document_chunkeds[pdf_file_name] == None:
                         document_chunkeds[pdf_file_name] = chunked_docs
