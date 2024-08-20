@@ -263,7 +263,7 @@ async def router(requestQuery: QueryRequest):
 
 @app.post("/ai/model/delete_vectordb")
 async def delete_vector_db(requestQuery: QueryRequest):
-    if requestQuery.chat_id != None:
+    if requestQuery.chat_id != "":
         ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
         for filenames in requestQuery.file_names:
             vc_doc, _, _ = all_user_vector_db[ids]
