@@ -71,8 +71,8 @@ class createVectorStore_DOC:
             
     def delete_vectordb_from_chroma(self, metada_id):
         ids_to_delete = []
-        print(self.vector_db._client.list_collections())
-        for collection in self.vector_db._client.list_collections():
+        print(self.vector_storage.vector_db._client.list_collections())
+        for collection in self.vector_storage.vector_db._client.list_collections():
             if collection.metadata["uuid"] == metada_id:
                 ids_to_delete.append(collection.id)
         
