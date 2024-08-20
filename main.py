@@ -266,7 +266,7 @@ async def delete_vector_db(requestQuery: QueryRequest):
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     for filenames in requestQuery.file_names:
         vc_doc, _, _ = all_user_vector_db[ids]
-        vc_doc.delete_vectordb_from_chroma(requestQuery.chat_id, requestQuery.user_id+"/"+filenames["filename"])
+        vc_doc.delete_vectordb_from_chroma(requestQuery.chat_id, filenames["filename"])
         
 
     
