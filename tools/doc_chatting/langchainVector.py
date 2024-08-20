@@ -60,7 +60,7 @@ class createVectorStore_DOC:
         self.key_points = []
         self.create_pdf_texts()
         if len(self.page_texts) > 0:
-            self.metada_collections = []
+            self.metada_collections = None
             # split the pdf into texts
             self.vector_storage.text_splitters(self.page_texts)
             # this is used for the computing the embedding 
@@ -87,11 +87,12 @@ class createVectorStore_DOC:
                     "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
                     "uuid": self.file_uuid
                 }
-            self.metada_collections.append({
+            # for vector db 
+            self.metada_collections = {
                     "source": filename,
                     "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
                     "uuid": self.file_uuid
-                })
+                }
             return document_chunked
         return None
 
