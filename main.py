@@ -265,7 +265,7 @@ async def router(requestQuery: QueryRequest):
 async def delete_vector_db(requestQuery: QueryRequest):
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     vc_doc, _, _ = all_user_vector_db[ids]
-    vc_doc.delete_vectordb_from_chroma(ids)
+    vc_doc.delete_vectordb_from_chroma({"uuid": requestQuery.chat_id})
     
 
     
