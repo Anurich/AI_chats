@@ -33,8 +33,11 @@ class UTILS:
         """
             Creating and Storing the vector store
         """
+        print(self.recursive_texts)
+        print(len(self.recursive_texts))
+        print(file_uuid)
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
-             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[file_uuid])
+             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[str(file_uuid)])
 
     def readVectorStore(self,persist_directory):
         """
