@@ -36,15 +36,26 @@ class Filesearchbykeyworddescrp(CustomLogger):
         self.chain = self.prompt_file_search | self.llm | JsonOutputParser()
 
 
-    def delete_vectordb_from_chroma(self):
+    def delete_vectordb_from_chroma(self, uuid):
         all_docs = self.vectordb_search._collection.get(include=["metadatas", "documents"])
-        print(all_docs)
+        metdatas = all_docs["metadatas"]
+        ids = all_docs["ids"]
+        ids_to_delete = []
+        for metadata, id in zip(metdatas, ids):
+            if metadata["uuid"] == uuid:
+                ids_to_delete.append(ids)
+        
+        if len(ids_to_delete) > 0:
+            self.vectordb_search._collection.delete(ids=ids_to_delete)
+
+
 
     def add_file_to_db(self, file_paths):
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
         assert len(file_paths) >= 1, self.log_error("Must have at least 1 file !")
         def process_file(path):
             file_path = path["filename"]
+            file_uuid = path["base_64_content"]
             temp_file_path = self.client.download_file_to_temp(file_path)
             self.log_info("File Downloaded from bucket to temp folder!")
 
@@ -55,7 +66,8 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     for i in tqdm(range(len(chunked_document))):
                         chunked_document[i].metadata = {
                             "source": file_path.split("/")[1],
-                            "page": str(chunked_document[i].metadata["page"])
+                            "page": str(chunked_document[i].metadata["page"]),
+                            "uuid": file_uuid
                         }
                 else:
                     all_pages = convert_from_path(temp_file_path)
@@ -63,7 +75,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     if len(all_pages) > 0:
                         for idx, page in enumerate(all_pages):
                             text = pytesseract.image_to_string(page)
-                            chunked_document.append(Document(page_content=text, metadata={"source": file_path.split("/")[1], "page":idx+1}))
+                            chunked_document.append(Document(page_content=text, metadata={"source": file_path.split("/")[1], "page":idx+1, "uuid":file_uuid}))
 
 
                 # Chunk it down further
