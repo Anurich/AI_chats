@@ -1,6 +1,9 @@
 import os
 import json
+from pdf2image import convert_from_path
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.documents import Document
+import pytesseract
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils.custom_logger import CustomLogger
@@ -48,11 +51,20 @@ class Filesearchbykeyworddescrp(CustomLogger):
             if file_path.endswith("pdf"):
                 loader = PyPDFLoader(temp_file_path)
                 chunked_document = loader.load_and_split()
-                for i in tqdm(range(len(chunked_document))):
-                    chunked_document[i].metadata = {
-                        "source": file_path.split("/")[1],
-                        "page": str(chunked_document[i].metadata["page"])
-                    }
+                if len(chunked_document) != 0:
+                    for i in tqdm(range(len(chunked_document))):
+                        chunked_document[i].metadata = {
+                            "source": file_path.split("/")[1],
+                            "page": str(chunked_document[i].metadata["page"])
+                        }
+                else:
+                    all_pages = convert_from_path(temp_file_path)
+                    chunked_document = []
+                    if len(all_pages) > 0:
+                        for idx, page in enumerate(all_pages):
+                            text = pytesseract.image_to_string(page)
+                            chunked_document.append(Document(page_content=text, metadata={"source": file_path.split("/")[1], "page":idx+1}))
+
 
                 # Chunk it down further
                 recursive_texts = self.text_split.split_documents(chunked_document)
@@ -66,6 +78,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     ids=all_ids
                 )
 
+                
                 
                 self.doc_id += len(all_ids)
                 self.log_info("Embedding stored successfully!")
