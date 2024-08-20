@@ -127,7 +127,7 @@ class createVectorStore_DOC:
                     if len(all_pages) > 0:
                         for idx, page in enumerate(all_pages):
                             text = pytesseract.image_to_string(page)
-                            docs.append(Document(page_content=text, metadata={"source": filename, "page":idx+1}))
+                            docs.append(Document(page_content=text, metadata={"source": filename, "page":idx+1,"uuid": self.file_uuid}))
 
                     document_chunkeds[pdf_file_name] = docs
 
