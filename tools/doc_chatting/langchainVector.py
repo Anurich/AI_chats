@@ -29,12 +29,12 @@ class UTILS:
         # page_texts_joined = [" ".join(page_texts)]
         self.recursive_texts = self.text_split.split_documents(page_texts)
 
-    def createVectorStore(self, persist_directory) -> None:
+    def createVectorStore(self, persist_directory, file_uuid) -> None:
         """
             Creating and Storing the vector store
         """
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
-             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[self.file_uuid])
+             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[file_uuid])
 
     def readVectorStore(self,persist_directory):
         """
@@ -64,7 +64,7 @@ class createVectorStore_DOC:
             # if not os.path.isdir(self.doc_object.persist_directory):
             # if not os.path.isdir(self.doc_object.persist_directory):
             if not again:
-                self.vector_storage.createVectorStore(self.doc_object.persist_directory)
+                self.vector_storage.createVectorStore(self.doc_object.persist_directory, file_uuid=self.file_uuid)
             self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
             
     def delete_vectordb_from_chroma(self, ids):
