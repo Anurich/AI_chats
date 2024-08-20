@@ -104,8 +104,8 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
 
     def generate_html_table_with_graph(self,data):
-        # if not any(probability > 0.6 for probability, _, _, _ in data.values()):
-        #     return "No file found with the given description."
+        if not any(probability > 0.6 for probability, _, _, _ in data.values()):
+            return "No file found with the given description."
 
         html = """
         <table border='1' style='border-collapse: collapse; width: 100%; class='file_filteration'>
