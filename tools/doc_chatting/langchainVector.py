@@ -76,6 +76,7 @@ class createVectorStore_DOC:
                 ids_to_delete.append(collection.id)
         
         # now we can delete it
+        print(ids_to_delete)
         self.vector_db._collection.delete(ids=ids_to_delete)
 
     def change_metadata(self,document_chunked, filename, table=False):
