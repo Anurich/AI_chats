@@ -74,9 +74,11 @@ class createVectorStore_DOC:
         ids_to_delete = []
         all_docs = self.vector_db._collection.get()
         for ids, metadata in zip(all_docs["ids"], all_docs["metadatas"]):
+            print(ids, metadata, metada_id)
             if metadata == metada_id:
                 ids_to_delete.append(ids)
         # # now we can delete it
+        print(ids_to_delete)
         self.vector_db._collection.delete(ids=ids_to_delete)
 
     def change_metadata(self,document_chunked, filename, table=False):
