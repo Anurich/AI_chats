@@ -34,7 +34,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
 
     def delete_vectordb_from_chroma(self):
-        all_docs = self.vectordb_search._collection.get()
+        all_docs = self.vectordb_search._collection.get(include=["ids", "metadatas", "documents"])
         print(all_docs)
 
     def add_file_to_db(self, file_paths):
@@ -63,8 +63,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 self.vectordb_search.add_texts(
                     texts=all_chunks,
                     metadatas=metadatas,
-                    ids=all_ids,
-                    collection_metadata=metadatas
+                    ids=all_ids
                 )
 
                 
