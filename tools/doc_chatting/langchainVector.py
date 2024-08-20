@@ -30,13 +30,13 @@ class UTILS:
         # page_texts_joined = [" ".join(page_texts)]
         self.recursive_texts = self.text_split.split_documents(page_texts)
 
-    def createVectorStore(self, persist_directory) -> None:
+    def createVectorStore(self, persist_directory, metadata) -> None:
         """
             Creating and Storing the vector store
         """
      
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
-             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory))
+             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), collection_metadata=metadata)
 
     def readVectorStore(self,persist_directory):
         """
@@ -60,24 +60,23 @@ class createVectorStore_DOC:
         self.key_points = []
         self.create_pdf_texts()
         if len(self.page_texts) > 0:
+            self.metada_collections = []
             # split the pdf into texts
             self.vector_storage.text_splitters(self.page_texts)
             # this is used for the computing the embedding 
             # if not os.path.isdir(self.doc_object.persist_directory):
             # if not os.path.isdir(self.doc_object.persist_directory):
-            if not again:
-                self.vector_storage.createVectorStore(self.doc_object.persist_directory)
+            self.vector_storage.createVectorStore(self.doc_object.persist_directory, self.metada_collections)
             self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
             
     def delete_vectordb_from_chroma(self, metada_id):
         ids_to_delete = []
-        print(self.vector_storage.vector_db._client.list_collections())
-        for collection in self.vector_storage.vector_db._client.list_collections():
+        print(self.vector_db._client.list_collections())
+        for collection in self.vector_db._client.list_collections():
             if collection.metadata["uuid"] == metada_id:
                 ids_to_delete.append(collection.id)
         
         # now we can delete it
-        print(ids_to_delete)
         self.vector_db._collection.delete(ids=ids_to_delete)
 
     def change_metadata(self,document_chunked, filename, table=False):
@@ -88,6 +87,11 @@ class createVectorStore_DOC:
                     "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
                     "uuid": self.file_uuid
                 }
+            self.metada_collections.append({
+                    "source": filename,
+                    "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
+                    "uuid": self.file_uuid
+                })
             return document_chunked
         return None
 
