@@ -46,11 +46,13 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 ids_to_delete.append(id)
         
         if len(ids_to_delete) > 0:
+            self.track_of_deleted.append(self.html)
             self.vectordb_search._collection.delete(ids=ids_to_delete)
 
 
 
     def add_file_to_db(self, file_paths):
+        self.track_of_deleted = []
         self.log_info(f"Total of {len(file_paths)} files uploaded !")
         assert len(file_paths) >= 1, self.log_error("Must have at least 1 file !")
         def process_file(path):
@@ -205,13 +207,14 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
                         relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
 
-                html = self.generate_html_table_with_graph(relevance_score)
-                    # we need to save into cache 
-                self.llm_cache_in_semantic_memory.add_query_response(description, html)
+                self.html = self.generate_html_table_with_graph(relevance_score)
+                # we need to save into cache 
+                self.llm_cache_in_semantic_memory.add_query_response(description, self.html)
             elif cache_response != None:
-                html =  cache_response
+                if cache_response not in self.track_of_deleted:
+                    self.html =  cache_response
 
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
             print(f"{cb}")
-            return html
+            return self.html
