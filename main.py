@@ -123,7 +123,7 @@ async def summarization_doc(requestQuery: QueryRequest):
     config.file_config["chat_with_pdf"]["persist_directory"] = "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb"
     
     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
-    vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,file_ids)
+    vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,requestQuery.chat_id)
     chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db if len(vector_doc.page_texts) > 0 else "" ,llm=llm, user_id=requestQuery.user_id)
   
     SAVE_SUMMAIZE_DIR = f"{requestQuery.path_for_summarization}/{requestQuery.user_id}_{requestQuery.chat_id}/"
@@ -264,9 +264,10 @@ async def router(requestQuery: QueryRequest):
 @app.post("/ai/model/delete_vectordb")
 async def delete_vector_db(requestQuery: QueryRequest):
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
-    vc_doc, _, _ = all_user_vector_db[ids]
-    vc_doc.delete_vectordb_from_chroma(requestQuery.chat_id)
-    
+    for filenames in requestQuery.file_names:
+        vc_doc, _, _ = all_user_vector_db[ids]
+        vc_doc.delete_vectordb_from_chroma(requestQuery.chat_id, requestQuery.user_id+"/"+filenames["filename"])
+        
 
     
 

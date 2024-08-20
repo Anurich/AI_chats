@@ -46,11 +46,11 @@ class UTILS:
 
 
 class createVectorStore_DOC:
-    def __init__(self, doc_object: dict, client, file_ids: dict,again=False):
+    def __init__(self, doc_object: dict, client, chat_ids):
         # now we can exrtact the pdfs
         self.llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
         self.doc_object = doc_object
-        self.file_ids  = file_ids
+        self.chat_ids  = chat_ids
         self.client = client
         self.vector_storage = UTILS(self.doc_object)
         self.chain = PromptTemplate.from_template(prompts.CATEGORIZATION) | self.llm | StrOutputParser()
@@ -70,12 +70,11 @@ class createVectorStore_DOC:
             # self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
             self.vector_db = self.vector_storage.vector_db_chroma
             
-    def delete_vectordb_from_chroma(self, metada_id):
+    def delete_vectordb_from_chroma(self, metada_id, filename):
         ids_to_delete = []
         all_docs = self.vector_db._collection.get()
         for ids, metadata in zip(all_docs["ids"], all_docs["metadatas"]):
-            print(ids, metadata, metada_id)
-            if metadata == metada_id:
+            if metadata["uuid"] == metada_id and metadata["source"] == filename:
                 ids_to_delete.append(ids)
         # # now we can delete it
         print(ids_to_delete)
@@ -88,13 +87,13 @@ class createVectorStore_DOC:
                 document_chunked[i].metadata = {
                     "source": filename,
                     "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
-                    "uuid": self.file_uuid
+                    "uuid": self.chat_ids
                 }
             # for vector db 
             self.metada_collections = {
                     "source": filename,
                     "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
-                    "uuid": self.file_uuid
+                    "uuid": self.chat_ids
                 }
             return document_chunked
         return None
@@ -108,7 +107,6 @@ class createVectorStore_DOC:
         self.page_texts = []
         document_chunkeds= dict() 
         pdf_file_name = None
-        self.file_uuid = self.file_ids[self.doc_object.filenames[0].split("/")[-1]]
         for filename in self.doc_object.filenames:
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
@@ -127,7 +125,7 @@ class createVectorStore_DOC:
                     if len(all_pages) > 0:
                         for idx, page in enumerate(all_pages):
                             text = pytesseract.image_to_string(page)
-                            docs.append(Document(page_content=text, metadata={"source": filename, "page":idx+1,"uuid": self.file_uuid}))
+                            docs.append(Document(page_content=text, metadata={"source": filename, "page":idx+1,"uuid": self.chat_ids}))
 
                     document_chunkeds[pdf_file_name] = docs
 
