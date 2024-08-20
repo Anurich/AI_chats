@@ -46,7 +46,6 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 ids_to_delete.append(id)
         
         if len(ids_to_delete) > 0:
-            self.track_of_deleted.append(self.html)
             self.vectordb_search._collection.delete(ids=ids_to_delete)
 
 
@@ -211,8 +210,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                 # we need to save into cache 
                 self.llm_cache_in_semantic_memory.add_query_response(description, self.html)
             elif cache_response != None:
-                if cache_response not in self.track_of_deleted:
-                    self.html =  cache_response
+                self.html =  cache_response
 
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
