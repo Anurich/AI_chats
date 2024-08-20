@@ -27,7 +27,6 @@ class UTILS:
             the idea is to split the texts into multiple chunks based on the chunk size and chunk overlap
         """
         # page_texts_joined = [" ".join(page_texts)]
-      
         self.recursive_texts = self.text_split.split_documents(page_texts)
 
     def createVectorStore(self, persist_directory) -> None:
@@ -35,7 +34,7 @@ class UTILS:
             Creating and Storing the vector store
         """
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
-             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory))
+             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[self.file_uuid])
 
     def readVectorStore(self,persist_directory):
         """
@@ -68,14 +67,15 @@ class createVectorStore_DOC:
                 self.vector_storage.createVectorStore(self.doc_object.persist_directory)
             self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
             
-        
-    def change_metadata(self,document_chunked, filename, file_uuid= None, table=False):
+    def delete_vectordb_from_chroma(self, ids):
+        self.vector_db._collection.delete(ids=[ids[-1]])
+
+    def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata = {
                     "source": filename,
                     "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
-                    "uuid": file_uuid
                 }
             return document_chunked
         return None
@@ -89,16 +89,15 @@ class createVectorStore_DOC:
         self.page_texts = []
         document_chunkeds= dict() 
         pdf_file_name = None
-        file_uuid=  None
-        
-        for filename in self.doc_object.filenames: 
+        self.file_uuid = self.file_ids[self.doc_object.filenames[0].split("/")[-1]]
+        for filename in self.doc_object.filenames:
             temp_file_path = self.client.download_file_to_temp(filename)
             if filename.endswith("pdf"):
                 pdf_file_name = filename
-                file_uuid = self.file_ids[filename.split("/")[-1]]
+                
                 loader = PyPDFLoader(temp_file_path)
                 document_chunked = loader.load_and_split()
-                chunked_docs = self.change_metadata(document_chunked, filename, file_uuid=file_uuid)
+                chunked_docs = self.change_metadata(document_chunked, filename)
                 if chunked_docs != None:
                     if document_chunkeds.get(pdf_file_name) == None:
                         document_chunkeds[pdf_file_name] = chunked_docs

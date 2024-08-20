@@ -159,26 +159,8 @@ async def chat_with_pdf(requestQuery: QueryRequest):
     vector_db = None
     chat_tool = None
     summary = None
-    
-
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     
-    # if all_user_vector_db.get(ids) == None:
-    #     # image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/all_files_text.txt"
-    #     summary_path = f"{requestQuery.path_for_summarization}/"+requestQuery.user_id+"_"+requestQuery.chat_id+"/summary.txt"
-    #     data = client.read_from_bucket(summary_path).decode("utf-8")
-    #     # print( "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb")
-    #     config.file_config["chat_with_pdf"]["filenames"] = ""
-    #     config.file_config["chat_with_pdf"]["persist_directory"] = "chromadb/"+requestQuery.user_id+"_"+requestQuery.chat_id+"_chromadb"
-    #     object_chat_with_pdf = utility.DotDict(config.file_config["chat_with_pdf"])
-    #     file_ids = dict()
-    #     for files in requestQuery.file_names:
-    #         all_file_names.append(files["filename"])
-    #         file_ids[files["filename"].split("/")[-1]] = files["base_64_content"]
-    #     vector_doc = createVectorStore_DOC(object_chat_with_pdf,client,again=True)
-    #     chat_tool = Chatwithdocument(vector_db=vector_doc.vector_db,llm=llm, user_id=requestQuery.user_id)
-    #     all_user_vector_db[ids] = [vector_db, data, chat_tool]
-
     if all_user_vector_db.get(ids) != None:
         vector_doc,  summary, chat_tool = all_user_vector_db[ids]
         output,  chat_history =  chat_tool.run_chat(requestQuery.query)
@@ -282,15 +264,11 @@ async def router(requestQuery: QueryRequest):
 @app.post("/ai/model/delete_vectordb")
 async def delete_vector_db(requestQuery: QueryRequest):
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
-    db, _, _ = all_user_vector_db[ids]
+    vc_doc, _, _ = all_user_vector_db[ids]
+    vc_doc.delete_vectordb_from_chroma(ids)
+    
 
-
-    file_ids = []
-    for files in requestQuery.file_names:
-        file_ids.append(files["base_64_content"])
-    assert len(file_ids) == 1
-    utility.delete_vector_db(db,file_ids[0])
-
+    
 
 
 # all_ids_mapping = dict()
