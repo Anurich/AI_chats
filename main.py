@@ -269,7 +269,8 @@ async def delete_vector_db(requestQuery: QueryRequest):
             vc_doc, _, _ = all_user_vector_db[ids]
             vc_doc.delete_vectordb_from_chroma(requestQuery.chat_id, filenames["filename"])
     else:
-        all_user_search_file[requestQuery.user_id].delete_vectordb_from_chroma()
+        for filenames in requestQuery.file_names:
+            all_user_search_file[requestQuery.user_id].delete_vectordb_from_chroma(filenames["base_64_content"])
 
 
 
