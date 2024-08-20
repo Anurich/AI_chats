@@ -69,6 +69,7 @@ class createVectorStore_DOC:
             
     def delete_vectordb_from_chroma(self, ids):
         self.vector_db._collection.delete(ids=[ids[-1]])
+        print("Vector db has successfully deleted !")
 
     def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
