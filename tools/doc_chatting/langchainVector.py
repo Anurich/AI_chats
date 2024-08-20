@@ -12,6 +12,7 @@ from collections import Counter
 from langchain_openai import ChatOpenAI
 from pdf2image import convert_from_path
 from tqdm import tqdm
+from uuid import uuid4
 import re 
 import os
 
@@ -29,12 +30,13 @@ class UTILS:
         # page_texts_joined = [" ".join(page_texts)]
         self.recursive_texts = self.text_split.split_documents(page_texts)
 
-    def createVectorStore(self, persist_directory) -> None:
+    def createVectorStore(self, persist_directory, file_uuid) -> None:
         """
             Creating and Storing the vector store
         """
+        ids = [f"{i}_{file_uuid}" for i in range(len(self.recursive_texts))]
         self.vector_db = Chroma.from_documents(self.recursive_texts, self.embedding_function, \
-             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory))
+             persist_directory=os.path.join("/code/chat_with_pdf",persist_directory), ids=[ids])
 
     def readVectorStore(self,persist_directory):
         """
@@ -64,24 +66,17 @@ class createVectorStore_DOC:
             # if not os.path.isdir(self.doc_object.persist_directory):
             # if not os.path.isdir(self.doc_object.persist_directory):
             if not again:
-                self.vector_storage.createVectorStore(self.doc_object.persist_directory)
+                self.vector_storage.createVectorStore(self.doc_object.persist_directory, file_uuid=self.file_uuid)
             self.vector_db = self.vector_storage.readVectorStore(self.doc_object.persist_directory)
             
-    def delete_vectordb_from_chroma(self, metadata_filter: dict):
-        """
-        Delete documents from ChromaDB based on metadata.
-
-        Args:
-            metadata_filter (dict): A dictionary containing metadata fields to filter by.
-                                    Example: {"uuid": "some_uuid_value"}
-        """
-        # Check if the vector_db supports filtering by metadata
-        if hasattr(self.vector_db._collection, 'delete'):
-            # Perform the deletion based on the metadata filter
-            self.vector_db._collection.delete(filter=metadata_filter)
-            print("Documents successfully deleted based on metadata!")
-        else:
-            print("Error: Your ChromaDB version does not support deletion by metadata.")
+    def delete_vectordb_from_chroma(self, metada_id):
+        ids_to_delete = []
+        for collection in self.vector_db._client.list_collections():
+            if collection.metadata["uuid"] == metada_id:
+                ids_to_delete.append(collection.id)
+        
+        # now we can delete it
+        self.vector_db._collection.delete(ids=ids_to_delete)
 
     def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
