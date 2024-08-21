@@ -26,7 +26,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
     def __init__(self, llm, client, persist_directory, user_id) -> None:
         super().__init__(__name__)
         self.embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
-        self.llm_cache_in_semantic_memory = SemanticMemory(embedding_func = self.embedding_function, user_id=user_id)
+        self.llm_cache_in_semantic_memory = SemanticMemory(embedding_func = self.embedding_function, user_id=user_id, type_of_chat="filter_file")
         self.client =client
         self.llm = llm
         self.vectordb_search = Chroma(persist_directory=persist_directory, embedding_function=self.embedding_function)
@@ -109,29 +109,29 @@ class Filesearchbykeyworddescrp(CustomLogger):
             return "No file found with the given description."
 
         html = """
-        <table border='1' style='border-collapse: collapse; width: 100%; class='file_filteration'>
-        <tr>
-            <th>PDF Name</th>
-            <th>Probability</th>
-            <th>Page Number</th>
-            <th>Context</th>
-            <th>Expected Answer</th>
-        </tr>
+            <table border='1' style='border-collapse: collapse; width: 100%; class='file_filteration'>
+            <tr>
+                <th>PDF Name</th>
+                <th>Probability</th>
+                <th>Page Number</th>
+                <th>Context</th>
+                <th>Expected Answer</th>
+            </tr>
         """
         for pdf_name, (probability, page_number, explaination, extracted_value) in data.items():
             if probability > 0.6:
                 probability_percentage = probability * 100 
                 html += f"""
-                <tr>
-                    <td>{pdf_name}</td>
-                    <td>
-                    <div style='background-color: #4CAF50; height: 20px; width: {probability_percentage}%;'></div>
-                    <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
-                    </td>
-                    <td>{page_number}</td>
-                    <td>{explaination}</td>
-                    <td>{extracted_value}</td>
-                </tr>
+                    <tr>
+                        <td>{pdf_name}</td>
+                        <td>
+                        <div style='background-color: #4CAF50; height: 20px; width: {probability_percentage}%;'></div>
+                        <div style='text-align: center; margin-top: 5px;'>{probability_percentage:.2f}%</div>
+                        </td>
+                        <td>{page_number}</td>
+                        <td>{explaination}</td>
+                        <td>{extracted_value}</td>
+                    </tr>
                 """
         html += "</table>"
         return html
