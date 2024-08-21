@@ -91,7 +91,6 @@ class createVectorStore_DOC:
             # for vector db 
             self.metada_collections = {
                     "source": filename,
-                    "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
                     "uuid": self.chat_ids
                 }
             return document_chunked
