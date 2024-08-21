@@ -206,13 +206,13 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
                         relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
 
-                self.html = self.generate_html_table_with_graph(relevance_score)
+                html = self.generate_html_table_with_graph(relevance_score)
                 # we need to save into cache 
                 self.llm_cache_in_semantic_memory.add_query_response(description, self.html)
             elif cache_response != None:
-                self.html =  cache_response
+                html =  cache_response
 
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
             print(f"{cb}")
-            return self.html
+            return html
