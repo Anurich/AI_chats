@@ -208,7 +208,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
                 html = self.generate_html_table_with_graph(relevance_score)
                 # we need to save into cache 
-                self.llm_cache_in_semantic_memory.add_query_response(description, self.html)
+                self.llm_cache_in_semantic_memory.add_query_response(description, html)
             elif cache_response != None:
                 html =  cache_response
 
