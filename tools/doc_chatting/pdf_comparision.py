@@ -17,7 +17,7 @@ class PdfPreprocessingForComparision:
         self.file2 = None
         self.loader_file1_chunked  = None
         self.loader_file1_chunked = None
-        for idx, filename in enumerate(self.doc_object["file_names"]):
+        for idx, filename in enumerate(self.doc_object["filename"]):
             if idx > 2:
                 break
             temp_file_path = self.client.download_file_to_temp(filename)
