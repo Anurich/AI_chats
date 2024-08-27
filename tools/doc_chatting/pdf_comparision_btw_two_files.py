@@ -2,7 +2,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
-from utils.prompts import PDF_COMPARISION
+from utils.prompts import PDF_COMPARISON
 from transformers import pipeline
 from tqdm import tqdm
 from langchain.prompts import PromptTemplate
@@ -16,7 +16,7 @@ class PdfPreprocessingForComparision:
     def __init__(self, llm, client, doc_object) -> None:
         self.llm = llm 
         self.summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-        self.chain = PromptTemplate.from_template(PDF_COMPARISION) | self.llm | StrOutputParser()
+        self.chain = PromptTemplate.from_template(PDF_COMPARISON) | self.llm | StrOutputParser()
         self.doc_object = doc_object
         self.client = client
         self.embeddings  = OpenAIEmbeddings()
