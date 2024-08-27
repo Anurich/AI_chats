@@ -28,6 +28,7 @@ class PdfPreprocessingForComparision:
             else:
                 self.file2 = temp_file_path
 
+        self.file_semantic_chunking()
 
     def read_through_pytesseract(self, temp_file_path):
         all_pages = convert_from_path(temp_file_path)
