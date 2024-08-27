@@ -3,6 +3,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
 from utils.prompts import PDF_COMPARISION
+from transformers import pipeline
 from tqdm import tqdm
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -10,9 +11,11 @@ import pytesseract
 from pdf2image import convert_from_path
 
 
+
 class PdfPreprocessingForComparision:
     def __init__(self, llm, client, doc_object) -> None:
         self.llm = llm 
+        self.summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
         self.chain = PromptTemplate.from_template(PDF_COMPARISION) | self.llm | StrOutputParser()
         self.doc_object = doc_object
         self.client = client
@@ -98,16 +101,21 @@ class PdfPreprocessingForComparision:
                 for key, value in self.response_with_page.items():
                     if "extra" not in str(key):
                         context1 += value+" "
+                
+                context1_summarized = self.summarizer(context1, max_length=1000, min_length=100, do_sample=False)
+
                 context2 =self.page_wise_text_file2.get(i)
-                response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
+                response = self.chain.invoke({"pdf1": context1_summarized, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
 
             elif self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i)==None:
                 for key, value in self.response_with_page.items():
                     if "extra" not in str(key):
                         context2 += value+" "
+                
+                context2_summarized = self.summarizer(context2, max_length=1000, min_length=100, do_sample=False)
                 context1 =self.page_wise_text_file1.get(i)
-                response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
+                response = self.chain.invoke({"pdf1": context1, "pdf2": context2_summarized})
                 self.response_with_page[f"extra_{i}"] = response
         
 
