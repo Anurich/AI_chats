@@ -1,4 +1,4 @@
-from langchain_experimental.text_splitter import SemanticChunker
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
@@ -12,7 +12,9 @@ class PdfPreprocessingForComparision:
         self.doc_object = doc_object
         self.client = client
         self.embeddings  = OpenAIEmbeddings()
-        self.text_splitter = SemanticChunker(OpenAIEmbeddings(),add_start_index=True)
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size =1000, \
+                                                chunk_overlap=200, \
+                                                length_function=len)
         self.file1 = None
         self.file2 = None
         self.loader_file1_chunked  = None
@@ -44,7 +46,7 @@ class PdfPreprocessingForComparision:
         if len(self.loader_file1_chunked) == 0:
             self.loader_file1_chunked = self.read_through_pytesseract(self.file1)
         elif len(self.loader_file2_chunked) == 0:
-            self.loader_file1_chunked = self.read_through_pytesseract(self.file1)
+            self.loader_file2_chunked = self.read_through_pytesseract(self.file1)
 
         # applying the semantic chunking 
         self.loader_file1_chunked = self.text_splitter.split_documents(self.loader_file1_chunked)
