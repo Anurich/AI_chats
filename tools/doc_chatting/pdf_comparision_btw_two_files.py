@@ -100,22 +100,20 @@ class PdfPreprocessingForComparision:
             elif self.page_wise_text_file1.get(i) == None and self.page_wise_text_file2.get(i)!=None:
                 for key, value in self.response_with_page.items():
                     if "extra" not in str(key):
-                        context1 += value+" "
+                        context1 += self.summarizer(value, max_length=150, min_length=30, do_sample=False)[0]["summary_text"]+" "
                 
-                context1_summarized = self.summarizer(context1, max_length=1000, min_length=100, do_sample=False)
 
                 context2 =self.page_wise_text_file2.get(i)
-                response = self.chain.invoke({"pdf1": context1_summarized, "pdf2": context2})
+                response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
 
             elif self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i)==None:
                 for key, value in self.response_with_page.items():
                     if "extra" not in str(key):
-                        context2 += value+" "
+                        context2 += self.summarizer(context2, max_length=1000, min_length=100, do_sample=False)[0]["summary_text"]+" "
                 
-                context2_summarized = self.summarizer(context2, max_length=1000, min_length=100, do_sample=False)
                 context1 =self.page_wise_text_file1.get(i)
-                response = self.chain.invoke({"pdf1": context1, "pdf2": context2_summarized})
+                response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
         
 
