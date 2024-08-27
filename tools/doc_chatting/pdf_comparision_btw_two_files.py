@@ -60,7 +60,7 @@ class PdfPreprocessingForComparision:
         if len(document_chunked) != 0:
             for i in range(len(document_chunked)):
                 document_chunked[i].metadata["page"] += 1
-            
+        return document_chunked        
 
     def file_semantic_chunking(self):
         self.loader_file1_chunked = PyPDFLoader(self.file1).load_and_split()
@@ -68,12 +68,12 @@ class PdfPreprocessingForComparision:
         if len(self.loader_file1_chunked) == 0:
             self.loader_file1_chunked = self.read_through_pytesseract(self.file1)
         else:
-            self.change_metadata(self.loader_file1_chunked)
+            self.loader_file1_chunked = self.change_metadata(self.loader_file1_chunked)
 
         if len(self.loader_file2_chunked) == 0:
             self.loader_file2_chunked = self.read_through_pytesseract(self.file2)
         else:
-            self.change_metadata(self.loader_file2_chunked)
+            self.loader_file2_chunked = self.change_metadata(self.loader_file2_chunked)
 
         # applying the semantic chunking 
         self.loader_file1_chunked = self.text_splitter.split_documents(self.loader_file1_chunked)
@@ -93,7 +93,6 @@ class PdfPreprocessingForComparision:
                 context1 = self.page_wise_text_file1[i]
                 context2 = self.page_wise_text_file2[i]
                 # summarize and than compare 
-
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[i] = response
             elif self.page_wise_text_file1.get(i) == None and self.page_wise_text_file2.get(i)!=None:

@@ -276,7 +276,6 @@ async def delete_vector_db(requestQuery: QueryRequest):
 @app.post("/ai/model/pdf_comparision")
 async def pdf_comparision_two_files(requestQuery: QueryRequest):
     pdfComparision =PdfPreprocessingForComparision(llm=llm, client=client, doc_object=requestQuery.file_names)
-    
     return {
         "output": pdfComparision.response_with_page
     }
