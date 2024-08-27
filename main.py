@@ -274,11 +274,11 @@ async def delete_vector_db(requestQuery: QueryRequest):
 
     
 @app.post("ai/model/pdf_comparision")
-async def pdf_comparision(requestQuery: QueryRequest):
-    pdf_comparision =PdfPreprocessingForComparision(llm=llm, client=client, doc_object=requestQuery.file_names)
+async def pdf_comparision_two_files(requestQuery: QueryRequest):
+    pdfComparision =PdfPreprocessingForComparision(llm=llm, client=client, doc_object=requestQuery.file_names)
 
-    print(pdf_comparision.loader_file1_chunked)
-    print(pdf_comparision.loader_file2_chunked)
+    print(pdfComparision.loader_file1_chunked)
+    print(pdfComparision.loader_file2_chunked)
 
 
 
