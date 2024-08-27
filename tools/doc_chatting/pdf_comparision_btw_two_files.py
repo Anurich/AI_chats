@@ -13,7 +13,7 @@ class PdfPreprocessingForComparision:
         self.client = client
         self.embeddings  = OpenAIEmbeddings()
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size =1000, \
-                                                chunk_overlap=200, \
+                                                chunk_overlap=0, \
                                                 length_function=len)
         self.file1 = None
         self.file2 = None
@@ -29,6 +29,8 @@ class PdfPreprocessingForComparision:
                 self.file2 = temp_file_path
 
         self.file_semantic_chunking()
+        self.page_wise_text_file1 = dict()
+        self.page_wise_text_file2 = dict()
 
     def read_through_pytesseract(self, temp_file_path):
         all_pages = convert_from_path(temp_file_path)
@@ -40,6 +42,16 @@ class PdfPreprocessingForComparision:
 
         return docs 
 
+    def data_to_page_based_content(self, data):
+        record = dict()
+        for doc in data:
+            if record.get(doc.metadata["page"]) == None:
+                record[doc.metadata["page"]] = doc.page_content+" "
+            else:
+                record[doc.metadata["page"]] += doc.page_content
+        
+        return record
+    
     def file_semantic_chunking(self):
         self.loader_file1_chunked = PyPDFLoader(self.file1).load_and_split()
         self.loader_file2_chunked = PyPDFLoader(self.file2).load_and_split()
@@ -51,4 +63,11 @@ class PdfPreprocessingForComparision:
         # applying the semantic chunking 
         self.loader_file1_chunked = self.text_splitter.split_documents(self.loader_file1_chunked)
         self.loader_file2_chunked = self.text_splitter.split_documents(self.loader_file2_chunked)
+    
+        # page wise data 
+        self.page_wise_text_file1 = self.data_to_page_based_content(self.loader_file1_chunked)
+        self.page_wise_text_file2 = self.data_to_page_based_content(self.loader_file2_chunked)
         
+        
+        
+
