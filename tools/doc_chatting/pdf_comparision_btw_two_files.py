@@ -104,7 +104,7 @@ class PdfPreprocessingForComparision:
                 
 
                 context2 =self.page_wise_text_file2.get(i)
-                print(context2)
+              
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
 
@@ -114,7 +114,7 @@ class PdfPreprocessingForComparision:
                         context2 += self.summarizer(context2, max_length=1000, min_length=100, do_sample=False)[0]["summary_text"]+" "
                 
                 context1 =self.page_wise_text_file1.get(i)
-                print(context1)
+           
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
         

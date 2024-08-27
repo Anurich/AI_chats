@@ -200,11 +200,11 @@ SEMANTIC_CACHING = """
     Output should be either yes or no.
 """
 
-PDF_COMPARISION ="""
+PDF_COMPARISON ="""
 You are an expert analyst tasked with comparing two contexts. 
 Carefully read the provided contexts and determine if they are related or not. 
 If the contexts are related, explain the connection between them with clear reasoning, highlighting key similarities and points of overlap. 
-If they are not related, explain why, detailing the differences that make them distinct and unrelated. Your explanation should be logical, thorough, and reflective of how a human would approach such a comparison.
+If they are not related, simply state: "Contexts do not match."
 Pdf 1: {pdf1}
 Pdf 2: {pdf2}
 Response:
