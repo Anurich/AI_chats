@@ -87,8 +87,6 @@ class PdfPreprocessingForComparision:
     def page_wise_comparision(self):
         self.response_with_page = dict()        
         for i in tqdm(range(int(self.min_page)+1)):
-            i = str(i)
-            print(self.response_with_page.get(i))
             if self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i) != None:
                 # perform the comparision between two same pages
                 context1 = self.page_wise_text_file1[i]
@@ -98,13 +96,13 @@ class PdfPreprocessingForComparision:
                 self.response_with_page[i] = response
             elif self.page_wise_text_file1.get(i) == None and self.page_wise_text_file2.get(i)!=None:
                 
-                context1 = " ".join({key: value for key, value in self.response_with_page.items() if "extra" not in key}.values)
+                context1 = " ".join({key: value for key, value in self.response_with_page.items() if "extra" not in str(key)}.values)
                 context2 =self.page_wise_text_file2.get(i)
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
 
             elif self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i)==None:
-                context2 = " ".join({key: value for key, value in self.response_with_page.items() if "extra" not in key}.values)
+                context2 = " ".join({key: value for key, value in self.response_with_page.items() if "extra" not in str(key)}.values)
                 context1 =self.page_wise_text_file1.get(i)
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
