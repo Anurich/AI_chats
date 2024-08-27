@@ -3,6 +3,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
 from utils.prompts import PDF_COMPARISION
+from tqdm import tqdm
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import pytesseract
@@ -85,7 +86,7 @@ class PdfPreprocessingForComparision:
 
     def page_wise_comparision(self):
         self.response_with_page = dict()        
-        for i in range(int(self.min_page)+1):
+        for i in tqdm(range(int(self.min_page)+1)):
             if self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i) != None:
                 # perform the comparision between two same pages
                 context1 = self.page_wise_text_file1[i]
