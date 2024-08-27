@@ -81,7 +81,7 @@ class PdfPreprocessingForComparision:
                 # perform the comparision between two same pages
                 context1 = self.page_wise_text_file1[i]
                 context2 = self.page_wise_text_file2[i]
-                response = self.chain({"context1": context1, "context2": context2})
+                response = self.chain.invoke({"context1": context1, "context2": context2})
                 self.response_with_page[i] = response
             
 
