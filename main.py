@@ -4,7 +4,7 @@ from tools.doc_chatting.langchainVector import createVectorStore_DOC, createVect
 from tools.doc_chatting.chat_with_document import Chatwithdocument
 from tools.doc_chatting.table_image_extraction_pdf import TableExtraction
 from tools.doc_chatting.construct_knowledge_graph import KnowledgeGraph
-from tools.doc_chatting.pdf_comparision import PdfPreprocessingForComparision
+from tools.doc_chatting.pdf_comparision_btw_two_files import PdfPreprocessingForComparision
 from tools.doc_chatting.talk_to_table import TableChat
 from tools.doc_chatting.link_scrapping_and_chating import ChatWithWebsite
 from langchain.prompts import  PromptTemplate

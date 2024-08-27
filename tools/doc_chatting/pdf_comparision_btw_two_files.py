@@ -40,13 +40,17 @@ class PdfPreprocessingForComparision:
         return docs 
 
     def file_semantic_chunking(self):
+        print(self.file1)
+        print(self.file2)
         self.loader_file1_chunked = PyPDFLoader(self.file1).load_and_split()
         self.loader_file2_chunked = PyPDFLoader(self.file2).load_and_split()
 
+        print(self.loader_file1_chunked)
+        print(self.loader_file2_chunked)
         if len(self.loader_file1_chunked) == 0:
             self.loader_file1_chunked = self.read_through_pytesseract(self.file1)
-        elif len(self.loader_file2_chunked) == 0:
-            self.loader_file2_chunked = self.read_through_pytesseract(self.file1)
+        if len(self.loader_file2_chunked) == 0:
+            self.loader_file2_chunked = self.read_through_pytesseract(self.file2)
 
         # applying the semantic chunking 
         self.loader_file1_chunked = self.text_splitter.split_documents(self.loader_file1_chunked)
