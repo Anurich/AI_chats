@@ -12,7 +12,6 @@ from collections import Counter
 from langchain_openai import ChatOpenAI
 from pdf2image import convert_from_path
 from tqdm import tqdm
-from uuid import uuid4
 import re 
 import os
 

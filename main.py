@@ -4,6 +4,7 @@ from tools.doc_chatting.langchainVector import createVectorStore_DOC, createVect
 from tools.doc_chatting.chat_with_document import Chatwithdocument
 from tools.doc_chatting.table_image_extraction_pdf import TableExtraction
 from tools.doc_chatting.construct_knowledge_graph import KnowledgeGraph
+from tools.doc_chatting.pdf_comparision import PdfPreprocessingForComparision
 from tools.doc_chatting.talk_to_table import TableChat
 from tools.doc_chatting.link_scrapping_and_chating import ChatWithWebsite
 from langchain.prompts import  PromptTemplate
@@ -102,16 +103,13 @@ async def chat_with_table(requestQuery: QueryRequest):
 
 @app.post("/ai/model/summarize")
 async def summarization_doc(requestQuery: QueryRequest):
-
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
     image_and_text_path = requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"
     responses = client.s3_object_list_txt(image_and_text_path)
     all_file_names=[]
     file_ids = dict()
-    print(responses)
     for files in requestQuery.file_names:
         txt_file = list(filter(lambda x: files["filename"].split("/")[-1].split(".pdf")[0].strip() in x , responses))
-        print(txt_file)
         if len(txt_file) > 0:
             txt_file_path= requestQuery.path_for_image_and_text+"/"+requestQuery.user_id+"/"+requestQuery.chat_id+"/"+txt_file[0]
             all_file_names.extend([files["filename"], txt_file_path])
@@ -275,6 +273,14 @@ async def delete_vector_db(requestQuery: QueryRequest):
 
 
     
+@app.post("ai/model/pdf_comparision")
+async def pdf_comparision(requestQuery: QueryRequest):
+    pdf_comparision =PdfPreprocessingForComparision(llm=llm, client=client, doc_object=requestQuery.file_names)
+
+    print(pdf_comparision.loader_file1_chunked)
+    print(pdf_comparision.loader_file2_chunked)
+
+
 
 
 # all_ids_mapping = dict()
