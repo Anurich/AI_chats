@@ -56,13 +56,24 @@ class PdfPreprocessingForComparision:
         
         return record
     
+    def change_metadata(self,document_chunked):
+        if len(document_chunked) != 0:
+            for i in range(len(document_chunked)):
+                document_chunked[i].metadata["page"] += 1
+            
+
     def file_semantic_chunking(self):
         self.loader_file1_chunked = PyPDFLoader(self.file1).load_and_split()
         self.loader_file2_chunked = PyPDFLoader(self.file2).load_and_split()
         if len(self.loader_file1_chunked) == 0:
             self.loader_file1_chunked = self.read_through_pytesseract(self.file1)
+        else:
+            self.change_metadata(self.loader_file1_chunked)
+
         if len(self.loader_file2_chunked) == 0:
             self.loader_file2_chunked = self.read_through_pytesseract(self.file2)
+        else:
+            self.change_metadata(self.loader_file2_chunked)
 
         # applying the semantic chunking 
         self.loader_file1_chunked = self.text_splitter.split_documents(self.loader_file1_chunked)
@@ -75,15 +86,25 @@ class PdfPreprocessingForComparision:
         self.page_wise_comparision()
 
     def page_wise_comparision(self):
-        self.response_with_page = dict()
+        self.response_with_page = dict()        
         for i in range(int(self.min_page)):
             if self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i) != None:
                 # perform the comparision between two same pages
                 context1 = self.page_wise_text_file1[i]
                 context2 = self.page_wise_text_file2[i]
-                response = self.chain.invoke({"context1": context1, "context2": context2})
+                # summarize and than compare 
+
+                response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[i] = response
-            
+            elif self.page_wise_text_file1.get(i) == None and self.page_wise_text_file2.get(i)!=None:
+                
+                context1 = " ".join({key: value for key, value in self.response_with_page.items() if "extra" not in key}.values)
+                context2 =self.page_wise_text_file2.get(i)
+                response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
+                self.response_with_page[f"extra_{i}"] = response
+
 
         
+
+
 
