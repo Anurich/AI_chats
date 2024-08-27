@@ -2,6 +2,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
+from utils.prompts import PDF_COMPARISION
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 import pytesseract
 from pdf2image import convert_from_path
 
@@ -9,6 +12,7 @@ from pdf2image import convert_from_path
 class PdfPreprocessingForComparision:
     def __init__(self, llm, client, doc_object) -> None:
         self.llm = llm 
+        self.chain = PromptTemplate.from_template(PDF_COMPARISION) | self.llm | StrOutputParser()
         self.doc_object = doc_object
         self.client = client
         self.embeddings  = OpenAIEmbeddings()
@@ -27,10 +31,9 @@ class PdfPreprocessingForComparision:
                 self.file1 = temp_file_path
             else:
                 self.file2 = temp_file_path
-
-        self.file_semantic_chunking()
         self.page_wise_text_file1 =None
         self.page_wise_text_file2 = None
+        self.file_semantic_chunking()
         self.min_page = -1
 
     def read_through_pytesseract(self, temp_file_path):
@@ -51,7 +54,6 @@ class PdfPreprocessingForComparision:
             else:
                 record[doc.metadata["page"]] += doc.page_content
         
-        print(record)
         return record
     
     def file_semantic_chunking(self):
@@ -70,7 +72,18 @@ class PdfPreprocessingForComparision:
         self.page_wise_text_file1 = self.data_to_page_based_content(self.loader_file1_chunked)
         self.page_wise_text_file2 = self.data_to_page_based_content(self.loader_file2_chunked)
         self.min_page = min(len(self.page_wise_text_file1.keys()), len(self.page_wise_text_file2))
+        self.page_wise_comparision()
 
+    def page_wise_comparision(self):
+        self.response_with_page = dict()
+        for i in range(int(self.min_page)):
+            if self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i) != None:
+                # perform the comparision between two same pages
+                context1 = self.page_wise_text_file1[i]
+                context2 = self.page_wise_text_file2[i]
+                response = self.chain({"context1": context1, "context2": context2})
+                self.response_with_page[i] = response
+            
 
         
 

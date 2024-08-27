@@ -278,8 +278,7 @@ async def pdf_comparision_two_files(requestQuery: QueryRequest):
     print(requestQuery.file_names)
     pdfComparision =PdfPreprocessingForComparision(llm=llm, client=client, doc_object=requestQuery.file_names)
 
-    print(pdfComparision.page_wise_text_file1)
-    print(pdfComparision.page_wise_text_file2)
+    print(pdfComparision.response_with_page)
 
 
 
