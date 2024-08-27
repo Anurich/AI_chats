@@ -29,8 +29,9 @@ class PdfPreprocessingForComparision:
                 self.file2 = temp_file_path
 
         self.file_semantic_chunking()
-        self.page_wise_text_file1 = dict()
-        self.page_wise_text_file2 = dict()
+        self.page_wise_text_file1 =None
+        self.page_wise_text_file2 = None
+        self.min_page = -1
 
     def read_through_pytesseract(self, temp_file_path):
         all_pages = convert_from_path(temp_file_path)
@@ -50,6 +51,7 @@ class PdfPreprocessingForComparision:
             else:
                 record[doc.metadata["page"]] += doc.page_content
         
+        print(record)
         return record
     
     def file_semantic_chunking(self):
@@ -67,7 +69,8 @@ class PdfPreprocessingForComparision:
         # page wise data 
         self.page_wise_text_file1 = self.data_to_page_based_content(self.loader_file1_chunked)
         self.page_wise_text_file2 = self.data_to_page_based_content(self.loader_file2_chunked)
-        
-        
+        self.min_page = min(len(self.page_wise_text_file1.keys()), len(self.page_wise_text_file2))
+
+
         
 
