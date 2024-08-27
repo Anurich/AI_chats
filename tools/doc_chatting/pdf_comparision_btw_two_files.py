@@ -87,6 +87,7 @@ class PdfPreprocessingForComparision:
     def page_wise_comparision(self):
         self.response_with_page = dict()        
         for i in tqdm(range(int(self.min_page)+1)):
+            i = str(i)
             if self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i) != None:
                 # perform the comparision between two same pages
                 context1 = self.page_wise_text_file1[i]
