@@ -95,14 +95,17 @@ class PdfPreprocessingForComparision:
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[i] = response
             elif self.page_wise_text_file1.get(i) == None and self.page_wise_text_file2.get(i)!=None:
-                
-                context1 = " ".join({key: value for key, value in self.response_with_page.items() if "extra" not in str(key)}.values)
+                for key, value in self.response_with_page.items():
+                    if "extra" not in str(key):
+                        context1 += value+" "
                 context2 =self.page_wise_text_file2.get(i)
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
 
             elif self.page_wise_text_file1.get(i) != None and self.page_wise_text_file2.get(i)==None:
-                context2 = " ".join({key: value for key, value in self.response_with_page.items() if "extra" not in str(key)}.values)
+                for key, value in self.response_with_page.items():
+                    if "extra" not in str(key):
+                        context2 += value+" "
                 context1 =self.page_wise_text_file1.get(i)
                 response = self.chain.invoke({"pdf1": context1, "pdf2": context2})
                 self.response_with_page[f"extra_{i}"] = response
