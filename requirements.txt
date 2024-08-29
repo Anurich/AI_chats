@@ -6,7 +6,7 @@ langchainhub
 langchain_cohere
 langchain_community
 langchain_core
-spacy=='3.7.6'
+spacy==3.7.6
 langchain_experimental
 langchain_openai
 langgraph
@@ -34,4 +34,4 @@ numpy
 duckduckgo-search
 optimum
 gptcache
-pytesseract=='0.3.10'
+pytesseract==0.3.10
