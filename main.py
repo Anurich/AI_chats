@@ -144,7 +144,6 @@ async def summarization_doc(requestQuery: QueryRequest):
         "categories": [vector_doc.categorization]
     }
 
-    print(response)
 
     return response
 
