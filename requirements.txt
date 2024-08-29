@@ -34,3 +34,4 @@ numpy
 duckduckgo-search
 optimum
 gptcache
+pytesseract
