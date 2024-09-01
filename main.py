@@ -38,7 +38,7 @@ OPENAI_API_KEY = json.load(open(PATH_TO_OPENAI_KEY, "r"))
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY["API_key"]
 os.environ["COHERE_API_KEY"] = OPENAI_API_KEY["API_COHERE_KEY"]
 path_for_image_and_text="path_for_image_and_text"
-llm =  ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0)
+llm =  ChatOpenAI(model="gpt-4o", temperature=0)
 det_model, det_processor, rec_model, rec_processor = utility.load_model_surya()
 all_user_vector_db  = dict()
 all_user_table_chat =dict()
@@ -274,6 +274,7 @@ async def delete_vector_db(requestQuery: QueryRequest):
     
 @app.post("/ai/model/pdf_comparision")
 async def pdf_comparision_two_files(requestQuery: QueryRequest):
+    llm = ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0)
     pdfComparision =PdfPreprocessingForComparision(llm=llm, client=client, doc_object=requestQuery.file_names)
     return {
         "output": pdfComparision.response_with_page
