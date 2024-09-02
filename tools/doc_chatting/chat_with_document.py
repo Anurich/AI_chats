@@ -128,6 +128,9 @@ class Chatwithdocument(CustomLogger):
                     if consider > max_count:
                         max_count  = consider
                         metadata = doc.metadata
+                    
+                if output_answer == "I don't know.":
+                    metadata = dict()
                 response_list=[output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
