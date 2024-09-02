@@ -265,6 +265,8 @@ async def delete_vector_db(requestQuery: QueryRequest):
         for filenames in requestQuery.file_names:
             vc_doc, _, _ = all_user_vector_db[ids]
             vc_doc.delete_vectordb_from_chroma(requestQuery.chat_id, filenames["filename"])
+            if all_user_search_file.get(requestQuery.user_id) != None:
+                all_user_search_file[requestQuery.user_id].llm_cache_in_semantic_memory.clear_cache()
     else:
         for filenames in requestQuery.file_names:
             all_user_search_file[requestQuery.user_id].delete_vectordb_from_chroma(filenames["base_64_content"])
