@@ -57,6 +57,8 @@ class TableExtraction(CustomLogger):
         
         self.log_info("Starting pdf to image conversion.....")
         self.all_images, self.all_files = self._convert_pdf_page_to_image() # converting the pdf to images
+        self.all_images, self.all_files = self.all_images[:6], self.all_files[:6] if len(self.all_images) > 5 else  self.all_images, self.all_files
+        
         self.log_info("Image preperation for table detection.....")
         self.prepared_images = self._prepare_image_for_table_detection()
         self.log_info("Inference on images.....")
