@@ -38,6 +38,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
     def delete_vectordb_from_chroma(self, uuid):
         self.llm_cache_in_semantic_memory.clear_cache()
+        
         all_docs = self.vectordb_search._collection.get(include=["metadatas", "documents"])
         metdatas = all_docs["metadatas"]
         ids = all_docs["ids"]
