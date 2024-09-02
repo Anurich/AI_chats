@@ -37,6 +37,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
 
 
     def delete_vectordb_from_chroma(self, uuid):
+        self.llm_cache_in_semantic_memory.clear_cache()
         all_docs = self.vectordb_search._collection.get(include=["metadatas", "documents"])
         metdatas = all_docs["metadatas"]
         ids = all_docs["ids"]
@@ -205,7 +206,7 @@ class Filesearchbykeyworddescrp(CustomLogger):
                     # Update relevance_score dictionary
                     if pdf_name not in relevance_score or relevance_score[pdf_name][0] < probability:
                         relevance_score[pdf_name] = [probability, output["page_number"], explanation, extracted_value]        
-
+            
                 html = self.generate_html_table_with_graph(relevance_score)
                 # we need to save into cache 
                 self.llm_cache_in_semantic_memory.add_query_response(description, html)
