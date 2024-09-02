@@ -20,12 +20,12 @@ class CacheInMemory:
 
 
 class SemanticMemory:
-    def __init__(self, embedding_func,  user_id, type_of_chat):
+    def __init__(self, embedding_func,  user_id, chat_id, type_of_chat):
         self.embedding_func = embedding_func
         self.user_id = user_id
         self.type_of_chat = type_of_chat
         self.counter =0
-        self.chroma_client = chromadb.PersistentClient(path=f"filter_file_with_keyword/{user_id}_{type_of_chat}")
+        self.chroma_client = chromadb.PersistentClient(path=f"filter_file_with_keyword/{user_id}_{chat_id}_{type_of_chat}")
         self.collection = self.chroma_client.get_or_create_collection(name="db_with_file_search")
 
 
@@ -59,7 +59,7 @@ class SemanticMemory:
 
     def clear_cache(self):
         self.chroma_client.delete_collection(name="db_with_file_search")
-        self.chroma_client = chromadb.PersistentClient(path=f"filter_file_with_keyword/{self.user_id}_{self.type_of_chat}")
+        self.chroma_client = chromadb.PersistentClient(path=f"filter_file_with_keyword/{self.user_id}_{self.user_id}_{self.type_of_chat}")
         self.collection = self.chroma_client.get_or_create_collection(name="db_with_file_search")
 
 
