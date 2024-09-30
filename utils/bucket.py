@@ -40,7 +40,7 @@ class BucketDigitalOcean(CustomLogger):
                   Returns None if object does not exist or if there's an error.
         """
         try:
-            response = self.client_object.get_object(Bucket="ai-server-bucket", Key=folder_path)
+            response = self.client_object.get_object(Bucket="ai-server-bucket123", Key=folder_path)
             return response
         except self.client_object.exceptions.NoSuchKey as e:
             self.logger.error(f"Object '{folder_path}' does not exist. {e}")
@@ -99,7 +99,7 @@ class BucketDigitalOcean(CustomLogger):
             pil_image.save(image_bytes, format='JPEG')  # Adjust format as needed
             image_bytes.seek(0)
 
-            self.client_object.put_object(Bucket='ai-server-bucket',
+            self.client_object.put_object(Bucket='ai-server-bucket123',
                                           Key=folder_path,
                                           Body=image_bytes,
                                           ACL='private',
@@ -124,7 +124,7 @@ class BucketDigitalOcean(CustomLogger):
             with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
                 df.to_excel(writer, index=False)
             excel_buffer.seek(0)
-            self.client_object.put_object(Bucket='ai-server-bucket',
+            self.client_object.put_object(Bucket='ai-server-bucket123',
                                           Key=folder_path,
                                           Body=excel_buffer,
                                           ACL='private',
@@ -145,7 +145,7 @@ class BucketDigitalOcean(CustomLogger):
             folder_path (str): The path to write the text file in the bucket.
         """
         try:
-            self.client_object.put_object(Bucket='ai-server-bucket',
+            self.client_object.put_object(Bucket='ai-server-bucket123',
                                           Key=folder_path,
                                           Body=data_object.encode("utf-8"),
                                           ACL='private',
@@ -169,7 +169,7 @@ class BucketDigitalOcean(CustomLogger):
                   Returns an empty list if no JPEG files are found or if there's an error.
         """
         try:
-            response = self.client_object.list_objects_v2(Bucket="ai-server-bucket")
+            response = self.client_object.list_objects_v2(Bucket="ai-server-bucket123")
             all_keys = [obj['Key'] for obj in response.get('Contents', [])]
             filtered_keys = [key.split('/')[-1] for key in all_keys if key.startswith(folder_path) and key.endswith('.jpg')]
             return filtered_keys
@@ -189,7 +189,7 @@ class BucketDigitalOcean(CustomLogger):
                   Returns an empty list if no TXT files are found or if there's an error.
         """
         try:
-            response = self.client_object.list_objects_v2(Bucket="ai-server-bucket")
+            response = self.client_object.list_objects_v2(Bucket="ai-server-bucket123")
             all_keys = [obj['Key'] for obj in response.get('Contents', [])]
             filtered_keys = [key.split('/')[-1] for key in all_keys if key.startswith(folder_path) and key.endswith('.txt')]
             return filtered_keys
@@ -225,7 +225,7 @@ class BucketDigitalOcean(CustomLogger):
             folder_path (str): The path to the object (file) in the bucket to delete.
         """
         try:
-            self.client_object.delete_object(Bucket="ai-server-bucket", Key=folder_path)
+            self.client_object.delete_object(Bucket="ai-server-bucket123", Key=folder_path)
             self.logger.info(f"Object '{folder_path}' deleted successfully.")
         except Exception as e:
             self.logger.error(f"Unable to delete object '{folder_path}'. {e}")
