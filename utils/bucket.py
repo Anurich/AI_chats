@@ -210,7 +210,7 @@ class BucketDigitalOcean(CustomLogger):
         """
         try:
             temp_file_path = tempfile.mktemp()
-            self.client_object.download_file('ai-server-bucket', folder_path, temp_file_path)
+            self.client_object.download_file('ai-server-bucket123', folder_path, temp_file_path)
             self.logger.info(f"File '{folder_path}' downloaded to '{temp_file_path}'.")
             return temp_file_path
         except Exception as e:
