@@ -94,10 +94,10 @@ class Chatwithdocument(CustomLogger):
                 # Let's take always top last 5 in chat history 
                 # to find the answer
                 
-                output_answer = json.loads(output["answer"])
+                output = json.loads(output["answer"])
                 print("*"*199)
                 print(output)
-                ner   = self.nlp(output_answer)
+                ner   = self.nlp(output["answer"])
                 tokens_with_label = []
                 to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
                 if ner.ents:
