@@ -87,9 +87,8 @@ class Chatwithdocument(CustomLogger):
                 rag_chain_with_source = RunnablePassthrough.assign(context=retriever_with_rag_fusion).assign(answer = rag_chain)
                 
                 # Async processing
-                response =  rag_chain_with_source.invoke({"question": query})
+                output =  rag_chain_with_source.invoke({"question": query})
 
-                output = response["answer"]
                 self.chatHistory.append_data_to_history(query, output)
                 
                 # Let's take always top last 5 in chat history 
