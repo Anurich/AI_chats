@@ -95,8 +95,8 @@ class Chatwithdocument(CustomLogger):
                 # Let's take always top last 5 in chat history 
                 # to find the answer
                 
-                output_answer = output.split("Sentiment:")[0].strip().replace("Answer:","")
-                
+                output_answer = output["answer"]
+            
                 ner   = self.nlp(output_answer)
                 tokens_with_label = []
                 to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
@@ -110,28 +110,27 @@ class Chatwithdocument(CustomLogger):
                             tokens_with_label.append([start_index, end_index, label, text])
                     
             
-                sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
-                output_answer += "\n **Sentiment:**\n "+sentiment
+                #sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
+                output_answer += "\n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
                 
-                max_count = 0
-                metadata = None
+                # max_count = 0
+                # metadata = None
                 
-                splitted_response = response["answer"].lower().split()
-                for i in range(len(response["context"])):
-                    consider = 0
-                    doc,_ = response["context"][i]
-                    data = doc.page_content.lower()
-                    for res in splitted_response:
-                        if res in data:
-                            consider +=1
+                # splitted_response = response["answer"].lower().split()
+                # for i in range(len(response["context"])):
+                #     consider = 0
+                #     doc,_ = response["context"][i]
+                #     data = doc.page_content.lower()
+                #     for res in splitted_response:
+                #         if res in data:
+                #             consider +=1
 
-                    if consider > max_count:
-                        max_count  = consider
-                        metadata = doc.metadata
+                #     if consider > max_count:
+                #         max_count  = consider
+                #         metadata = doc.metadata
                     
-                if output_answer == "I don't know.":
-                    metadata = dict()
-                response_list=[output_answer+f" ***{metadata}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
+               
+                response_list=[output_answer+f" ***{output["source"]}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
                 response_list = ast.literal_eval(cache_response)
