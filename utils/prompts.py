@@ -143,7 +143,7 @@ Based on the language of the context and question, the response should be in the
 Context: {context}
 Question: {question}
 
-Response should be in the format 
+Response should be in the JSON format as shown below:
 {{
     "answer":...,
     "sentiment":...,
