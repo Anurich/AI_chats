@@ -93,7 +93,7 @@ class Chatwithdocument(CustomLogger):
                 
                 # Let's take always top last 5 in chat history 
                 # to find the answer
-                
+                print(output["answer"])
                 output = json.loads(output["answer"].replace("```json").replace("```", ""))
                 print("*"*199)
                 print(output)
