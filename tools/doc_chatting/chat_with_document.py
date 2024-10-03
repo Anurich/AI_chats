@@ -93,7 +93,7 @@ class Chatwithdocument(CustomLogger):
                 
                 # Let's take always top last 5 in chat history 
                 # to find the answer
-                print(output["answer"])
+                
                 output = json.loads(output["answer"].replace("```json", "").replace("```", ""))
                 print("*"*199)
                 print(output)
@@ -111,7 +111,7 @@ class Chatwithdocument(CustomLogger):
                     
             
                 #sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
-                output_answer += "\n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
+                output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
                 
                 # max_count = 0
                 # metadata = None

@@ -148,7 +148,7 @@ Response should be in the JSON format as shown below:
     "answer":...,
     "sentiment":...,
     "explaination":...,
-    "source": List[str]  
+    "source": List[str]  = ["filename", "page number", ......]
 }}
 
 """
