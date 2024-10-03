@@ -94,7 +94,7 @@ class Chatwithdocument(CustomLogger):
                 # Let's take always top last 5 in chat history 
                 # to find the answer
                 
-                output_answer = output["answer"]
+                output_answer = json.loads(output["answer"])
                 print("*"*199)
                 print(output)
                 ner   = self.nlp(output_answer)
