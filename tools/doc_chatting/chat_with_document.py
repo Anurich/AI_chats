@@ -96,7 +96,8 @@ class Chatwithdocument(CustomLogger):
                 # to find the answer
                 
                 output_answer = output["answer"]
-            
+                print("*"*199)
+                print(output)
                 ner   = self.nlp(output_answer)
                 tokens_with_label = []
                 to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
