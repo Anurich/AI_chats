@@ -97,7 +97,7 @@ class Chatwithdocument(CustomLogger):
                 output = json.loads(output["answer"].replace("```json", "").replace("```", ""))
                 print("*"*199)
                 print(output)
-                ner   = self.nlp(output["answer"])
+                ner   = self.nlp(" ".join(output["answer"]))
                 tokens_with_label = []
                 to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
                 if ner.ents:
