@@ -148,9 +148,16 @@ Response should be in the JSON format as shown below:
     "answer":...,
     "sentiment":...,
     "explaination":...,
-    "source": List[str]  = ["filename", "page number", ......]
+    "source":List[Dict]: [{{
+        "pdf_name": ....,
+        "page_number": pages seprated by comma
+    }},
+    {{
+        "pdf_name": ....,
+        "page_number": pages seprated by comma
+    }}
+    ]
 }}
-
 """
 
 
