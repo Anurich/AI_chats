@@ -118,7 +118,7 @@ class Chatwithdocument(CustomLogger):
                 print(response_list)
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
-                print(cache_response)
+                print(cache_response[0])
                 response_list = eval(cache_response)
 
             end_time = time.time()
