@@ -82,6 +82,7 @@ class createVectorStore_DOC:
     def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
             for i in range(len(document_chunked)):
+                document_chunked[i].page_content += f" page number related to this chunk is {document_chunked[i].metadata["page"] + 1}"
                 document_chunked[i].metadata = {
                     "source": filename,
                     "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
@@ -122,7 +123,7 @@ class createVectorStore_DOC:
                     if len(all_pages) > 0:
                         for idx, page in enumerate(all_pages):
                             text = pytesseract.image_to_string(page)
-                            docs.append(Document(page_content=text, metadata={"source": filename, "page":idx+1,"uuid": self.chat_ids}))
+                            docs.append(Document(page_content=text +f" page number for this chunk is {idx+1}" , metadata={"source": filename, "page":idx+1,"uuid": self.chat_ids}))
 
                     document_chunkeds[pdf_file_name] = docs
 
