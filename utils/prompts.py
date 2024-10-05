@@ -145,9 +145,9 @@ Question: {question}
 
 Response should be in the JSON format as shown below:
 {{
-    "answer":...,
-    "sentiment":...,
-    "explaination":...,
+    "answer":string value,
+    "sentiment":String value,
+    "explaination":string value,
     "source":List[Dict]: [{{
         "pdf_name": ....,
         "page_number": pages seprated by comma
