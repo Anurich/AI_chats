@@ -82,6 +82,7 @@ class createVectorStore_DOC:
     def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
             for i in range(len(document_chunked)):
+                print(document_chunked[i].metadata)
                 document_chunked[i].page_content += f" page number related to this chunk is {document_chunked[i].metadata["page"] + 1}"
                 document_chunked[i].metadata = {
                     "source": filename,
