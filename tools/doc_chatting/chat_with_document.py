@@ -110,30 +110,15 @@ class Chatwithdocument(CustomLogger):
                             tokens_with_label.append([start_index, end_index, label, text])
                     
             
-                #sentiment = " ".join(output.split("Sentiment:")[1].split("Explanation:")).replace("\n","")
                 output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
                 
-                # max_count = 0
-                # metadata = None
-                
-                # splitted_response = response["answer"].lower().split()
-                # for i in range(len(response["context"])):
-                #     consider = 0
-                #     doc,_ = response["context"][i]
-                #     data = doc.page_content.lower()
-                #     for res in splitted_response:
-                #         if res in data:
-                #             consider +=1
-
-                #     if consider > max_count:
-                #         max_count  = consider
-                #         metadata = doc.metadata
                     
                
                 response_list=[output_answer+f" ***{output["source"]}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
                 print(response_list)
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
+                print(cache_response)
                 response_list = ast.literal_eval(cache_response)
 
             end_time = time.time()
