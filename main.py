@@ -153,7 +153,6 @@ async def summarization_doc(requestQuery: QueryRequest):
 async def chat_with_pdf(requestQuery: QueryRequest):
     # once i am here i need to respond with firs the summary of the pdf
     # for file 
-    vector_db = None
     chat_tool = None
     summary = None
     ids = f"{requestQuery.user_id}_{requestQuery.chat_id}"
