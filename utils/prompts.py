@@ -150,11 +150,11 @@ Response should be in the JSON format as shown below:
     "explaination":string value,
     "source":List[Dict]: [{{
         "pdf_name": ....,
-        "page_number": pages seprated by comma
+        "page_number": pages seprated by comma (only provide the page number )
     }},
     {{
         "pdf_name": ....,
-        "page_number": pages seprated by comma
+        "page_number": pages seprated by comma (only provide the page number )
     }}
     ]
 }}
