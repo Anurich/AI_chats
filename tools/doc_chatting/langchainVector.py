@@ -82,10 +82,9 @@ class createVectorStore_DOC:
     def change_metadata(self,document_chunked, filename, table=False):
         if len(document_chunked) != 0:
             for i in range(len(document_chunked)):
-                document_chunked[i].page_content += f" page number related to this chunk is {i + 1}"
                 document_chunked[i].metadata = {
                     "source": filename,
-                    "page": str(i + 1) if table ==False else "Table",
+                    "page": str(document_chunked[i].metadata["page"] + 1) if table ==False else "Table",
                     "uuid": self.chat_ids
                 }
             # for vector db 
@@ -114,6 +113,8 @@ class createVectorStore_DOC:
                 document_chunked = loader.load_and_split()
                 chunked_docs = self.change_metadata(document_chunked, filename)
                 if chunked_docs != None:
+                    for i in range(len(chunked_docs)):
+                        chunked_docs[i].page_content +=f" page number for this chunk is {chunked_docs[i].metadata["page"]}"
                     if document_chunkeds.get(pdf_file_name) == None:
                         document_chunkeds[pdf_file_name] = chunked_docs
                 else:
