@@ -64,11 +64,18 @@ class Chatwithdocument(CustomLogger):
         
         return reranked_results
 
+
     def convert_to_json_format(self,input_str):
-        import re
-        # Using regex to handle cases where single quotes are within the text
-        # This will replace outer single quotes only
-        return re.sub(r"(?<!\\)'", '"', input_str)
+        import re 
+        # Replace single quotes with double quotes
+        # Make sure to preserve existing double quotes within strings
+        converted = re.sub(r"(?<!\\)'", '"', input_str)
+        
+        # Optionally remove any trailing commas in the object
+        converted = re.sub(r",\s*([\]}])", r"\1", converted)
+        
+        return converted
+
     
     def run_chat(self, query: str):
         # Summarize docs need not to be run every time because if the document is summarized I can save it 
