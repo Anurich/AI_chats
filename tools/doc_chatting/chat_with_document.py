@@ -64,6 +64,12 @@ class Chatwithdocument(CustomLogger):
         
         return reranked_results
 
+    def convert_to_json_format(self,input_str):
+        import re
+        # Using regex to handle cases where single quotes are within the text
+        # This will replace outer single quotes only
+        return re.sub(r"(?<!\\)'", '"', input_str)
+    
     def run_chat(self, query: str):
         # Summarize docs need not to be run every time because if the document is summarized I can save it 
         # and next time when someone asks a question I can simply use the saved one 
@@ -115,7 +121,7 @@ class Chatwithdocument(CustomLogger):
             elif cache_response != None:
                 print("**"*200)
                 import ast
-                print(ast.literal_eval(cache_response))
+                print(json.loads(self.convert_to_json_format(cache_response)))
                 output = json.loads(cache_response.replace("'",'"'))
                 output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
                 response_list=[output_answer+f" ***{output["source"]}*** ----{output["tokens_with_label"]}----", output["chat_history"]]
