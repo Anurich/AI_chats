@@ -8,6 +8,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.callbacks import get_openai_callback
 from utils.llm_cache import SemanticMemory
+from utils.utility import parse_complex_string
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils import history, prompts
 import ast
@@ -95,8 +96,6 @@ class Chatwithdocument(CustomLogger):
                 # to find the answer
                 
                 output = json.loads(output["answer"].replace("```json", "").replace("```", ""))
-                print("*"*199)
-                print(output)
                 ner   = self.nlp(output["answer"])
                 tokens_with_label = []
                 to_remove = ["CARDINAL", "ORDINAL", "WORK_OF_ART"]
@@ -113,8 +112,7 @@ class Chatwithdocument(CustomLogger):
                 response_list=[output_answer+f" ***{output["source"]}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
-                response_list = ast.literal_eval(cache_response)
-
+                response_list = parse_complex_string(cache_response)
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
             print(f"{cb}")

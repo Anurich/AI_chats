@@ -16,7 +16,40 @@ from surya.model.recognition.model import load_model
 from surya.model.recognition.processor import load_processor
 from surya.model.detection import segformer
 from langchain_openai import ChatOpenAI
+import re 
+import ast
 
+
+def parse_complex_string(s):
+    def parse_element(element):
+        element = element.strip()
+        try:
+            return ast.literal_eval(element)
+        except:
+            # If literal_eval fails, return the original string
+            return element
+
+    # Remove the outermost quotes and square brackets
+    s = s.strip('[]"')
+    
+    # Split the string into main components
+    parts = re.split(r'(,\s*\[.*?\]|\{.*?\})', s)
+    
+    result = []
+    current_item = ""
+    nesting_level = 0
+    
+    for part in parts:
+        current_item += part
+        nesting_level += part.count('[') + part.count('{') - part.count(']') - part.count('}')
+        
+        if nesting_level == 0:
+            # We've completed a top-level item
+            parsed_item = parse_element(current_item.lstrip(',').strip())
+            result.append(parsed_item)
+            current_item = ""
+
+    return result
 
 
 def load_model_surya():
