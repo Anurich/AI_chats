@@ -107,7 +107,7 @@ class Chatwithdocument(CustomLogger):
                             text  = ner_obj.text
                             tokens_with_label.append([start_index, end_index, label, text])
                                         
-                output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
+                output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"]
                 response_list=[output_answer+f" ***{output["source"]}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
