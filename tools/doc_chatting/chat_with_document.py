@@ -8,10 +8,8 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.callbacks import get_openai_callback
 from utils.llm_cache import SemanticMemory
-from utils.utility import parse_complex_string
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils import history, prompts
-import ast
 import time
 from typing import List
 from langchain_community.vectorstores import Chroma
