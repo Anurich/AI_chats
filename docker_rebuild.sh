@@ -3,6 +3,11 @@
 # Assign arguments to variables (optional)
 CONTAINER_NAME=$1
 IMAGE_NAME=$2
+GIT_REPO_URL=$3
+
+# Hardcoded credentials
+GIT_USERNAME="Anurich"
+GIT_TOKEN="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"  # Replace with your actual token
 
 # If container name is provided, stop and remove the container
 if [ ! -z "$CONTAINER_NAME" ]; then
@@ -21,9 +26,17 @@ else
   echo "No image name provided. Skipping image removal."
 fi
 
+# Pull the latest code from the Git repository
+if [ ! -z "$GIT_REPO_URL" ]; then
+  echo "Pulling latest code from repository: $GIT_REPO_URL"
+  git -C /path/to/your/repo pull https://$GIT_USERNAME:$GIT_TOKEN@$GIT_REPO_URL
+else
+  echo "No Git repository URL provided. Skipping git pull."
+fi
+
 # Build new image
 echo "Building new image: ai-server-tool"
-sudo docker build -t ai-server-tool .
+sudo docker build -t ai-server-tool /path/to/your/repo
 
 # Run the new container
 echo "Running new container on port 4200"
