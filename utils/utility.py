@@ -23,34 +23,12 @@ import json
 
 def parse_response_list(s):
     # Remove the outer list brackets
-    s = s.strip('[]')
-    # Split into two main parts
-    parts = s.split(',', 1)
-    if len(parts) != 2:
-        raise ValueError("Input string does not match expected format")
-
-    # Parse the first part (output_answer + source + tokens)
-    first_part = parts[0].strip()
-    
-    # Extract source
-    source_match = re.search(r'\*\*\*(.*?)\*\*\*', first_part)
-    source = json.loads(source_match.group(1)) if source_match else None
-    
-    # Extract tokens
-    tokens_match = re.search(r'----(.*?)----', first_part)
-    tokens = ast.literal_eval(tokens_match.group(1)) if tokens_match else None
-    
-    # Extract output_answer
-    output_answer = first_part[:source_match.start()].strip() if source_match else first_part
-    
-    # Parse the second part (chat history)
-    chat_history = ast.literal_eval(parts[1].strip())
-    
-    return [
-        f"{output_answer} ***{json.dumps(source)}*** ----{tokens}----",
-        chat_history
-    ]
-
+    splitted_data = s.split("----")
+    index_1 = "----".join(splitted_data[:-4]+"----")
+    index_2 = " ".join(splitted_data[-4:])
+                
+    result = [index_1[1:], index_2]
+    return result
 
 
 def load_model_surya():
