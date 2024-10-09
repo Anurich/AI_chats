@@ -24,9 +24,8 @@ import json
 def parse_response_list(s):
     # Remove the outer list brackets
     splitted_data = s.split("----")
-    index_1 = "----".join(splitted_data[:-4])+"----"
-    index_2 = "".join(splitted_data[-4:])
-                
+    index_1 = splitted_data[0] +"----"+splitted_data[1]+"----"
+    index_2 = splitted_data[5]
     result = [index_1[1:], index_2]
     return result
 
