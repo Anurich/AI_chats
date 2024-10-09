@@ -33,7 +33,7 @@ class SemanticMemory:
         embedding = self.embedding_func.embed_query(query)
         self.collection.add(
             embeddings=[embedding],
-            metadatas=[{"query": query, "response": str(response)}],
+            metadatas=[{"query": query, "response": response}],
             ids=[str(self.counter)]
         )
         self.counter +=1
