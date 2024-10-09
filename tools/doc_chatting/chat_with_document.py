@@ -130,7 +130,7 @@ class Chatwithdocument(CustomLogger):
             elif cache_response != None:
                 print("**"*200)
                 import ast
-                print(cache_response)
+                print(ast.literal_eval(cache_response))
                 print(cache_response["answer"])
                 output = json.loads(cache_response.replace("'",'"'))
                 output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
