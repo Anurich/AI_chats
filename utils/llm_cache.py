@@ -34,7 +34,7 @@ class SemanticMemory:
         self.collection.add(
             embeddings=[embedding],
             metadatas=[{"query": query, "response": str(response)}],
-            documents=response,
+            documents=[response],
             ids=[str(self.counter)]
         )
         self.counter +=1
@@ -50,7 +50,7 @@ class SemanticMemory:
         if len(nearest_distance) > 0:
             if nearest_distance[0] < threshold:
                 
-                return results["documents"]
+                return results["documents"][0]
             else:
                 return None
         else:
