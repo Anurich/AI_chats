@@ -9,6 +9,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.callbacks import get_openai_callback
 from utils.llm_cache import SemanticMemory
 from utils.utility import parse_response_list
+import ast
 from langchain_openai.embeddings import OpenAIEmbeddings
 from utils import history, prompts
 import time
@@ -109,9 +110,16 @@ class Chatwithdocument(CustomLogger):
                                         
                 output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"]
                 response_list=[output_answer+f" ***{output["source"]}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
-                self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
+                response_to_store_in_cache = {
+                    "output_answer": output_answer,
+                    "source": f" ***{output["source"]}***",
+                    "tokens_with_label":f"----{tokens_with_label}----",
+                    "chat_history": self.chatHistory.chat_history
+                }
+                self.llm_cache_in_semantic_memory.add_query_response(query, response_to_store_in_cache)
             elif cache_response != None:
-                response_list =cache_response
+                json_response = ast.literal_eval(cache_response)
+                response_list=[json_response["output_answer"]+""+json_response["source"]+" "+ json_response["tokens_with_label"],  self.chatHistory.chat_history]
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
             print(f"{cb}")
