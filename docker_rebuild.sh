@@ -29,7 +29,7 @@ fi
 # Pull the latest code from the Git repository
 if [ ! -z "$GIT_REPO_URL" ]; then
   echo "Pulling latest code from repository: $GIT_REPO_URL"
-  git -C . pull https://$GIT_USERNAME:$GIT_TOKEN@$GIT_REPO_URL
+  git -C . pull https://$GIT_USERNAME:$GIT_TOKEN@github.com/Anurich/AI_chats.git
 else
   echo "No Git repository URL provided. Skipping git pull."
 fi
