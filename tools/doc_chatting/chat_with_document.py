@@ -114,7 +114,8 @@ class Chatwithdocument(CustomLogger):
                 self.llm_cache_in_semantic_memory.add_query_response(query, output)
             elif cache_response != None:
                 print("**"*200)
-                print(cache_response.replace("'",'"'))
+                import ast
+                print(ast.literal_eval(cache_response))
                 output = json.loads(cache_response.replace("'",'"'))
                 output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
                 response_list=[output_answer+f" ***{output["source"]}*** ----{output["tokens_with_label"]}----", output["chat_history"]]
