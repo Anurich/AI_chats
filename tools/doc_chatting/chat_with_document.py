@@ -124,7 +124,9 @@ class Chatwithdocument(CustomLogger):
                 output["tokens_with_label"] = tokens_with_label
                 output["chat_history"] = self.chatHistory.chat_history
                 
-                self.llm_cache_in_semantic_memory.add_query_response(query, output)
+                
+                
+                self.llm_cache_in_semantic_memory.add_query_response(query, dict(output))
             elif cache_response != None:
                 print("**"*200)
                 import ast
