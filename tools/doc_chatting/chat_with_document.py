@@ -108,19 +108,12 @@ class Chatwithdocument(CustomLogger):
                             label = ner_obj.label_
                             text  = ner_obj.text
                             tokens_with_label.append([start_index, end_index, label, text])
-                    
-            
+                                        
                 output_answer = f"{output["answer"]} \n **Sentiment:**\n "+output["sentiment"] +" "+output["explaination"]
-                
-                    
-               
                 response_list=[output_answer+f" ***{output["source"]}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
-                print(response_list)
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
-                print("**"*10)
-                print(cache_response[0])
-                response_list = eval(cache_response)
+                response_list = ast.literal_eval(cache_response)
 
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")

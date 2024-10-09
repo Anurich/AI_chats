@@ -33,7 +33,7 @@ class SemanticMemory:
         embedding = self.embedding_func.embed_query(query)
         self.collection.add(
             embeddings=[embedding],
-            metadatas=[{"query": query, "response": response}],
+            metadatas=[{"query": query, "response": str(response)}],
             ids=[str(self.counter)]
         )
         self.counter +=1
@@ -46,7 +46,6 @@ class SemanticMemory:
         )
         
         nearest_distance = results["distances"][0]
-        print(nearest_distance, "**"*10)
         if len(nearest_distance) > 0:
             if nearest_distance[0] < threshold:
                 return results["metadatas"][0][0]["response"]
