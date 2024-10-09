@@ -111,7 +111,7 @@ class Chatwithdocument(CustomLogger):
                 response_list=[output_answer+f" ***{output["source"]}*** ----{tokens_with_label}----",  self.chatHistory.chat_history]
                 self.llm_cache_in_semantic_memory.add_query_response(query, response_list)
             elif cache_response != None:
-                response_list = parse_response_list(cache_response)
+                response_list =cache_response
             end_time = time.time()
             print(f"Total Time Taken: {end_time - start_time:0.2f}")
             print(f"{cb}")
