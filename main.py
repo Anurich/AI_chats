@@ -21,9 +21,6 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 from utils.bucket import BucketDigitalOcean
 from spacy.cli import download
-import nltk
-nltk.download('punkt_tab')
-nltk.download('averaged_perceptron_tagger_eng')
 from tools.doc_chatting.search_by_descrp_keyword import Filesearchbykeyworddescrp
 download("en_core_web_lg")
 

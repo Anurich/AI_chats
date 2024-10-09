@@ -18,38 +18,39 @@ from surya.model.detection import segformer
 from langchain_openai import ChatOpenAI
 import re 
 import ast
+import json
 
 
-def parse_complex_string(s):
-    def parse_element(element):
-        element = element.strip()
-        try:
-            return ast.literal_eval(element)
-        except:
-            # If literal_eval fails, return the original string
-            return element
+def parse_response_list(s):
+    # Remove the outer list brackets
+    s = s.strip('[]')
+    # Split into two main parts
+    parts = s.split(',', 1)
+    if len(parts) != 2:
+        raise ValueError("Input string does not match expected format")
 
-    # Remove the outermost quotes and square brackets
-    s = s.strip('[]"')
+    # Parse the first part (output_answer + source + tokens)
+    first_part = parts[0].strip()
     
-    # Split the string into main components
-    parts = re.split(r'(,\s*\[.*?\]|\{.*?\})', s)
+    # Extract source
+    source_match = re.search(r'\*\*\*(.*?)\*\*\*', first_part)
+    source = json.loads(source_match.group(1)) if source_match else None
     
-    result = []
-    current_item = ""
-    nesting_level = 0
+    # Extract tokens
+    tokens_match = re.search(r'----(.*?)----', first_part)
+    tokens = ast.literal_eval(tokens_match.group(1)) if tokens_match else None
     
-    for part in parts:
-        current_item += part
-        nesting_level += part.count('[') + part.count('{') - part.count(']') - part.count('}')
-        
-        if nesting_level == 0:
-            # We've completed a top-level item
-            parsed_item = parse_element(current_item.lstrip(',').strip())
-            result.append(parsed_item)
-            current_item = ""
+    # Extract output_answer
+    output_answer = first_part[:source_match.start()].strip() if source_match else first_part
+    
+    # Parse the second part (chat history)
+    chat_history = ast.literal_eval(parts[1].strip())
+    
+    return [
+        f"{output_answer} ***{json.dumps(source)}*** ----{tokens}----",
+        chat_history
+    ]
 
-    return result
 
 
 def load_model_surya():
