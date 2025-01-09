@@ -1,9 +1,9 @@
 {
-    "API_key": "sk-proj-pqh4EPzUsLOJAH7X7RKUT3BlbkFJWWD6kHOH4Sjn1fEqoSZE",
-    "API_COHERE_KEY": "Lmm3OcRXjdOOGZtYYeAaMtsw3cvofE8D2cbMsvwl",
-    "OCR_AZZURE_KEY":"ecf553c40cb94dd08e18b4d08f1b0c51",
-    "region_name": "sfo3",
-    "endpoint_url":"https://ai-server-bucket.sfo3.digitaloceanspaces.com",
-    "aws_access_key_id": "DO00HJ27F3J3KEMER2ZV",
-    "aws_secret_access_key":"eUviKyjL/YQDfN5JubDJX6w08d0RmeOumn/3UHQESzk"
+    "API_key": "",
+    "API_COHERE_KEY": "",
+    "OCR_AZZURE_KEY":"",
+    "region_name": "",
+    "endpoint_url":"",
+    "aws_access_key_id": "",
+    "aws_secret_access_key":""
 }
