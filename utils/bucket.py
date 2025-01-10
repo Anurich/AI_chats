@@ -19,8 +19,8 @@ class BucketDigitalOcean(CustomLogger):
     client_object = session.client(
             's3',
             region_name='ap-south-1',
-            aws_access_key_id='AKIAXZEFHXMEJG2VS5E3',
-            aws_secret_access_key='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'
+            aws_access_key_id='',
+            aws_secret_access_key=''
         )
     def __init__(self):
         """
