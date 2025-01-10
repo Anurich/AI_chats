@@ -62,7 +62,6 @@ AI_chats/
 ## Installation
 
 ### Clone the Repository
-bash
 git clone <repository-url>
 cd AI_chats
 
@@ -77,7 +76,6 @@ pip install -r requirements.txt
 Add your OpenAI API keys to openai_keys/openai_cred.json.
 
 ### Build and Run Docker Containers
-bash
 docker-compose up --build
 
 
@@ -85,7 +83,6 @@ docker-compose up --build
 
 ### Start the Application
 Run the main script to initiate the service:
-bash
 python main.py
 
 
