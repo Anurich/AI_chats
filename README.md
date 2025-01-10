@@ -22,7 +22,7 @@ AI Chat is an advanced document interaction tool designed to enhance productivit
 While LangChain served as the foundation, limitations in flexibility and scalability emerged as the features grew. This led to messy and unmanageable code. A structured approach using LangGraph could have improved workflow and efficiency, providing better modularity and readability.
 
 ## Directory Structure
-
+```bash
 AI_chats/
 ├── configuration/
 │   ├── __init__.py
@@ -57,7 +57,7 @@ AI_chats/
     ├── llm_cache.py
     ├── prompts.py
     └── utility.py
-
+```
 
 ## Installation
 
